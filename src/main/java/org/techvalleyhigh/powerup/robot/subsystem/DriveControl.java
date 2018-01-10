@@ -3,16 +3,34 @@ package org.techvalleyhigh.powerup.robot.subsystem;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.techvalleyhigh.powerup.robot.OI;
+import org.techvalleyhigh.powerup.robot.Robot;
 import org.techvalleyhigh.powerup.robot.RobotMap;
+import org.techvalleyhigh.powerup.robot.commands.Drive;
 
+
+// TODO: PID CONTROL
 public class DriveControl extends Subsystem {
     /**
      * String used for SmartDashboard key for
      */
     private static final String AUTO_GYRO_TOLERANCE = "Auto Gyro Tolerance (+- Deg)";
 
+    // ----------------------- Subsystem Control ----------------------- //
+
+    /**
+     * Create the subsystem with a default name
+     */
     public DriveControl() {
         super();
+        init();
+    }
+
+    /**
+     * Create the subsystem with the given name.
+     */
+    public DriveControl(String name) {
+        super(name);
         init();
     }
 
@@ -21,12 +39,16 @@ public class DriveControl extends Subsystem {
      */
     public void init() {
         calibrateGyro();
+
+        // TODO: INIT ROBOT DRIVE (wpilib killed it)
     }
 
     @Override
     public void initDefaultCommand() {
-        //setDefaultCommand(new Drive());
+        setDefaultCommand(new Drive());
     }
+
+    // ----------------------- GYRO ----------------------- //
 
     /**
      * Calibrate the Gyro on init
@@ -58,5 +80,44 @@ public class DriveControl extends Subsystem {
      */
     private void updateDashboard() {
         SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
+    }
+
+    // ----------------------- DRIVE HANDLING ----------------------- //
+
+    public void driveJoystickInputs() {
+        double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
+        double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
+
+        // TODO: Robot drive
+        robotDrive.arcadeDrive(y, x, true);
+    }
+
+    /**
+     * Command the drive motors to move and turn without correcting for deadzone or scaling.
+     * Joystick input should NOT be fed thru this function.
+     *
+     * @param move Motor amount to move from -1 to 1
+     * @param turn Motor amount to turn from -1 to 1
+     */
+
+    public void rawDrive(double move, double turn) {
+        updateDashboard();
+
+        // TODO: Robot drive
+        robotDrive.arcadeDrive(move, turn, true);
+    }
+
+    /**
+     * Stops all drive motors
+     */
+    public void stopDrive() {
+        // TODO: Robot drive
+        // TODO: define drive talons and stop them
+        /*
+        talonBackLeft.set(0);
+        talonBackRight.set(0);
+        talonFrontLeft.set(0);
+        RobotMap.talonFrontRight.set(0);
+         */
     }
 }

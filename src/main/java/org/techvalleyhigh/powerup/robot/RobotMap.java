@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 public class RobotMap {
     // Gyro
@@ -13,12 +14,13 @@ public class RobotMap {
     // Talons
     public static TalonSRX testTalon;
 
-    /**
-     *
-     */
+    // TODO: Drive talons
     public static void init() {
+        // Define talons with TalonSRX
+        // TODO: LiveWindow.add(Sendable)
         testTalon = new TalonSRX(0);
 
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+
     }
 }
