@@ -1,9 +1,12 @@
-package org.techvalleyhigh.powerup.robot;
+package org.techvalleyhigh.frc5881.powerup.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
+/**
+ * Controls operator interfaces, such as controllers
+ */
 public class OI {
     public GenericHID xboxController;
 
@@ -85,5 +88,7 @@ public class OI {
         rightBumper = new JoystickButton(xboxController, BUTTON_RIGHT_BUMPER);
         backButton = new JoystickButton(xboxController, BUTTON_BACK);
         startButton = new JoystickButton(xboxController, BUTTON_START);
+
+        // Put button controls down here
     }
 }

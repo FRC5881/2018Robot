@@ -1,4 +1,4 @@
-package org.techvalleyhigh.powerup.robot;
+package org.techvalleyhigh.frc5881.powerup.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.techvalleyhigh.powerup.robot.commands.AutonomousCommand;
-import org.techvalleyhigh.powerup.robot.commands.Drive;
-import org.techvalleyhigh.powerup.robot.subsystem.DriveControl;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
 
 
 public class Robot extends TimedRobot {
@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
 
     // Define auto code
     public static Command autonomousCommand;
-    public static SendableChooser autoChooser;
+    public static SendableChooser<AutonomousCommand> autoChooser;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -36,7 +36,6 @@ public class Robot extends TimedRobot {
         // Define drive command to during tele - op
         driveCommand = new Drive();
 
-        // THEN DEFINE OI
         // OI must be constructed after subsystems. If the OI creates Commands
         //(which it very likely will), subsystems are not guaranteed to be
         // constructed yet. Thus, their requires() statements may grab null
@@ -47,8 +46,7 @@ public class Robot extends TimedRobot {
         autonomousCommand = null;
 
         // Add Auto commands to the smart dashboard
-        autoChooser = new SendableChooser();
-        // TODO: Is the line below an error?
+        autoChooser = new SendableChooser<>();
         autoChooser.addDefault("Do Nothing", new AutonomousCommand("None"));
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
@@ -73,7 +71,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         if (autoChooser.getSelected() != null) {
-            autonomousCommand = (Command) autoChooser.getSelected();
+            autonomousCommand = autoChooser.getSelected();
             autonomousCommand.start();
         } else {
             System.out.println("Null Auto Chooser");
@@ -112,7 +110,6 @@ public class Robot extends TimedRobot {
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
-        // TODO: LiveWindow.run() is deprecated
-        LiveWindow.run();
+
     }
 }
