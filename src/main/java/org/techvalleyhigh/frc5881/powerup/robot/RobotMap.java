@@ -11,15 +11,14 @@ public class RobotMap {
     public static DoubleSolenoid doubleSolenoid;
 
     public static void init() {
-        // Define talons with TalonSRX
-        // TODO: LiveWindow.add(Sendable)
         //Compressor for pneumatics
-        compressor = new Compressor(1);
+        compressor = new Compressor(0);
         compressor.setName("Compressor", "Compressor1");
         LiveWindow.add(compressor);
+
         //Double Solenoids for (you guessed it) the solenoid
-        doubleSolenoid = new DoubleSolenoid(1, 2);
-        doubleSolenoid.setName("Solenoid", "DoubleSolenoid1");
+        doubleSolenoid = new DoubleSolenoid(0, 0);
+        doubleSolenoid.setName("Solenoid", "Double Solenoid 1");
         LiveWindow.add(doubleSolenoid);
     }
 }
