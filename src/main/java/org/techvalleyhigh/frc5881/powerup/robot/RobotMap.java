@@ -1,31 +1,25 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 public class RobotMap {
-    // Gyro
-    public static ADXRS450_Gyro digitalGyro;
 
-    // Talons
-    public static TalonSRX driveFrontLeft;
-    public static TalonSRX driveFrontRight;
-    public static TalonSRX driveBackLeft;
-    public static TalonSRX driveBackRight;
+    public static Compressor compressor;
+    public static DoubleSolenoid doubleSolenoid;
 
-    // TODO: Drive talons
     public static void init() {
         // Define talons with TalonSRX
         // TODO: LiveWindow.add(Sendable)
-        driveFrontLeft = new TalonSRX(0);
-        driveFrontRight = new TalonSRX(1);
-        driveBackLeft = new TalonSRX(2);
-        driveBackRight = new TalonSRX(3);
-
-        digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+        //Compressor for pneumatics
+        compressor = new Compressor(1);
+        compressor.setName("Compressor", "Compressor1");
+        LiveWindow.add(compressor);
+        //Double Solenoids for (you guessed it) the solenoid
+        doubleSolenoid = new DoubleSolenoid(1, 2);
+        doubleSolenoid.setName("Solenoid", "DoubleSolenoid1");
+        LiveWindow.add(doubleSolenoid);
     }
 }
