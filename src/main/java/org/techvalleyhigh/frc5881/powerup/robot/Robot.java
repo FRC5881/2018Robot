@@ -7,15 +7,20 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
 
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
     public static OI oi;
     public static DriveControl driveControl;
-
+    public static Manipulator manipulator;
+    public static Arm arm;
+    public static Elevator elevator;
     // Define drive command
     public static Drive driveCommand;
 
@@ -32,7 +37,9 @@ public class Robot extends TimedRobot {
 
         // Define Subsystems
         driveControl = new DriveControl();
-
+        manipulator = new Manipulator();
+        arm = new Arm();
+        elevator = new Elevator();
         // Define drive command to during tele - op
         driveCommand = new Drive();
 
