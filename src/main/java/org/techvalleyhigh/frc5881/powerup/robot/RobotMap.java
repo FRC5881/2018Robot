@@ -19,7 +19,9 @@ public class RobotMap {
     public static WPI_TalonSRX driveBackRight;
     public static WPI_TalonSRX elevatorTalon1;
     public static WPI_TalonSRX elevatorTalon2;
-
+    //Pneumatics
+    public static DoubleSolenoid doubleSolenoid;
+    public static Compressor compressor;
     //Possibly Ultrasonics
     public static AnalogInput ultrasonic;
     // TODO: Drive talons
@@ -52,5 +54,12 @@ public class RobotMap {
         ultrasonic = new AnalogInput(1);
         ultrasonic.setName("Ultrasonic", "Ultrasonic");
         LiveWindow.add(ultrasonic);
+        //Pneumatic things
+        compressor = new Compressor(0);
+        compressor.setName("Compressor", "Compressor");
+        LiveWindow.add(compressor);
+        doubleSolenoid = new DoubleSolenoid(0, 1);
+        doubleSolenoid.setName("DoubleSolenoid", "Double Solenoid");
+        LiveWindow.add(doubleSolenoid);
     }
 }
