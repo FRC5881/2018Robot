@@ -1,6 +1,8 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,6 +19,8 @@ public class DriveControl extends Subsystem {
      */
     private static final String AUTO_GYRO_TOLERANCE = "Auto Gyro Tolerance (+- Deg)";
 
+
+    private DifferentialDrive robotDrive;
 
     // ----------------------- Subsystem Control ----------------------- //
 
@@ -42,7 +46,10 @@ public class DriveControl extends Subsystem {
     public void init() {
         calibrateGyro();
 
-        // TODO: INIT ROBOT DRIVE (wpilib killed it)
+        SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft, RobotMap.driveBackLeft);
+        SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight, RobotMap.driveBackRight);
+
+        robotDrive = new DifferentialDrive(m_left, m_right);
     }
 
     @Override
@@ -90,8 +97,7 @@ public class DriveControl extends Subsystem {
         double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
         double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
 
-        // TODO: Robot drive
-        // robotDrive.arcadeDrive(y, x, true);
+        robotDrive.arcadeDrive(x, y, true);
     }
 
     /**
@@ -105,21 +111,16 @@ public class DriveControl extends Subsystem {
     public void rawDrive(double move, double turn) {
         updateDashboard();
 
-        // TODO: Robot drive
-        // robotDrive.arcadeDrive(move, turn, true);
+        robotDrive.arcadeDrive(move, turn, true);
     }
 
     /**
      * Stops all drive motors
      */
     public void stopDrive() {
-        // TODO: Robot drive
-        // TODO: define drive talons and stop them
-        /*
-        talonBackLeft.set(0);
-        talonBackRight.set(0);
-        talonFrontLeft.set(0);
-        RobotMap.talonFrontRight.set(0);
-         */
+        RobotMap.driveFrontRight.set(0);
+        RobotMap.driveFrontLeft.set(0);
+        RobotMap.driveBackRight.set(0);
+        RobotMap.driveBackLeft.set(0);
     }
 }
