@@ -118,6 +118,15 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpiutil/wpiutil-java/3.0.0/950917d431d417eea7f1f90cba3d144ede38814b/wpiutil-java-3.0.0-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Gradle: jaci.pathfinder:Pathfinder-Java:1.8">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/jaci.pathfinder/Pathfinder-Java/1.8/c37dcf790766dd0c023cc00c57bb2e2e4e58f487/Pathfinder-Java-1.8.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/jaci.pathfinder/Pathfinder-Java/1.8/f99c341d8a52f2445060989aef1af8ab7bb458ed/Pathfinder-Java-1.8-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Gradle: junit:junit:4.12">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar!/" />
