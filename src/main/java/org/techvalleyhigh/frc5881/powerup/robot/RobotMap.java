@@ -12,7 +12,7 @@ public class RobotMap {
     public static ADXRS450_Gyro digitalGyro;
 
     // Talons
-    //TODO: add talons for arm and manipulator subsystems
+    //TODO: add talons for arm and manipulator subsystems and maybe even for elevator if need be
     public static WPI_TalonSRX driveFrontLeft;
     public static WPI_TalonSRX driveFrontRight;
     public static WPI_TalonSRX driveBackLeft;

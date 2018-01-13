@@ -14,6 +14,7 @@ public class AutonomousCommand extends CommandGroup {
     public AutonomousCommand(String routine) {
         if (!routine.equals("None")) {
             // TODO: auto commands
+
         }
     }
 }
