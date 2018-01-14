@@ -1,11 +1,12 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
-import sun.nio.cs.ext.DoubleByte;
 
 public class RobotMap {
     // Gyro
@@ -17,47 +18,56 @@ public class RobotMap {
     public static WPI_TalonSRX driveFrontRight;
     public static WPI_TalonSRX driveBackLeft;
     public static WPI_TalonSRX driveBackRight;
-    public static WPI_TalonSRX elevatorTalon1;
-    public static WPI_TalonSRX elevatorTalon2;
+    public static WPI_TalonSRX elevatorTalonMaster;
+    public static WPI_TalonSRX elevatorTalonFollower;
     //Pneumatics
     public static DoubleSolenoid doubleSolenoid;
     public static Compressor compressor;
-    //Possibly Ultrasonics
-    public static AnalogInput ultrasonic;
-    // TODO: Drive talons
+
     public static void init() {
-        // TODO: LiveWindow.add(Sendable)
         //Talons
         driveFrontLeft = new WPI_TalonSRX(0);
-        driveFrontLeft.setName("Talon", "Talon Front Left");
+        driveFrontLeft.setName("Drive Talon Left", "Talon Front Left");
         LiveWindow.add(driveFrontLeft);
+
         driveFrontRight = new WPI_TalonSRX(1);
-        driveFrontRight.setName("Talon", "Talon Front Right");
+        driveFrontRight.setName("Drive Talon Right", "Talon Front Right");
         LiveWindow.add(driveFrontRight);
+
         driveBackLeft = new WPI_TalonSRX(2);
-        driveBackLeft.setName("Talon", "Talon Back Left");
+        driveBackLeft.setName("Drive Talon Left", "Talon Back Left");
         LiveWindow.add(driveBackLeft);
+
         driveBackRight = new WPI_TalonSRX(3);
-        driveBackRight.setName("Talon", "talon Back Right");
+        driveBackRight.setName("Drive Talon Right", "Talon Back Right");
         LiveWindow.add(driveBackRight);
-        elevatorTalon1 = new WPI_TalonSRX(4);
-        elevatorTalon1.setName("Talon", "Elevator Talon 1");
-        LiveWindow.add(elevatorTalon1);
-        elevatorTalon2 = new WPI_TalonSRX(5);
-        elevatorTalon2.setName("Talon", "Elevator Talon 2");
-        LiveWindow.add(elevatorTalon2);
+
+
+        //Elevator Talons
+        elevatorTalonMaster = new WPI_TalonSRX(4);
+        elevatorTalonMaster.setName("Elevator Talon", "Master");
+        elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+        elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        LiveWindow.add(elevatorTalonMaster);
+
+        elevatorTalonFollower = new WPI_TalonSRX(5);
+        elevatorTalonFollower.setName("Elevator Talon", "Follow");
+        //elevatorTalonFollower.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+        elevatorTalonFollower.set(ControlMode.Follower, 4);
+        LiveWindow.add(elevatorTalonFollower);
+
+
         //Gyro
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
         digitalGyro.setName("Gyro", "Gyro");
         LiveWindow.add(digitalGyro);
-        //Ultrasonic
-        ultrasonic = new AnalogInput(1);
-        ultrasonic.setName("Ultrasonic", "Ultrasonic");
-        LiveWindow.add(ultrasonic);
+
+
         //Pneumatic things
         compressor = new Compressor(0);
         compressor.setName("Compressor", "Compressor");
         LiveWindow.add(compressor);
+
         doubleSolenoid = new DoubleSolenoid(0, 1);
         doubleSolenoid.setName("DoubleSolenoid", "Double Solenoid");
         LiveWindow.add(doubleSolenoid);

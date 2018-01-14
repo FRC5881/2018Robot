@@ -1,30 +1,36 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.Elevator;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
-import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
+import org.techvalleyhigh.frc5881.powerup.robot.Robot;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 
 public class ElevatorLift extends Command {
     public ElevatorLift() {
-        super();
-    }
-
-    public ElevatorLift(String name) {
-        super(name);
+        requires(Robot.elevator);
     }
 
     @Override
-    protected void execute() {
-        RobotMap.elevatorTalon1.set(1);
-        RobotMap.elevatorTalon2.set(1);
+    protected void initialize() {
+
     }
+
+    @Override
+    protected void execute(){
+        Robot.elevator.drive(Elevator.raiseSpeed);
+    }
+
     @Override
     protected boolean isFinished() {
         return false;
     }
+
     @Override
-    protected void end() {
-        RobotMap.elevatorTalon1.set(0);
-        RobotMap.elevatorTalon2.set(0);
+    protected void end(){
+        Robot.elevator.stop();
+    }
+
+    @Override
+    protected void interrupted() {
+        end();
     }
 }
