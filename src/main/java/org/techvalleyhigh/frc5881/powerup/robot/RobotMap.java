@@ -13,13 +13,15 @@ public class RobotMap {
     public static ADXRS450_Gyro digitalGyro;
 
     // Talons
-    //TODO: add talons for arm and manipulator subsystems and maybe even for elevator if need be
     public static WPI_TalonSRX driveFrontLeft;
     public static WPI_TalonSRX driveFrontRight;
     public static WPI_TalonSRX driveBackLeft;
     public static WPI_TalonSRX driveBackRight;
     public static WPI_TalonSRX elevatorTalonMaster;
     public static WPI_TalonSRX elevatorTalonFollower;
+
+    public static WPI_TalonSRX armTalon;
+
     //Pneumatics
     public static DoubleSolenoid doubleSolenoid;
     public static Compressor compressor;
@@ -45,16 +47,21 @@ public class RobotMap {
 
         //Elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
-        elevatorTalonMaster.setName("Elevator Talon", "Master");
+        elevatorTalonMaster.setName("Elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(elevatorTalonMaster);
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
-        elevatorTalonFollower.setName("Elevator Talon", "Follow");
+        elevatorTalonFollower.setName("Elevator", "Follow");
         //elevatorTalonFollower.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonFollower.set(ControlMode.Follower, 4);
         LiveWindow.add(elevatorTalonFollower);
+
+        //Arm Talon
+        armTalon = new WPI_TalonSRX(6);
+        armTalon.setName("Arm", "Master");
+        LiveWindow.add(armTalon);
 
 
         //Gyro

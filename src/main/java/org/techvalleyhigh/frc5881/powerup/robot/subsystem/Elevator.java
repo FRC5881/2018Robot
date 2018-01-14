@@ -29,19 +29,24 @@ public class Elevator extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new ElevatorLift());
+    }
+
+    public void init() {
+        RobotMap.elevatorTalonMaster.setSelectedSensorPosition(0, 0, 20);
     }
 
     public void drive(double speed) {
+        // If we're trying to go up, and we haven't passed max height -> it's okay
         if (speed > 0 && getHeight() < maxSafeRotations) {
             RobotMap.elevatorTalonMaster.set(speed);
+        // If we're trying to go down, and haven't passed bottom -> it's okay
         } else if(speed < 0 && getHeight() < 0) {
             RobotMap.elevatorTalonMaster.set(speed);
         }
     }
 
     public void stop() {
-        RobotMap.elevatorTalonMaster.set(0);
+        RobotMap.elevatorTalonMaster.stopMotor();
     }
 
     public double getHeight() {

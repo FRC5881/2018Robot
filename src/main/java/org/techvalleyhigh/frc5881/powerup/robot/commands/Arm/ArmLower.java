@@ -1,14 +1,15 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.Arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 
-public class Drive extends Command {
-    public Drive() {
-        requires(Robot.driveControl);
+
+public class ArmLower extends Command {
+    public ArmLower() {
+        requires(Robot.arm);
     }
 
-    // Called just before this Command runs the first time
     @Override
     protected void initialize() {
     }
@@ -17,7 +18,7 @@ public class Drive extends Command {
     // Drive code to run during
     @Override
     protected void execute() {
-        Robot.driveControl.driveJoystickInputs();
+        Robot.arm.drive(-Arm.armSpeed);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -29,7 +30,7 @@ public class Drive extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.driveControl.stopDrive();
+        Robot.arm.stop();
     }
 
     // Called when another command which requires one or more of the same
