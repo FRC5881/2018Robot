@@ -70,11 +70,12 @@ public class RobotMap {
         LiveWindow.add(digitalGyro);
 
 
-        //Pneumatic things
+        //Pneumatic Compressor
         compressor = new Compressor(0);
         compressor.setName("Compressor", "Compressor");
         LiveWindow.add(compressor);
 
+        //Pneumatic Solenoid
         doubleSolenoid = new DoubleSolenoid(0, 1);
         doubleSolenoid.setName("DoubleSolenoid", "Double Solenoid");
         LiveWindow.add(doubleSolenoid);
