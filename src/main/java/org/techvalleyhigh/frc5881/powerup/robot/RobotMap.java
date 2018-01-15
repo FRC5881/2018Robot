@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -23,18 +24,22 @@ public class RobotMap {
         driveFrontLeft = new WPI_TalonSRX(0);
         driveFrontLeft.setName("Drive", "Front Left");
         LiveWindow.add(driveFrontLeft);
+        driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
         driveFrontRight = new WPI_TalonSRX(1);
         driveFrontRight.setName("Drive", "Front Right");
         LiveWindow.add(driveFrontRight);
+        driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
         driveBackLeft = new WPI_TalonSRX(2);
         driveBackLeft.setName("Drive", "Back Left");
         LiveWindow.add(driveBackLeft);
+        driveBackLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
         driveBackRight = new WPI_TalonSRX(3);
         driveBackRight.setName("Drive", "Back Right");
         LiveWindow.add(driveBackRight);
+        driveBackRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
     }

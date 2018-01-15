@@ -108,19 +108,25 @@ public class DriveControl extends Subsystem {
      * @param turn Motor amount to turn from -1 to 1
      */
 
-    public void rawDrive(double move, double turn) {
+    public void rawArcadeDrive(double move, double turn) {
         updateDashboard();
 
         robotDrive.arcadeDrive(move, turn, true);
+    }
+
+    public void rawTenkDrive(double right, double left) {
+        updateDashboard();
+
+        robotDrive.tankDrive(left, right);
     }
 
     /**
      * Stops all drive motors
      */
     public void stopDrive() {
-        RobotMap.driveFrontRight.set(0);
-        RobotMap.driveFrontLeft.set(0);
-        RobotMap.driveBackRight.set(0);
-        RobotMap.driveBackLeft.set(0);
+        RobotMap.driveFrontRight.stopMotor();
+        RobotMap.driveFrontLeft.stopMotor();
+        RobotMap.driveBackRight.stopMotor();
+        RobotMap.driveBackLeft.stopMotor();
     }
 }
