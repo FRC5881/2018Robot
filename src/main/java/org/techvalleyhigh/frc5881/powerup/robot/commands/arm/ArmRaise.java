@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.Arm;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
@@ -16,7 +16,7 @@ public class ArmRaise extends Command {
     // Drive code to run during
     @Override
     protected void execute() {
-        Robot.arm.drive(Arm.armSpeed);
+        Robot.arm.move(Arm.armSpeed);
     }
 
     // Make this return true when this Command no longer needs to run execute()

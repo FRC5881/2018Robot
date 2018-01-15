@@ -2,9 +2,6 @@ package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.Elevator.ElevatorLift;
-
-import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.init;
 
 public class Elevator extends Subsystem {
     /**

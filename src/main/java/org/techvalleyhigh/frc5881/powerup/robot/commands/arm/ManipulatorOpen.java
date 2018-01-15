@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 

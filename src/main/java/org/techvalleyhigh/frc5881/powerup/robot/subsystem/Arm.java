@@ -21,7 +21,7 @@ public class Arm extends Subsystem {
     protected void initDefaultCommand() {
     }
 
-    public void drive(double speed){
+    public void move(double speed){
         RobotMap.armTalon.set(speed);
     }
 

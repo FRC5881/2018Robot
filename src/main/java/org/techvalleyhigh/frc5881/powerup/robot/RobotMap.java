@@ -38,29 +38,37 @@ public class RobotMap {
 
         driveBackLeft = new WPI_TalonSRX(2);
         driveBackLeft.setName("Drive Talon Left", "Talon Back Left");
+        driveBackLeft.set(ControlMode.Follower, 0);
         LiveWindow.add(driveBackLeft);
 
         driveBackRight = new WPI_TalonSRX(3);
         driveBackRight.setName("Drive Talon Right", "Talon Back Right");
+        driveBackRight.set(ControlMode.Follower, 1);
         LiveWindow.add(driveBackRight);
 
 
-        //Elevator Talons
+        //elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
-        elevatorTalonMaster.setName("Elevator", "Master");
+        elevatorTalonMaster.setName("elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+        elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(elevatorTalonMaster);
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
-        elevatorTalonFollower.setName("Elevator", "Follow");
-        //elevatorTalonFollower.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+        elevatorTalonFollower.setName("elevator", "Follow");
         elevatorTalonFollower.set(ControlMode.Follower, 4);
         LiveWindow.add(elevatorTalonFollower);
 
-        //Arm Talon
+        //arm Talon
         armTalon = new WPI_TalonSRX(6);
-        armTalon.setName("Arm", "Master");
+        armTalon.setName("arm", "Master");
+        armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+        armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
 
 
