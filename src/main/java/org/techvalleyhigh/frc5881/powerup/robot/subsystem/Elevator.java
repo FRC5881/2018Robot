@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
@@ -49,9 +50,9 @@ public class Elevator extends Subsystem {
         if(currentSpeed >= 0 && getHeight() >= maxSafeRotations) {
             elevatorTalonMaster.stopMotor();
         } else if( getHeight() < switchRotations ) {
-            elevatorTalonMaster.set(raiseSpeed);
+            elevatorTalonMaster.set(ControlMode.Position, switchRotations);
         } else if(getHeight() < scaleRotations && getHeight() > switchRotations){
-            elevatorTalonMaster.set(raiseSpeed);
+            elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
         }
     }
 //Meant to descend elevator to next lower level
@@ -61,8 +62,9 @@ public class Elevator extends Subsystem {
         }
         while (currentSpeed <= 0 && getHeight() > minSafeRotations) {
             if (getHeight() >= scaleRotations) {
-                elevatorTalonMaster.set(lowerSpeed);
+                elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
             } else if (getHeight() >= switchRotations && getHeight() < scaleRotations) {
+                elevatorTalonMaster.set(ControlMode.Position, switchRotations);
             }
         }
     }

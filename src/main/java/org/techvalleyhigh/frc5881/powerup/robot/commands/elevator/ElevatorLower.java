@@ -11,7 +11,6 @@ public class ElevatorLower extends Command {
 
     @Override
     protected void initialize() {
-
     }
 
     @Override
