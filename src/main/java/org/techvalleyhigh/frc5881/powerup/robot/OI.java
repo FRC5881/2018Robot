@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLift;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLiftAuto;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLower;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLowerAuto;
 
 /**
  * Controls operator interfaces, such as controllers
@@ -54,6 +57,7 @@ public class OI {
     /**
      * Controls Left joystick, forward/backward for Arcade Drive
      */
+    //TODO: figure out what number corosponds to the triggers on the controller
     public static int LeftYAxis = 1;
     /**
      * Controls right joystick, Turning For Arcade Drive
@@ -90,7 +94,13 @@ public class OI {
         backButton = new JoystickButton(xboxController, BUTTON_BACK);
         startButton = new JoystickButton(xboxController, BUTTON_START);
 
-        // Add commands down here
-        yButton.whenPressed(new ElevatorLift());
+        //Left bumper lowers elevator manually
+        leftBumper.whileHeld(new ElevatorLower());
+        //Left bumper pressed lowers elevator to next level
+        leftBumper.whenPressed(new ElevatorLowerAuto());
+        //Right bumper raises elevator manually
+        rightBumper.whileHeld(new ElevatorLift());
+        //Right bumper pressed raises elevator to next level
+        rightBumper.whileHeld(new ElevatorLiftAuto());
     }
 }

@@ -53,11 +53,20 @@ public class RobotMap {
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        elevatorTalonMaster.config_kD(1, 0.013, 20);
+        //elevatorTalonMaster.config_kF();
+        elevatorTalonMaster.config_kI(1, 0.001, 20);
+        elevatorTalonMaster.config_kP(1, 0.012, 20);
         LiveWindow.add(elevatorTalonMaster);
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
         elevatorTalonFollower.setName("elevator", "Follow");
         elevatorTalonFollower.set(ControlMode.Follower, 4);
+        elevatorTalonFollower.config_kD(1, 0.013, 20);
+        //not sure if we need "kF"
+        //elevatorTalonFollower.config_kF();
+        elevatorTalonFollower.config_kI(1, 0.001, 20);
+        elevatorTalonFollower.config_kP(1, 0.012, 20);
         LiveWindow.add(elevatorTalonFollower);
 
         //arm Talon
