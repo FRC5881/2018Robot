@@ -57,7 +57,7 @@ public class OI {
     /**
      * Controls Left joystick, forward/backward for Arcade Drive
      */
-    //TODO: figure out what number corosponds to the triggers on the controller
+    //TODO: figure out what number corresponds to the triggers on the controller
     public static int LeftYAxis = 1;
     /**
      * Controls right joystick, Turning For Arcade Drive

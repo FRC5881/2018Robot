@@ -62,11 +62,6 @@ public class RobotMap {
         elevatorTalonFollower = new WPI_TalonSRX(5);
         elevatorTalonFollower.setName("elevator", "Follow");
         elevatorTalonFollower.set(ControlMode.Follower, 4);
-        elevatorTalonFollower.config_kD(1, 0.013, 20);
-        //not sure if we need "kF"
-        //elevatorTalonFollower.config_kF();
-        elevatorTalonFollower.config_kI(1, 0.001, 20);
-        elevatorTalonFollower.config_kP(1, 0.012, 20);
         LiveWindow.add(elevatorTalonFollower);
 
         //arm Talon
