@@ -163,6 +163,7 @@ public class OI {
         //When the back button is pressed the grabber opens
         coPilotControllerBackButton.whenPressed(new ManipulatorOpen());
 
+
         xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     }
 }

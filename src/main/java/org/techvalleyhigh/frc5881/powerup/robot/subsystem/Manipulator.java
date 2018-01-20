@@ -22,11 +22,13 @@ public class Manipulator extends Subsystem {
     public void openGrabbers(){
         rightGrabDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
         leftGrabDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
+
     }
 
     public void closeGrabbers(){
         rightGrabDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
         leftGrabDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+
     }
 
     public void stop(){
