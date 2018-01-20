@@ -151,18 +151,18 @@ public class OI {
         coPilotControllerStartButton = new JoystickButton(xboxController2, BUTTON_START);
 
         //When the Left bumper is pressed the elevator descends manually
-        coPilotControllerLeftBumper.whileHeld(new ElevatorLower());
+        //coPilotControllerLeftBumper.whileHeld(new ElevatorLower());
         //When the "a" button is pressed the elevator rises to the next level
         coPilotControllerButtonA.whenPressed(new ElevatorLowerAuto());
         //When the Right bumper is held down the elevator rises manually
-        coPilotControllerRightBumper.whileHeld(new ElevatorLift());
-        //When the "b" button is pressed the elevator rises to the next level
-        coPilotControllerButtonB.whenPressed(new ElevatorLiftAuto());
-        //When the start button is pressed the grabber closes
-        coPilotControllerStartButton.whenPressed(new ManipulatorClose());
-        //When the back button is pressed the grabber opens
-        coPilotControllerBackButton.whenPressed(new ManipulatorOpen());
-
+        //coPilotControllerRightBumper.whileHeld(new ElevatorLift());
+        //When the y button is pressed the elevator rises to the next level
+        coPilotControllerButtonY.whenPressed(new ElevatorLiftAuto());
+        //When the x button is pressed the grabber closes
+        coPilotControllerButtonX.whenPressed(new ManipulatorClose());
+        //When the b button is pressed the grabber opens
+        coPilotControllerButtonB.whenPressed(new ManipulatorOpen());
+        //When the start button is pressed the arm
 
         xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     }

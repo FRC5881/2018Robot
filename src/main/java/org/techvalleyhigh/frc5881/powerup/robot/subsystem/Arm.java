@@ -1,7 +1,11 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import org.techvalleyhigh.frc5881.powerup.robot.OI;
+import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
+
+import static org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator.raiseSpeed;
 
 public class Arm extends Subsystem {
     /**
@@ -25,6 +29,12 @@ public class Arm extends Subsystem {
         RobotMap.armTalon.set(speed);
     }
 
+    public void driveJoystickInput() {
+        double y = Robot.oi.xboxController2.getRawAxis(OI.RightYAxis);
+        if (Math.abs(y) > deadzone) {
+            move(y * raiseSpeed);
+        }
+    }
     public void stop(){
         RobotMap.armTalon.stopMotor();
     }

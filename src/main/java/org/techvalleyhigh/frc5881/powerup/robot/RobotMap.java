@@ -25,7 +25,7 @@ public class RobotMap {
     public static DoubleSolenoid leftGrabDoubleSolenoid;
     public static DoubleSolenoid rightGrabDoubleSolenoid;
     public static DoubleSolenoid buddyBarDoubleSolenoid;
-    //Pnuematic Compressor for giving everything air
+    //Pneumatic Compressor for giving everything air
     public static Compressor compressor;
 
     public static void init() {
