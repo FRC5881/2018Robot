@@ -1,6 +1,5 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
@@ -47,17 +46,17 @@ public class Elevator extends Subsystem {
          * Supposed to loop until it reaches the next level.
          * But we will find out when we test it.
          */
-        if(currentSpeed >= 0 && getHeight() >= maxSafeRotations) {
+        /*if(currentSpeed >= 0 && getHeight() >= maxSafeRotations) {
             elevatorTalonMaster.stopMotor();
         } else if( getHeight() < switchRotations ) {
             elevatorTalonMaster.set(ControlMode.Position, switchRotations);
         } else if(getHeight() < scaleRotations && getHeight() > switchRotations){
             elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
         }
-    }
+    */}
 //Meant to descend elevator to next lower level
     public void nextBelowDescend() {
-        if (currentSpeed <= 0 && getHeight() <= minSafeRotations) {
+       /* if (currentSpeed <= 0 && getHeight() <= minSafeRotations) {
             elevatorTalonMaster.stopMotor();
         }
         while (currentSpeed <= 0 && getHeight() > minSafeRotations) {
@@ -66,7 +65,7 @@ public class Elevator extends Subsystem {
             } else if (getHeight() >= switchRotations && getHeight() < scaleRotations) {
                 elevatorTalonMaster.set(ControlMode.Position, switchRotations);
             }
-        }
+        }*/
     }
     public void drive(double speed) {
         // If we're trying to go up, and we haven't passed max height -> it's okay

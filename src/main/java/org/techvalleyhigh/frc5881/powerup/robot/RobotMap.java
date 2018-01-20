@@ -17,6 +17,7 @@ public class RobotMap {
     public static WPI_TalonSRX driveFrontRight;
     public static WPI_TalonSRX driveBackLeft;
     public static WPI_TalonSRX driveBackRight;
+
     public static WPI_TalonSRX elevatorTalonMaster;
     public static WPI_TalonSRX elevatorTalonFollower;
 
@@ -53,10 +54,10 @@ public class RobotMap {
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-        elevatorTalonMaster.config_kD(1, 0.013, 20);
+        elevatorTalonMaster.config_kD(0, 0.012, 20);
         //elevatorTalonMaster.config_kF();
-        elevatorTalonMaster.config_kI(1, 0.001, 20);
-        elevatorTalonMaster.config_kP(1, 0.012, 20);
+        elevatorTalonMaster.config_kI(0, 0.001, 20);
+        elevatorTalonMaster.config_kP(0, 0.013, 20);
         LiveWindow.add(elevatorTalonMaster);
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
