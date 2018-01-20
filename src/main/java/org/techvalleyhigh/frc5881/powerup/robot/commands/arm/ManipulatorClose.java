@@ -12,7 +12,6 @@ public class ManipulatorClose extends Command {
 
     @Override
     protected void initialize() {
-        super.initialize();
     }
 
     @Override
@@ -32,6 +31,6 @@ public class ManipulatorClose extends Command {
 
     @Override
     protected void interrupted() {
-        super.interrupted();
+        end();
     }
 }

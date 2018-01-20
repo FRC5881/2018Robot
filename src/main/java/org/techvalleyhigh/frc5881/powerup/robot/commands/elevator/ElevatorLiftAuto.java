@@ -29,6 +29,6 @@ public class ElevatorLiftAuto extends Command {
 
     @Override
     protected void interrupted() {
-        super.interrupted();
+        end();
     }
 }

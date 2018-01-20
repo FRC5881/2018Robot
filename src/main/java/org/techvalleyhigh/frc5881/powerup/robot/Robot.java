@@ -22,7 +22,7 @@ public class Robot extends TimedRobot {
     public static Arm arm;
     public static Elevator elevator;
     // Define drive command
-    public static Drive driveCommand;
+    // public static Drive driveCommand;
     public static ElevatorDrive elevatorCommand;
 
     // Define auto code
@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
         elevator = new Elevator();
 
         // Define drive and elevator command to during tele - op
-        driveCommand = new Drive();
+        //driveCommand = new Drive();
         elevatorCommand = new ElevatorDrive();
 
         // OI must be constructed after subsystems. If the OI creates Commands
@@ -102,8 +102,7 @@ public class Robot extends TimedRobot {
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
 
-        if (driveCommand != null) {
-            driveCommand.start();
+        if (elevatorCommand != null) {
             elevatorCommand.start();
         } else {
             System.err.println("teleopInit() Failed to start Drive command due to null");

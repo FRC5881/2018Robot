@@ -11,7 +11,7 @@ public class ElevatorLowerAuto extends Command{
 
     @Override
     protected void initialize() {
-        super.initialize();
+
     }
 
     @Override

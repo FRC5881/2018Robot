@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
@@ -16,7 +17,7 @@ public class Elevator extends Subsystem {
     private static final double minSafeRotations = 0;
     private static final double maxSafeRotations = 10.0;
 
-    private static final double deadzone = 1/10;
+    private static final double deadzone = 1/5;
 
     //8192 if needed to be known in the future
     private static final double switchRotations = 2;
@@ -25,7 +26,6 @@ public class Elevator extends Subsystem {
     // Percent to run motors
     public static final double lowerSpeed = -0.5;
     public static final double raiseSpeed = 0.5;
-    public static double currentSpeed = elevatorTalonMaster.getActiveTrajectoryVelocity();
 
     public Elevator(){
         super();
@@ -51,41 +51,44 @@ public class Elevator extends Subsystem {
          * Supposed to loop until it reaches the next level.
          * But we will find out when we test it.
          */
-        /*if(currentSpeed >= 0 && getHeight() >= maxSafeRotations) {
+        if(getHeight() >= maxSafeRotations) {
             elevatorTalonMaster.stopMotor();
         } else if( getHeight() < switchRotations ) {
             elevatorTalonMaster.set(ControlMode.Position, switchRotations);
         } else if(getHeight() < scaleRotations && getHeight() > switchRotations){
             elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
         }
-    */}
+    }
 //Meant to descend elevator to next lower level
     public void nextBelowDescend() {
-       /* if (currentSpeed <= 0 && getHeight() <= minSafeRotations) {
+        if (getHeight() <= minSafeRotations) {
             elevatorTalonMaster.stopMotor();
+        } else if (getHeight() >= scaleRotations) {
+            elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
+        } else if (getHeight() >= switchRotations && getHeight() < scaleRotations) {
+            elevatorTalonMaster.set(ControlMode.Position, switchRotations);
         }
-        while (currentSpeed <= 0 && getHeight() > minSafeRotations) {
-            if (getHeight() >= scaleRotations) {
-                elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
-            } else if (getHeight() >= switchRotations && getHeight() < scaleRotations) {
-                elevatorTalonMaster.set(ControlMode.Position, switchRotations);
-            }
-        }*/
     }
 
     public void driveJoystickInput(){
         double y = Robot.oi.xboxController2.getRawAxis(OI.LeftYAxis);
-        if (y > deadzone) {
+        if (Math.abs(y) > deadzone) {
             drive(y * raiseSpeed);
         }
     }
     public void drive(double speed) {
+        System.out.println(speed);
+        System.out.println(getHeight());
         // If we're trying to go up, and we haven't passed max height -> it's okay
         if (speed > 0 && getHeight() < maxSafeRotations) {
             elevatorTalonMaster.set(speed);
-        // If we're trying to go down, and haven't passed bottom -> it's okay
-        } else if(speed < 0 && getHeight() < 0) {
+            System.out.println("Up");
+            // If we're trying to go down, and haven't passed bottom -> it's okay
+        } else if(speed < 0 && getHeight() > 0) {
+            System.out.println("Down");
             elevatorTalonMaster.set(speed);
+        } else {
+            elevatorTalonMaster.stopMotor();
         }
     }
 

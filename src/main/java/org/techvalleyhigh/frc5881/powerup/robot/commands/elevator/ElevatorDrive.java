@@ -16,6 +16,7 @@ public class ElevatorDrive extends Command {
     @Override
     protected void execute(){
         Robot.elevator.driveJoystickInput();
+        System.out.println("Running");
     }
 
     @Override

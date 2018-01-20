@@ -3,6 +3,8 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLift;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLiftAuto;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLower;
@@ -128,6 +130,7 @@ public class OI {
         // Button 7 == driveControllerBackButton
         // Button 8 == driveControllerStartButton
 
+
         driveControllerButtonA = new JoystickButton(xboxController, BUTTON_A);
         driveControllerButtonB = new JoystickButton(xboxController, BUTTON_B);
         driveControllerButtonX = new JoystickButton(xboxController, BUTTON_X);
@@ -136,6 +139,7 @@ public class OI {
         driveControllerRightBumper = new JoystickButton(xboxController, BUTTON_RIGHT_BUMPER);
         driveControllerBackButton = new JoystickButton(xboxController, BUTTON_BACK);
         driveControllerStartButton = new JoystickButton(xboxController, BUTTON_START);
+
 
         coPilotControllerButtonA = new JoystickButton(xboxController2, BUTTON_A);
         coPilotControllerButtonB = new JoystickButton(xboxController2, BUTTON_B);
@@ -146,13 +150,19 @@ public class OI {
         coPilotControllerBackButton = new JoystickButton(xboxController2, BUTTON_BACK);
         coPilotControllerStartButton = new JoystickButton(xboxController2, BUTTON_START);
 
-        //Left bumper lowers elevator manually
+        //When the Left bumper is pressed the elevator descends manually
         coPilotControllerLeftBumper.whileHeld(new ElevatorLower());
-        //Left bumper pressed lowers elevator to next level
-        coPilotControllerLeftBumper.whenPressed(new ElevatorLowerAuto());
-        //Right bumper raises elevator manually
+        //When the "a" button is pressed the elevator rises to the next level
+        coPilotControllerButtonA.whenPressed(new ElevatorLowerAuto());
+        //When the Right bumper is held down the elevator rises manually
         coPilotControllerRightBumper.whileHeld(new ElevatorLift());
-        //Right bumper pressed raises elevator to next level
-        coPilotControllerRightBumper.whenPressed(new ElevatorLiftAuto());
+        //When the "b" button is pressed the elevator rises to the next level
+        coPilotControllerButtonB.whenPressed(new ElevatorLiftAuto());
+        //When the start button is pressed the grabber closes
+        coPilotControllerStartButton.whenPressed(new ManipulatorClose());
+        //When the back button is pressed the grabber opens
+        coPilotControllerBackButton.whenPressed(new ManipulatorOpen());
+
+        xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     }
 }
