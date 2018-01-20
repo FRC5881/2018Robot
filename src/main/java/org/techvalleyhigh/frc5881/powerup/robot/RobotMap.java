@@ -50,7 +50,7 @@ public class RobotMap {
 
         //Talons for the Elevator
         //switch Talon number back to four
-        elevatorTalonMaster = new WPI_TalonSRX(6);
+        elevatorTalonMaster = new WPI_TalonSRX(4);
         elevatorTalonMaster.setName("elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
@@ -62,7 +62,7 @@ public class RobotMap {
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
         elevatorTalonFollower.setName("elevator", "Follow");
-        elevatorTalonFollower.set(ControlMode.Follower, 6);
+        elevatorTalonFollower.set(ControlMode.Follower, 4);
         LiveWindow.add(elevatorTalonFollower);
 
         //Talon for the arm
