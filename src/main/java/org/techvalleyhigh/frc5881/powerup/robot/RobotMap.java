@@ -24,7 +24,9 @@ public class RobotMap {
     public static WPI_TalonSRX armTalon;
 
     //Pneumatics
-    public static DoubleSolenoid doubleSolenoid;
+    public static DoubleSolenoid leftGrabDoubleSolenoid;
+    public static DoubleSolenoid rightGrabDoubleSolenoid;
+    public static DoubleSolenoid buddyBarDoubleSolenoid;
     public static Compressor compressor;
 
     public static void init() {
@@ -46,7 +48,6 @@ public class RobotMap {
         driveBackRight.setName("Drive Talon Right", "Talon Back Right");
         driveBackRight.set(ControlMode.Follower, 1);
         LiveWindow.add(driveBackRight);
-
 
         //elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
@@ -73,21 +74,27 @@ public class RobotMap {
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
 
-
         //Gyro
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
         digitalGyro.setName("Gyro", "Gyro");
         LiveWindow.add(digitalGyro);
 
-
         //Pneumatic Compressor
-        compressor = new Compressor(0);
+        compressor = new Compressor(20);
         compressor.setName("Compressor", "Compressor");
         LiveWindow.add(compressor);
 
         //Pneumatic Solenoid
-        doubleSolenoid = new DoubleSolenoid(0, 1);
-        doubleSolenoid.setName("DoubleSolenoid", "Double Solenoid");
-        LiveWindow.add(doubleSolenoid);
+        rightGrabDoubleSolenoid = new DoubleSolenoid(20,0, 1);
+        rightGrabDoubleSolenoid.setName("Grabber Solenoid", "Right Solenoid");
+        LiveWindow.add(rightGrabDoubleSolenoid);
+
+        leftGrabDoubleSolenoid = new DoubleSolenoid(20,2, 3);
+        leftGrabDoubleSolenoid.setName("Grabber Solenoid", "Left Solenoid");
+        LiveWindow.add(leftGrabDoubleSolenoid);
+
+        buddyBarDoubleSolenoid = new DoubleSolenoid(20,4, 5);
+        buddyBarDoubleSolenoid.setName("Buddy Bar Solenoid", "Buddy Bar Solenoid One");
+        LiveWindow.add(buddyBarDoubleSolenoid);
     }
 }
