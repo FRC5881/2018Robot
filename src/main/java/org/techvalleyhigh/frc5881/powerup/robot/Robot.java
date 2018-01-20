@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
@@ -22,6 +23,7 @@ public class Robot extends TimedRobot {
     public static Elevator elevator;
     // Define drive command
     public static Drive driveCommand;
+    public static ElevatorDrive elevatorCommand;
 
     // Define auto code
     public static Command autonomousCommand;
@@ -40,8 +42,9 @@ public class Robot extends TimedRobot {
         arm = new Arm();
         elevator = new Elevator();
 
-        // Define drive command to during tele - op
+        // Define drive and elevator command to during tele - op
         driveCommand = new Drive();
+        elevatorCommand = new ElevatorDrive();
 
         // OI must be constructed after subsystems. If the OI creates Commands
         //(which it very likely will), subsystems are not guaranteed to be
@@ -101,6 +104,7 @@ public class Robot extends TimedRobot {
 
         if (driveCommand != null) {
             driveCommand.start();
+            elevatorCommand.start();
         } else {
             System.err.println("teleopInit() Failed to start Drive command due to null");
         }
