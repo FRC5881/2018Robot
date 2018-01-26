@@ -19,6 +19,7 @@ public class DriveControl extends Subsystem {
      */
     private static final String AUTO_GYRO_TOLERANCE = "Auto Gyro Tolerance (+- Deg)";
 
+    public static final double distancePerTick = 4 * 18.84954 / 4096;
 
     private DifferentialDrive robotDrive;
 
@@ -119,6 +120,8 @@ public class DriveControl extends Subsystem {
 
         robotDrive.tankDrive(left, right);
     }
+
+    /* --------------- */
 
     /**
      * Stops all drive motors
