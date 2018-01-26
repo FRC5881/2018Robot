@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class ManipulatorClose extends Command {
+
     @Override
     protected synchronized void requires(Subsystem subsystem) {
         super.requires(Robot.manipulator);

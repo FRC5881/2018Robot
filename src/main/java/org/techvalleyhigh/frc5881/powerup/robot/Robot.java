@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
@@ -22,7 +21,7 @@ public class Robot extends TimedRobot {
     public static Arm arm;
     public static Elevator elevator;
     // Define drive command
-    // public static Drive driveCommand;
+    //public static Drive driveCommand;
     public static ElevatorDrive elevatorCommand;
 
     // Define auto code

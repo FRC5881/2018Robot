@@ -7,9 +7,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmLower;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmRaise;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorOpen;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLift;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLiftAuto;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLower;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLowerAuto;
 
 /**
@@ -104,9 +102,6 @@ public class OI {
      */
     //TODO: figure out what number corresponds to the triggers on the controller
     public static int LeftYAxis = 1;
-    /**
-     * Controls right joystick, Turning For Arcade Drive
-     */
 
     public static int RightYAxis = 3;
     public static int RightXAxis = 4;
@@ -144,7 +139,7 @@ public class OI {
         driveControllerBackButton = new JoystickButton(xboxController, BUTTON_BACK);
         driveControllerStartButton = new JoystickButton(xboxController, BUTTON_START);
 
-
+        //buttons for the second controller
         coPilotControllerButtonA = new JoystickButton(xboxController2, BUTTON_A);
         coPilotControllerButtonB = new JoystickButton(xboxController2, BUTTON_B);
         coPilotControllerButtonX = new JoystickButton(xboxController2, BUTTON_X);
@@ -154,12 +149,8 @@ public class OI {
         coPilotControllerBackButton = new JoystickButton(xboxController2, BUTTON_BACK);
         coPilotControllerStartButton = new JoystickButton(xboxController2, BUTTON_START);
 
-        //When the Left bumper is pressed the elevator descends manually
-        //coPilotControllerLeftBumper.whileHeld(new ElevatorLower());
         //When the "a" button is pressed the elevator rises to the next level
         coPilotControllerButtonA.whenPressed(new ElevatorLowerAuto());
-        //When the Right bumper is held down the elevator rises manually
-        //coPilotControllerRightBumper.whileHeld(new ElevatorLift());
         //When the y button is pressed the elevator rises to the next level
         coPilotControllerButtonY.whenPressed(new ElevatorLiftAuto());
         //When the x button is pressed the grabber closes
@@ -170,6 +161,7 @@ public class OI {
         coPilotControllerStartButton.whenPressed(new ArmRaise());
         //When the back button is pressed the arm lowers
         coPilotControllerBackButton.whenPressed(new ArmLower());
+
         //Turns the rumble off
         xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     }

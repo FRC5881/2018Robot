@@ -17,7 +17,7 @@ public class RobotMap {
     public static WPI_TalonSRX driveBackLeft;
     public static WPI_TalonSRX driveBackRight;
     //Elevator Talons
-    public static WPI_TalonSRX elevatorTalonMaster;
+    public  static WPI_TalonSRX elevatorTalonMaster;
     public static WPI_TalonSRX elevatorTalonFollower;
     //Talon for the arm
     public static WPI_TalonSRX armTalon;
@@ -49,7 +49,6 @@ public class RobotMap {
         LiveWindow.add(driveBackRight);
 
         //Talons for the Elevator
-        //switch Talon number back to four
         elevatorTalonMaster = new WPI_TalonSRX(4);
         elevatorTalonMaster.setName("elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -91,6 +90,7 @@ public class RobotMap {
         leftGrabDoubleSolenoid = new DoubleSolenoid(20,2, 3);
         leftGrabDoubleSolenoid.setName("Grabber Solenoid", "Left Solenoid");
         LiveWindow.add(leftGrabDoubleSolenoid);
+
         //Pneumatic Solenoid for the buddy bar
         buddyBarDoubleSolenoid = new DoubleSolenoid(20,4, 5);
         buddyBarDoubleSolenoid.setName("Buddy Bar Solenoid", "Buddy Bar Solenoid One");
