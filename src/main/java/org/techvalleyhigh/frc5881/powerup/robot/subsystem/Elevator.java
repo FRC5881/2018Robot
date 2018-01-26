@@ -17,14 +17,13 @@ public class Elevator extends Subsystem {
     private static final double minSafeRotations = 0;
     private static final double maxSafeRotations = 10.0;
 
-    private static final double deadzone = 1/5;
+    private static final double deadZone = 1/5;
 
     //8192 if needed to be known in the future
     private static final double switchRotations = 2;
     //36864 ticks if needed to be known in the future
     private static final double scaleRotations = 9;
     // Percent to run motors
-    public static final double lowerSpeed = -0.5;
     public static final double raiseSpeed = 0.5;
 
     public Elevator(){
@@ -47,7 +46,7 @@ public class Elevator extends Subsystem {
 
     public void nextUpRise(){
         //if elevator is at top floor don't do anything, else keep going to next level
-        /**
+        /*
          * Supposed to loop until it reaches the next level.
          * But we will find out when we test it.
          */
@@ -72,7 +71,7 @@ public class Elevator extends Subsystem {
 
     public void driveJoystickInput(){
         double y = Robot.oi.xboxController2.getRawAxis(OI.LeftYAxis);
-        if (Math.abs(y) > deadzone) {
+        if (Math.abs(y) > deadZone) {
             drive(y * raiseSpeed);
         }
     }

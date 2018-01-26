@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class ElevatorLiftAuto extends Command {
+
     public ElevatorLiftAuto() {
         requires(Robot.elevator);
     }

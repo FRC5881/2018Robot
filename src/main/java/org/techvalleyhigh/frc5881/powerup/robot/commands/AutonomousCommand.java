@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutonomousCommand extends CommandGroup {
     // TODO: Is this definition necessary???
+
     public AutonomousCommand CommandGroup;
 
     @Override

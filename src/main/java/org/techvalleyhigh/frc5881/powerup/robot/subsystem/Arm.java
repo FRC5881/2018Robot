@@ -11,7 +11,9 @@ public class Arm extends Subsystem {
     /**
      * Percentage to run arm motors
      */
-    public static final double armSpeed = 0.5;
+    private static final double deadZone = 1/5;
+
+    //public static final double armSpeed = 0.5;
 
     public Arm() {
         super();
@@ -25,13 +27,13 @@ public class Arm extends Subsystem {
     protected void initDefaultCommand() {
     }
 
-    public void move(double speed){
+    private void move(double speed){
         RobotMap.armTalon.set(speed);
     }
 
     public void driveJoystickInput() {
         double y = Robot.oi.xboxController2.getRawAxis(OI.RightYAxis);
-        if (Math.abs(y) > deadzone) {
+        if (Math.abs(y) > deadZone) {
             move(y * raiseSpeed);
         }
     }
