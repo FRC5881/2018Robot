@@ -3,6 +3,8 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmLower;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmRaise;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLift;
@@ -105,6 +107,8 @@ public class OI {
     /**
      * Controls right joystick, Turning For Arcade Drive
      */
+
+    public static int RightYAxis = 3;
     public static int RightXAxis = 4;
 
     public static int BUTTON_A = 1;
@@ -162,8 +166,11 @@ public class OI {
         coPilotControllerButtonX.whenPressed(new ManipulatorClose());
         //When the b button is pressed the grabber opens
         coPilotControllerButtonB.whenPressed(new ManipulatorOpen());
-        //When the start button is pressed the arm
-
+        //When the start button is pressed the arm rises
+        coPilotControllerStartButton.whenPressed(new ArmRaise());
+        //When the back button is pressed the arm lowers
+        coPilotControllerBackButton.whenPressed(new ArmLower());
+        //Turns the rumble off
         xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     }
 }

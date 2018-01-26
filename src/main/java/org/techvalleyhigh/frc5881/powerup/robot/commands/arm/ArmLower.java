@@ -18,7 +18,7 @@ public class ArmLower extends Command {
     // Drive code to run during
     @Override
     protected void execute() {
-        Robot.arm.move(-Arm.armSpeed);
+      Robot.arm.driveJoystickInput();
     }
 
     // Make this return true when this Command no longer needs to run execute()
