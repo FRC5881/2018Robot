@@ -5,15 +5,13 @@ import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 
-import static org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator.raiseSpeed;
-
 public class Arm extends Subsystem {
     /**
      * Percentage to run arm motors
      */
     private static final double deadZone = 1/5;
 
-    //public static final double armSpeed = 0.5;
+    public static final double armSpeed = 0.5;
 
     public Arm() {
         super();
@@ -34,7 +32,7 @@ public class Arm extends Subsystem {
     public void driveJoystickInput() {
         double y = Robot.oi.xboxController2.getRawAxis(OI.RightYAxis);
         if (Math.abs(y) > deadZone) {
-            move(y * raiseSpeed);
+            move(y * armSpeed);
         }
     }
     public void stop(){

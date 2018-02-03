@@ -4,9 +4,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class ArmRaise extends Command {
+
     public ArmRaise() {
         requires(Robot.arm);
     }
+
     @Override
     protected void initialize() {
     }

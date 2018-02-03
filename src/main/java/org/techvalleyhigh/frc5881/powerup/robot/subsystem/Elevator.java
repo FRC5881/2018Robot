@@ -24,7 +24,7 @@ public class Elevator extends Subsystem {
     //36864 ticks if needed to be known in the future
     private static final double scaleRotations = 9;
     // Percent to run motors
-    public static final double raiseSpeed = 0.5;
+    private static final double raiseSpeed = 0.5;
 
     public Elevator(){
         super();

@@ -124,10 +124,10 @@ public class OI {
         // Button 2 == B Button
         // Button 3 == X Button
         // Button 4 == Y Button
-        // Button 5 == driveControllerLeftBumper
-        // Button 6 == driveControllerRightBumper
-        // Button 7 == driveControllerBackButton
-        // Button 8 == driveControllerStartButton
+        // Button 5 == Left Bumper
+        // Button 6 == Right Bumper
+        // Button 7 == Back Button
+        // Button 8 == Start Button
 
 
         driveControllerButtonA = new JoystickButton(xboxController, BUTTON_A);

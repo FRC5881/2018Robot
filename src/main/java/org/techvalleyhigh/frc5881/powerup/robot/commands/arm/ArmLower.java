@@ -26,7 +26,7 @@ public class ArmLower extends Command {
         return false;
     }
 
-    // Called once after isFinished returns true
+    // Called once/ after isFinished returns true
     @Override
     protected void end() {
         Robot.arm.stop();
