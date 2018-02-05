@@ -64,11 +64,14 @@ public class MotionProfile extends Command {
         Trajectory leftTrajectory = modifier.getLeftTrajectory();
         Trajectory rightTrajectory = modifier.getRightTrajectory();
 
+        // Push trajectories into the talons
         pushTrajectory(leftTrajectory, RobotMap.driveFrontLeft);
         pushTrajectory(rightTrajectory, RobotMap.driveFrontRight);
     }
 
     protected void execute() {
+        RobotMap.driveFrontRight.getMotionProfileStatus(status);
+
         if (status.btmBufferCnt > kMinPointsTalon) {
             RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
             RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
@@ -89,6 +92,11 @@ public class MotionProfile extends Command {
         return status.activePointValid && status.isLast;
     }
 
+    /**
+     * Loops through each segment in trajectory and pushes it into talon's buffer
+     * @param trajectory input trajectory to loop through
+     * @param talon the talon to trajectory into
+     */
     private void pushTrajectory(Trajectory trajectory, WPI_TalonSRX talon) {
         TrajectoryPoint point = new TrajectoryPoint();
 
