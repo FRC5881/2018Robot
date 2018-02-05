@@ -4,6 +4,7 @@ import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Command;
 import jaci.pathfinder.Pathfinder;
@@ -14,13 +15,14 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 
-public class FigureEight extends Command {
+public class MotionProfile extends Command {
+    private static int kMinPointsTalon = 5;
 
+    private Waypoint[] waypoints;
     private MotionProfileStatus status = new MotionProfileStatus();
-    private int kMinPointsTalon = 5;
 
-
-    public FigureEight() {
+    public MotionProfile(Waypoint[] waypoints) {
+        this.waypoints = waypoints;
         requires(Robot.driveControl);
     }
 
@@ -36,73 +38,34 @@ public class FigureEight extends Command {
      * The initialize method is called the first time this Command is run after being started.
      */
     protected void initialize() {
-        // Change control mode
+        // Change control modes
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
         RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
 
-        notifier.startPeriodic(0.005);
-
-        // Set up configs
-        Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 5, 4, 60);
-
-        // Create waypoints
-        Waypoint[] points = new Waypoint[] {
-                new Waypoint(10, 5, Math.toRadians(0)),
-                new Waypoint(15, 10, Math.toRadians(90)),
-                new Waypoint(10, 15, Math.toRadians(135)),
-                new Waypoint(5, 20, Math.toRadians(90)),
-                new Waypoint(10, 25, Math.toRadians(0)),
-                new Waypoint(15, 20, Math.toRadians(270)),
-                new Waypoint(10, 15, Math.toRadians(-135)),
-                new Waypoint(5, 10, Math.toRadians(-90)),
-                new Waypoint(10, 5, Math.toRadians(0))
-        };
-
-        // Generate trajectory
-        Trajectory trajectory = Pathfinder.generate(points, config);
-
-        // Wheelbase Width = 2.3226166667 feet
-        TankModifier modifier = new TankModifier(trajectory).modify(2.3226166667);
-        Trajectory leftTrajectory = modifier.getLeftTrajectory();
-        Trajectory rightTrajectory = modifier.getRightTrajectory();
-
-        TrajectoryPoint pointR = new TrajectoryPoint();
-        TrajectoryPoint pointL = new TrajectoryPoint();
-
+        // Clear the buffers just in case there's something left over
         RobotMap.driveBackRight.clearMotionProfileTrajectories();
         RobotMap.driveBackLeft.clearMotionProfileTrajectories();
 
-        for (int i = 0; i < trajectory.length(); i++) {
-            // Trajectory
-            Trajectory.Segment segmentR = leftTrajectory.get(i);
+        // Start processing buffers
+        notifier.startPeriodic(0.005);
 
-            double positionRotR = segmentR.position;
-            double velocityRPMR = segmentR.velocity;
-            pointR.position = positionRotR * DriveControl.distancePerTick;
-            pointR.velocity = velocityRPMR * 4096d / 600d;
-            pointR.headingDeg = 0;
-            pointR.profileSlotSelect = 0;
+        // Set up configs
+        Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+                Trajectory.Config.SAMPLES_HIGH, 0.05, 5, 4, 60);
 
-            pointR.zeroPos = i == 0;
-            pointR.isLastPoint = (i + 1) == points.length;
-            RobotMap.driveFrontRight.pushMotionProfileTrajectory(pointR);
+        // Generate trajectory
+        Trajectory trajectory = Pathfinder.generate(this.waypoints, config);
 
-            // Trajectory
-            Trajectory.Segment segmentL = rightTrajectory.get(i);
+        // Change trajectory into a tank drive
+        // Wheelbase Width = 2.3226166667 feet
+        TankModifier modifier = new TankModifier(trajectory).modify(2.3226166667);
 
-            double positionRotL = segmentL.position;
-            double velocityRPML = segmentL.velocity;
-            pointL.position = positionRotL * DriveControl.distancePerTick;
-            pointL.velocity = velocityRPML * 4096d / 600d;
-            pointL.headingDeg = 0;
-            pointL.profileSlotSelect = 0;
+        // Separate trajectories for left and right
+        Trajectory leftTrajectory = modifier.getLeftTrajectory();
+        Trajectory rightTrajectory = modifier.getRightTrajectory();
 
-            pointL.zeroPos = i == 0;
-            pointL.isLastPoint = (i + 1) == points.length;
-            RobotMap.driveFrontLeft.pushMotionProfileTrajectory(pointL);
-        }
-
-
+        pushTrajectory(leftTrajectory, RobotMap.driveFrontLeft);
+        pushTrajectory(rightTrajectory, RobotMap.driveFrontRight);
     }
 
     protected void execute() {
@@ -124,5 +87,30 @@ public class FigureEight extends Command {
 
     protected boolean isFinished() {
         return status.activePointValid && status.isLast;
+    }
+
+    private void pushTrajectory(Trajectory trajectory, WPI_TalonSRX talon) {
+        TrajectoryPoint point = new TrajectoryPoint();
+
+        for (int i = 0; i < trajectory.length(); i++) {
+            Trajectory.Segment segment = trajectory.get(i);
+
+            // Configure point for talon
+            double positionRot = segment.position;
+            double velocityRPM = segment.velocity;
+            point.position = positionRot * DriveControl.distancePerTick;
+            point.velocity = velocityRPM * 4096d / 600d;
+
+            // Not functional yet (reference dumpster fire)
+            point.headingDeg = 0;
+            point.profileSlotSelect = 0;
+
+            // Record weather segment is first or last
+            point.zeroPos = i == 0;
+            point.isLastPoint = (i + 1) == this.waypoints.length;
+
+            // Finally push into the talon
+            talon.pushMotionProfileTrajectory(point);
+        }
     }
 }

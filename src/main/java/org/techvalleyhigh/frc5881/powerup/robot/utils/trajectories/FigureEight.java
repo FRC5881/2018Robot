@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.trajectories;
+package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories;
 
 import jaci.pathfinder.Waypoint;
 
