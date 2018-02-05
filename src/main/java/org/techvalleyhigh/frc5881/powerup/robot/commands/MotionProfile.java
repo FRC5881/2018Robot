@@ -107,7 +107,7 @@ public class MotionProfile extends Command {
 
             // Record weather segment is first or last
             point.zeroPos = i == 0;
-            point.isLastPoint = (i + 1) == this.waypoints.length;
+            point.isLastPoint = (i + 1) == trajectory.length();
 
             // Finally push into the talon
             talon.pushMotionProfileTrajectory(point);
