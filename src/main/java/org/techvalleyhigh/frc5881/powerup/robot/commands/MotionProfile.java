@@ -15,6 +15,8 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 
+import javax.sound.midi.SysexMessage;
+
 public class MotionProfile extends Command {
     private static int kMinPointsTalon = 5;
 
@@ -25,6 +27,7 @@ public class MotionProfile extends Command {
     public MotionProfile(Waypoint[] waypoints) {
         this.waypoints = waypoints;
         requires(Robot.driveControl);
+        initialize();
     }
 
     class PeriodicRunnable implements java.lang.Runnable {
@@ -39,7 +42,9 @@ public class MotionProfile extends Command {
      * The initialize method is called the first time this Command is run after being started.
      */
     protected void initialize() {
+        System.out.println("INIT");
         // Change control modes
+        System.out.println("test");
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
         RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
 
@@ -71,6 +76,7 @@ public class MotionProfile extends Command {
     }
 
     protected void execute() {
+        System.out.println("Execute");
         // Update the status
         RobotMap.driveFrontRight.getMotionProfileStatus(status);
 
@@ -82,6 +88,7 @@ public class MotionProfile extends Command {
     }
 
     protected void end() {
+        System.out.println("end");
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
         RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
         System.out.println("Motion profile finished");
@@ -92,6 +99,7 @@ public class MotionProfile extends Command {
     }
 
     protected boolean isFinished() {
+        System.out.println(status.activePointValid && status.isLast);
         return status.activePointValid && status.isLast;
     }
 
@@ -104,6 +112,8 @@ public class MotionProfile extends Command {
         TrajectoryPoint point = new TrajectoryPoint();
 
         for (int i = 0; i < trajectory.length(); i++) {
+            System.out.println(i);
+
             Trajectory.Segment segment = trajectory.get(i);
 
             // Configure point for talon

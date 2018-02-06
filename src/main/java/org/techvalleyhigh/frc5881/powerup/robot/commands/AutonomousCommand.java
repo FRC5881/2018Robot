@@ -13,7 +13,7 @@ public class AutonomousCommand extends CommandGroup {
         if (!routine.equals("None")) {
             // TODO: auto commands
             if (routine.equals("Figure Eight")) {
-                new MotionProfile(TrajectoryUtil.testFigureEight);
+                addSequential(new MotionProfile(TrajectoryUtil.testFigureEight));
             }
         }
     }

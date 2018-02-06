@@ -23,22 +23,22 @@ public class RobotMap {
 
     public static void init() {
         // Define talons with WPI_TalonSRX
-        driveFrontLeft = new WPI_TalonSRX(0);
+        driveFrontLeft = new WPI_TalonSRX(10);
         driveFrontLeft.setName("Drive", "Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
-        driveBackLeft = new WPI_TalonSRX(2);
+        driveBackLeft = new WPI_TalonSRX(11);
         driveBackLeft.setName("Drive", "Back Left");
         LiveWindow.add(driveBackLeft);
         driveBackLeft.set(ControlMode.Follower, 0);
 
-        driveFrontRight = new WPI_TalonSRX(1);
+        driveFrontRight = new WPI_TalonSRX(12);
         driveFrontRight.setName("Drive", "Front Right");
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
-        driveBackRight = new WPI_TalonSRX(3);
+        driveBackRight = new WPI_TalonSRX(13);
         driveBackRight.setName("Drive", "Back Right");
         LiveWindow.add(driveBackRight);
         driveBackRight.set(ControlMode.Follower, 1);
