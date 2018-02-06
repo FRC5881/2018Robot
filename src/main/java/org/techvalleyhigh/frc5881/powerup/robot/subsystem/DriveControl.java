@@ -10,7 +10,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
 
 
-// TODO: PID CONTROL
 public class DriveControl extends Subsystem {
     /**
      * String used for SmartDashboard key for Auto Gyro Tolerance
@@ -130,4 +129,5 @@ public class DriveControl extends Subsystem {
     }
 
     // ----------------------- PID CONTROL ----------------------- //
+    // TODO: PID CONTROL
 }

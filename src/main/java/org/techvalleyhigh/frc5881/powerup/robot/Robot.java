@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
         // Add Auto commands to the smart dashboard
         autoChooser = new SendableChooser<>();
         autoChooser.addDefault("Do Nothing", new AutonomousCommand("None"));
+        autoChooser.addObject("Figure 8", new AutonomousCommand("Figure Eight"));
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
 
@@ -60,7 +61,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-
+        System.out.println("We've been disabled :(");
     }
 
     @Override

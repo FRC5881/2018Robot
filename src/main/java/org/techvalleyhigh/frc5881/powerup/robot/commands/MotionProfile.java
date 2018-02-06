@@ -21,6 +21,7 @@ public class MotionProfile extends Command {
     private Waypoint[] waypoints;
     private MotionProfileStatus status = new MotionProfileStatus();
 
+    // TODO: Once motion profiling works add configs to constructor
     public MotionProfile(Waypoint[] waypoints) {
         this.waypoints = waypoints;
         requires(Robot.driveControl);
@@ -70,8 +71,10 @@ public class MotionProfile extends Command {
     }
 
     protected void execute() {
+        // Update the status
         RobotMap.driveFrontRight.getMotionProfileStatus(status);
 
+        // Make sure there's some points in the buffer before going at it
         if (status.btmBufferCnt > kMinPointsTalon) {
             RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
             RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
@@ -81,7 +84,7 @@ public class MotionProfile extends Command {
     protected void end() {
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
         RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
-        System.out.println("Figure 8 finished");
+        System.out.println("Motion profile finished");
     }
 
     protected void interrupted() {
@@ -113,7 +116,7 @@ public class MotionProfile extends Command {
             point.headingDeg = 0;
             point.profileSlotSelect = 0;
 
-            // Record weather segment is first or last
+            // Record whether a segment is first or last
             point.zeroPos = i == 0;
             point.isLastPoint = (i + 1) == trajectory.length();
 

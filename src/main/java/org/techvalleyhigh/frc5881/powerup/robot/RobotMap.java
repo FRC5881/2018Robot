@@ -33,7 +33,6 @@ public class RobotMap {
         LiveWindow.add(driveBackLeft);
         driveBackLeft.set(ControlMode.Follower, 0);
 
-
         driveFrontRight = new WPI_TalonSRX(1);
         driveFrontRight.setName("Drive", "Front Right");
         LiveWindow.add(driveFrontRight);
@@ -43,8 +42,6 @@ public class RobotMap {
         driveBackRight.setName("Drive", "Back Right");
         LiveWindow.add(driveBackRight);
         driveBackRight.set(ControlMode.Follower, 1);
-
-
 
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
     }
