@@ -3,8 +3,6 @@ package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
@@ -15,7 +13,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
 // TODO: PID CONTROL
 public class DriveControl extends Subsystem {
     /**
-     * String used for SmartDashboard key for
+     * String used for SmartDashboard key for Auto Gyro Tolerance
      */
     private static final String AUTO_GYRO_TOLERANCE = "Auto Gyro Tolerance (+- Deg)";
 
@@ -121,8 +119,6 @@ public class DriveControl extends Subsystem {
         robotDrive.tankDrive(left, right);
     }
 
-    /* --------------- */
-
     /**
      * Stops all drive motors
      */
@@ -132,4 +128,6 @@ public class DriveControl extends Subsystem {
         RobotMap.driveBackRight.stopMotor();
         RobotMap.driveBackLeft.stopMotor();
     }
+
+    // ----------------------- PID CONTROL ----------------------- //
 }
