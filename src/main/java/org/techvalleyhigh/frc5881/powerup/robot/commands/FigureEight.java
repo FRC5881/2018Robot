@@ -81,7 +81,7 @@ public class FigureEight extends Command {
             pointR.position = positionRotR * DriveControl.distancePerTick;
             pointR.velocity = velocityRPMR * 4096d / 600d;
             pointR.headingDeg = 0;
-            pointR.profileSlotSelect0 = 0;
+            pointR.profileSlotSelect = 0;
 
             pointR.zeroPos = i == 0;
             pointR.isLastPoint = (i + 1) == points.length;
@@ -95,7 +95,7 @@ public class FigureEight extends Command {
             pointL.position = positionRotL * DriveControl.distancePerTick;
             pointL.velocity = velocityRPML * 4096d / 600d;
             pointL.headingDeg = 0;
-            pointL.profileSlotSelect0 = 0;
+            pointL.profileSlotSelect = 0;
 
             pointL.zeroPos = i == 0;
             pointL.isLastPoint = (i + 1) == points.length;
