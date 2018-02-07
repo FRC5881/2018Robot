@@ -4,12 +4,12 @@ import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 
 public class TrajectoryUtil {
-    // Starting TrajectoryUtil
+    // Starting locations
     public static final Waypoint startRight = new Waypoint(1.36333333, 3.9583, 0);
     public static final Waypoint startMiddle = new Waypoint(1.36333333, 13.0416, 0);
     public static final Waypoint startLeft = new Waypoint(1.36333333, 23.041, 0);
 
-    // Ending TrajectoryUtil
+    // Ending locations
     public static final Waypoint leftSideSwitch = new Waypoint(14, 21.37496667, -Math.PI / 2);
     public static final Waypoint leftFrontSwitch = new Waypoint(10.20836667, 18.5, 0);
     public static final Waypoint leftSideScale = new Waypoint(27, 21.35413333, -Math.PI / 2);

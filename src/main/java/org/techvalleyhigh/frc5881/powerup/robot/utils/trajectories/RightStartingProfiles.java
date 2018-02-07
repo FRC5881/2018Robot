@@ -34,5 +34,42 @@ public class RightStartingProfiles {
     };
     public static final Trajectory.Config config_12 = TrajectoryUtil.defaultConfig;
 
+    // Right Side Scale
+    public static final Waypoint[] path_13 = new Waypoint[] {
+            TrajectoryUtil.startRight,
+            new Waypoint(23.75, TrajectoryUtil.startRight.y, 0),
+            TrajectoryUtil.rightFrontScale
+    };
+    public static final Trajectory.Config config_13 = TrajectoryUtil.defaultConfig;
 
+    // Right Front Scale
+    public static final Waypoint[] path_14 = new Waypoint[] {
+            TrajectoryUtil.startRight,
+            new Waypoint(14, TrajectoryUtil.startRight.y, 0),
+            TrajectoryUtil.rightFrontScale
+    };
+    public static final Trajectory.Config config_14 = TrajectoryUtil.defaultConfig;
+
+    // Left Side Scale
+    public static final Waypoint[] path_15 = new Waypoint[] {
+            TrajectoryUtil.startRight,
+            new Waypoint(14, TrajectoryUtil.startRight.y, 0),
+            new Waypoint(19, 6.56, Math.toRadians(60)),
+            new Waypoint(19.33, 9, Math.PI / 2),
+            new Waypoint(19.33, 21, Math.PI / 2),
+            new Waypoint(23, 24, 0),
+            TrajectoryUtil.leftSideScale
+    };
+    public static final Trajectory.Config config_15 = TrajectoryUtil.defaultConfig;
+
+    // Left Front Scale
+    public static final Waypoint[] path_16 = new Waypoint[] {
+            TrajectoryUtil.startRight,
+            new Waypoint(14, 2, 0),
+            new Waypoint(19.75, 6, 0),
+            new Waypoint(19.75, 16.75, Math.PI / 2),
+            new Waypoint(20.75, 16.5, Math.PI / 4),
+            TrajectoryUtil.leftFrontScale
+    };
+    public static final Trajectory.Config config_16 = TrajectoryUtil.defaultConfig;
 }
