@@ -17,7 +17,6 @@ public class Drive extends Command {
 
     /**
      * Called repeatedly when this Command is scheduled to run
-     * Let drive control
       */
 
     @Override
