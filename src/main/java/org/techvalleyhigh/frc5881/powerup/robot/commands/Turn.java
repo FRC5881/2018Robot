@@ -3,8 +3,12 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class Drive extends Command {
-    public Drive() {
+// WORK IN PROGRESS
+/**
+ * Takes in relative degrees to turn during autonomous and will do just that, turn
+ */
+public class Turn extends Command {
+    public Turn() {
         requires(Robot.driveControl);
     }
 
@@ -13,16 +17,15 @@ public class Drive extends Command {
      */
     @Override
     protected void initialize() {
-        Robot.driveControl.init();
     }
 
     /**
      * Called repeatedly when this Command is scheduled to run
-      */
+     * Let drive control
+     */
 
     @Override
     protected void execute() {
-
         Robot.driveControl.driveJoystickInputs();
     }
 
@@ -36,8 +39,8 @@ public class Drive extends Command {
     }
 
     /**
-      * Called once after isFinished returns true OR the command is interrupted
-      */
+     * Called once after isFinished returns true OR the command is interrupted
+     */
     @Override
     protected void end() {
         Robot.driveControl.stopDrive();
