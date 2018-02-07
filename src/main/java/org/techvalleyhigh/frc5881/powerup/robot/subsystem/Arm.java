@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
@@ -26,7 +27,7 @@ public class Arm extends Subsystem {
     }
 
     private void move(double speed){
-        RobotMap.armTalon.set(speed);
+        RobotMap.armTalon.set(ControlMode.PercentOutput, speed);
     }
 
     public void driveJoystickInput() {

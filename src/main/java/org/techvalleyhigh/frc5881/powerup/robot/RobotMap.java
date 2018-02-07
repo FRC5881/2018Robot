@@ -25,8 +25,6 @@ public class RobotMap {
     public static WPI_TalonSRX driveBackRight;
     //Elevator Talons
     public  static WPI_TalonSRX elevatorTalonMaster;
-
-    public static WPI_TalonSRX elevatorTalonMaster;
     public static WPI_TalonSRX elevatorTalonFollower;
     //Talon for the arm
     public static WPI_TalonSRX armTalon;
