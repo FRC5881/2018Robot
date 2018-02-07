@@ -15,21 +15,33 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 
-import javax.sound.midi.SysexMessage;
 
+/**
+ * Command to handle autonomous motion profiling
+ * Takes in array of waypoints, converts them to trajectories, floods drive talons
+ * motion profile buffers with trajectory segments, tells the talons to start driving
+ */
 public class MotionProfile extends Command {
     private static int kMinPointsTalon = 5;
 
     private Waypoint[] waypoints;
     private MotionProfileStatus status = new MotionProfileStatus();
 
-    // TODO: Once motion profiling works add configs to constructor
+    // TODO: Once motion profiling works add Trajectory.Config to constructor to handle different speeds / accelerations / etc
+
+    /**
+     * Makes the drive talons drive a profile described by waypoints
+     * @param waypoints
+     */
     public MotionProfile(Waypoint[] waypoints) {
         this.waypoints = waypoints;
         requires(Robot.driveControl);
-        initialize();
     }
 
+    /**
+     * Periodically processes motion profile buffers separate from RoboRio allowing us to get
+     * best performance
+     */
     class PeriodicRunnable implements java.lang.Runnable {
         public void run() {
             RobotMap.driveFrontRight.processMotionProfileBuffer();
@@ -44,7 +56,6 @@ public class MotionProfile extends Command {
     protected void initialize() {
         System.out.println("INIT");
         // Change control modes
-        System.out.println("test");
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
         RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
 
@@ -88,6 +99,9 @@ public class MotionProfile extends Command {
     }
 
     protected void end() {
+        // Stop the processing buffers
+        notifier.stop();
+
         System.out.println("end");
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
         RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
@@ -112,15 +126,15 @@ public class MotionProfile extends Command {
         TrajectoryPoint point = new TrajectoryPoint();
 
         for (int i = 0; i < trajectory.length(); i++) {
-            System.out.println(i);
+            //System.out.println(i);
 
             Trajectory.Segment segment = trajectory.get(i);
 
             // Configure point for talon
             double positionRot = segment.position;
             double velocityRPM = segment.velocity;
-            point.position = positionRot * DriveControl.distancePerTick;
-            point.velocity = velocityRPM * 4096d / 600d;
+            point.position = positionRot * DriveControl.distancePerTick; // Convert rotations to units
+            point.velocity = velocityRPM * 4096d / 600d; // Convert RPM to Units/100ms
 
             // Not functional yet (reference dumpster fire)
             point.headingDeg = 0;

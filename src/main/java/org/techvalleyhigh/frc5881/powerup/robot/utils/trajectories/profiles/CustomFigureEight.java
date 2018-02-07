@@ -2,6 +2,10 @@ package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles;
 
 import jaci.pathfinder.Waypoint;
 
+/**
+ * Returns array of waypoints that paths out a figure eight with a given width and height
+ * (figure eights fits inside a rectangle of width x height)
+ */
 public class CustomFigureEight {
     public CustomFigureEight(double width, double height) {
         Waypoint[] points = new Waypoint[] {

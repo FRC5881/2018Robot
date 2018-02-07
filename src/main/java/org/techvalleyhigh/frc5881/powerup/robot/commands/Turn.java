@@ -3,6 +3,10 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
+// WORK IN PROGRESS
+/**
+ * Takes in relative degrees to turn during autonomous and will do just that, turn
+ */
 public class Turn extends Command {
     public Turn() {
         requires(Robot.driveControl);

@@ -6,7 +6,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.utils.vision.VisionCamera;
 
 
 /**
- * Created by cmahoney on 10/28/2018
+ *
  */
 public class Vision extends Subsystem {
     //We can totally have more than one camera up here

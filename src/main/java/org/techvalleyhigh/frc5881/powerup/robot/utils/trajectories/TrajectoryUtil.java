@@ -3,6 +3,9 @@ package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 
+/**
+ * Util class holding all kinds of useful data to streamline working with autonomous profiles
+ */
 public class TrajectoryUtil {
     // Starting locations
     public static final Waypoint startRight = new Waypoint(1.36333333, 3.9583, 0);
@@ -49,6 +52,18 @@ public class TrajectoryUtil {
         }
 
         return ret;
+    }
+
+    /**
+     * Takes in the only 2 parameters we'll likely ever change using Trajectory.Config velocity and acceleration
+     * And returns Trajectory.Config with everything else defaults
+     * @param max_velocity
+     * @param max_acceleration
+     * @return
+     */
+    public static Trajectory.Config ourConfig(double max_velocity, double max_acceleration) {
+        return new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+                0.5, max_velocity, max_acceleration, 60);
     }
 
     // Possible auto targets
