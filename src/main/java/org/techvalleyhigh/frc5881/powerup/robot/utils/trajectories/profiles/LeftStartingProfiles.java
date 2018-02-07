@@ -9,27 +9,28 @@ import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Trajec
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
 public class LeftStartingProfiles extends ProfileGroup {
+    //Left Side Switch
     public static final Waypoint[] path_0 = new Waypoint[] {
             TrajectoryUtil.startLeft, // Starting point
             new Waypoint(13.5, 23, Math.toRadians(0)), // Middle Point
             TrajectoryUtil.leftSideSwitch // Ending Point
     };
     public static final Autonomous auto_0 = new Autonomous(path_0, defaultConfig, SWITCH_LEFT); // Autonomous Object
-
+    //Left Front Switch
     public static final Waypoint[] path_1 = new Waypoint[]{
             TrajectoryUtil.startLeft,
             new Waypoint(8,18.25, Math.toRadians(0)),
             TrajectoryUtil.leftFrontSwitch
     };
     public static final Autonomous auto_1 = new Autonomous(path_1, defaultConfig, SWITCH_LEFT);
-
+    //Right Side Switch
     public static final Waypoint[] path_2 = new Waypoint[]{
             TrajectoryUtil.startLeft,
             new Waypoint(5, 11, Math.toRadians(-90)),
             TrajectoryUtil.rightSideSwitch
     };
     public static final Autonomous auto_2 = new Autonomous(path_2, defaultConfig, SWITCH_RIGHT);
-
+    //Left Side Scale
     public static final Waypoint[] path_3 = new Waypoint[]{
             TrajectoryUtil.startLeft,
             new Waypoint(13.5, 24.5, Math.toRadians(0)),
@@ -37,7 +38,7 @@ public class LeftStartingProfiles extends ProfileGroup {
             TrajectoryUtil.leftSideScale
     };
     public static final Autonomous auto_3 = new Autonomous(path_3, defaultConfig, SCALE_LEFT);
-
+    //Left Front Scale
     public static final Waypoint[] path_4 = new Waypoint[]{
             TrajectoryUtil.startLeft,
             new Waypoint(16, 25, Math.toRadians(0)),
@@ -45,7 +46,7 @@ public class LeftStartingProfiles extends ProfileGroup {
             TrajectoryUtil.leftFrontScale
     };
     public static final Autonomous auto_4 = new Autonomous(path_4, defaultConfig, SCALE_LEFT);
-
+    //Right Side Scale
     public static final Waypoint[] path_5 = new Waypoint[]{
             TrajectoryUtil.startLeft,
             new Waypoint(2, 23, Math.toRadians(0)),
@@ -58,6 +59,7 @@ public class LeftStartingProfiles extends ProfileGroup {
             TrajectoryUtil.rightSideScale
     };
     public static final Autonomous auto_5 = new Autonomous(path_5, defaultConfig, SCALE_LEFT);
+    //Right Front Scale
     //TODO: mess around with velocity\/
     public static final Waypoint[] path_6 = new Waypoint[]{
             TrajectoryUtil.startLeft,
