@@ -5,10 +5,13 @@ import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.ProfileGroup;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
+import java.util.HashMap;
+
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.AutoTarget.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
 public class LeftStartingProfiles extends ProfileGroup {
+    public static HashMap<Integer, Autonomous> autos = new HashMap<>();
     //Left Side Switch
     public static final Waypoint[] path_0 = new Waypoint[] {
             TrajectoryUtil.startLeft, // Starting point
@@ -70,4 +73,13 @@ public class LeftStartingProfiles extends ProfileGroup {
             TrajectoryUtil.rightFrontScale
     };
     public static final Autonomous auto_6 = new Autonomous(path_6, defaultConfig, SCALE_RIGHT);
+    static {
+        autos.put(0, auto_0);
+        autos.put(1, auto_1);
+        autos.put(2, auto_2);
+        autos.put(3, auto_3);
+        autos.put(4, auto_4);
+        autos.put(5, auto_5);
+        autos.put(6, auto_6);
+    }
 }
