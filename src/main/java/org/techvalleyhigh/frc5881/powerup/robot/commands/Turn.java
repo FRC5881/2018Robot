@@ -4,34 +4,48 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class Turn extends Command {
-    public Turn(double relativeDegrees) {
+    public Turn() {
         requires(Robot.driveControl);
     }
 
-    // Called just before this Command runs the first time
+    /**
+     * Called just before this Command runs the first time
+     */
     @Override
     protected void initialize() {
     }
 
-    // Called repeatedly when this Command is scheduled to run
-    // Drive code to run during
-    @Override
-    protected void execute() {}
+    /**
+     * Called repeatedly when this Command is scheduled to run
+     * Let drive control
+     */
 
-    // Make this return true when this Command no longer needs to run execute()
+    @Override
+    protected void execute() {
+        Robot.driveControl.driveJoystickInputs();
+    }
+
+    /**
+     * Make this return true when this Command no longer needs to run execute()
+     * Since this is our drive command we never want it to end
+     */
     @Override
     protected boolean isFinished() {
         return false;
     }
 
-    // Called once after isFinished returns true
+    /**
+     * Called once after isFinished returns true OR the command is interrupted
+     */
     @Override
     protected void end() {
         Robot.driveControl.stopDrive();
     }
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
+    /**
+     * Called when another command which requires one or more of the same
+     * subsystems is scheduled to run
+     */
     @Override
     protected void interrupted() {
         end();

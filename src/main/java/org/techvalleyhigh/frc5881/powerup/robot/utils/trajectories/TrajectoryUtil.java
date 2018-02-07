@@ -50,4 +50,13 @@ public class TrajectoryUtil {
 
         return ret;
     }
+
+    // Possible auto targets
+    public enum AutoTarget {
+        SWITCH_LEFT,
+        SWITCH_RIGHT,
+        SCALE_LEFT,
+        SCALE_RIGHT,
+        AUTO_LINE
+    }
 }

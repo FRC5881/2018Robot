@@ -1,9 +1,18 @@
-package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories;
+package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles;
 
-import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.ProfileGroup;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
-public class RightStartingProfiles {
+import java.util.HashMap;
+
+import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.AutoTarget.*;
+import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
+
+public class RightStartingProfiles extends ProfileGroup {
+    public static HashMap<Integer, Autonomous> autos = new HashMap<>();
+
     // Right Side Switch
     public static final Waypoint[] path_10 = new Waypoint[] {
             TrajectoryUtil.startRight,
@@ -11,14 +20,14 @@ public class RightStartingProfiles {
             new Waypoint(8, 2, 0),
             TrajectoryUtil.rightSideSwitch
     };
-    public static final Trajectory.Config config_10 = TrajectoryUtil.defaultConfig;
+    public static final Autonomous auto_10 = new Autonomous(path_10, defaultConfig, SWITCH_RIGHT);
 
     // Right Front Switch
     public static final Waypoint[] path_11 = new Waypoint[] {
             TrajectoryUtil.startRight,
             TrajectoryUtil.rightFrontSwitch
     };
-    public static final Trajectory.Config config_11 = TrajectoryUtil.defaultConfig;
+    public static final Autonomous auto_11 = new Autonomous(path_11, defaultConfig, SWITCH_RIGHT);
 
     // Left Side Switch
     public static final Waypoint[] path_12 = new Waypoint[] {
@@ -32,15 +41,15 @@ public class RightStartingProfiles {
             new Waypoint(16.5, 23.75, Math.toRadians(200)),
             TrajectoryUtil.leftSideSwitch
     };
-    public static final Trajectory.Config config_12 = TrajectoryUtil.defaultConfig;
-
+    public static final Autonomous auto_12 = new Autonomous(path_12, defaultConfig, SWITCH_LEFT);
+    
     // Right Side Scale
     public static final Waypoint[] path_13 = new Waypoint[] {
             TrajectoryUtil.startRight,
             new Waypoint(23.75, TrajectoryUtil.startRight.y, 0),
-            TrajectoryUtil.rightFrontScale
+            TrajectoryUtil.rightSideScale
     };
-    public static final Trajectory.Config config_13 = TrajectoryUtil.defaultConfig;
+    public static final Autonomous auto_13 = new Autonomous(path_13, defaultConfig, SCALE_RIGHT);
 
     // Right Front Scale
     public static final Waypoint[] path_14 = new Waypoint[] {
@@ -48,7 +57,7 @@ public class RightStartingProfiles {
             new Waypoint(14, TrajectoryUtil.startRight.y, 0),
             TrajectoryUtil.rightFrontScale
     };
-    public static final Trajectory.Config config_14 = TrajectoryUtil.defaultConfig;
+    public static final Autonomous auto_14 = new Autonomous(path_14, defaultConfig, SWITCH_RIGHT);
 
     // Left Side Scale
     public static final Waypoint[] path_15 = new Waypoint[] {
@@ -60,7 +69,7 @@ public class RightStartingProfiles {
             new Waypoint(23, 24, 0),
             TrajectoryUtil.leftSideScale
     };
-    public static final Trajectory.Config config_15 = TrajectoryUtil.defaultConfig;
+    public static final Autonomous auto_15 = new Autonomous(path_15, defaultConfig, SCALE_LEFT);
 
     // Left Front Scale
     public static final Waypoint[] path_16 = new Waypoint[] {
@@ -71,5 +80,15 @@ public class RightStartingProfiles {
             new Waypoint(20.75, 16.5, Math.PI / 4),
             TrajectoryUtil.leftFrontScale
     };
-    public static final Trajectory.Config config_16 = TrajectoryUtil.defaultConfig;
+    public static final Autonomous auto_16 = new Autonomous(path_16, defaultConfig, SCALE_LEFT);
+
+    static {
+        autos.put(10, auto_10);
+        autos.put(11, auto_11);
+        autos.put(12, auto_12);
+        autos.put(13, auto_13);
+        autos.put(14, auto_14);
+        autos.put(15, auto_15);
+        autos.put(16, auto_16);
+    }
 }

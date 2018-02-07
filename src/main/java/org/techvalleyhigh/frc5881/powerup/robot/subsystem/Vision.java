@@ -16,6 +16,7 @@ public class Vision extends Subsystem {
     public VisionCamera camera;
 
     public Vision(VisionCamera camera) {
+        super();
         init();
 
         //Define each camera
@@ -23,6 +24,7 @@ public class Vision extends Subsystem {
     }
 
     public Vision(String name, VisionCamera camera) {
+        super(name);
         init();
 
         //Define each camera
@@ -37,4 +39,6 @@ public class Vision extends Subsystem {
     protected void initDefaultCommand() {
         // No commands, this is a read-only subsystem
     }
+
+
 }
