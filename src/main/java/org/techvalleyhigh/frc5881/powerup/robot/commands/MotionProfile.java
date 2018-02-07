@@ -124,7 +124,7 @@ public class MotionProfile extends Command {
 
             // Not functional yet (reference dumpster fire)
             point.headingDeg = 0;
-            point.profileSlotSelect = 0;
+            point.profileSlotSelect0 = 0;
 
             // Record whether a segment is first or last
             point.zeroPos = i == 0;
