@@ -15,7 +15,6 @@ public class ArmLower extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    // ArcadeDrive code to run during
     @Override
     protected void execute() {
         Robot.arm.move(-Arm.armSpeed);
@@ -27,7 +26,7 @@ public class ArmLower extends Command {
         return false;
     }
 
-    // Called once after isFinished returns true
+    // Called once after isFinished returns true or command is interrupted
     @Override
     protected void end() {
         Robot.arm.stop();

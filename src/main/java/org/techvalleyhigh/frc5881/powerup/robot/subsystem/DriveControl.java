@@ -64,8 +64,8 @@ public class DriveControl extends Subsystem {
         calibrateGyro();
 
         // Create Differential ArcadeDrive Object
-        SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft, RobotMap.driveBackLeft);
-        SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight, RobotMap.driveBackRight);
+        SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft);
+        SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight);
 
         robotDrive = new DifferentialDrive(m_left, m_right);
 
@@ -195,8 +195,6 @@ public class DriveControl extends Subsystem {
     public void stopDrive() {
         RobotMap.driveFrontRight.stopMotor();
         RobotMap.driveFrontLeft.stopMotor();
-        RobotMap.driveBackRight.stopMotor();
-        RobotMap.driveBackLeft.stopMotor();
     }
 
     // Add PID controls down here if need be

@@ -3,6 +3,9 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
+/**
+ * Runs Differential.curvatureDrive for testing
+ */
 public class CurvatureDrive extends Command {
     public CurvatureDrive() {
         requires(Robot.driveControl);

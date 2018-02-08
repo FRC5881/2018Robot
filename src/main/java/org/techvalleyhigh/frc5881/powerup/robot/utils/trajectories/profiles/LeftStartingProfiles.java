@@ -11,9 +11,9 @@ import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Trajec
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
 /**
- * Static class storing autonomous routines starting in the left position
+ * Class full of static variables storing autonomous routines starting in the left position
  */
-public class LeftStartingProfiles extends ProfileGroup {
+public class LeftStartingProfiles implements ProfileGroup {
     private static HashMap<Integer, Autonomous> autos = new HashMap<>();
     
     // Left Side Switch
@@ -91,5 +91,9 @@ public class LeftStartingProfiles extends ProfileGroup {
         autos.put(4, auto_4);
         autos.put(5, auto_5);
         autos.put(6, auto_6);
+    }
+
+    public static Autonomous getAuto(int autoNum) {
+        return autos.get(autoNum);
     }
 }
