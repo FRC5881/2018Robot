@@ -5,7 +5,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
@@ -20,12 +22,15 @@ public class Robot extends TimedRobot {
     public static Manipulator manipulator;
     public static Arm arm;
     public static Elevator elevator;
-    // Define drive command
-    public static Drive driveCommand;
+
+    // Define drive code
+    public static SendableChooser<Command> driveChooser;
+    public static Command driveCommand;
 
     // Define auto code
     public static Command autonomousCommand;
     public static SendableChooser<AutonomousCommand> autoChooser;
+
 
     /**
      * This function is run when the robot is first started up and should be
@@ -39,9 +44,6 @@ public class Robot extends TimedRobot {
         manipulator = new Manipulator();
         arm = new Arm();
         elevator = new Elevator();
-
-        // Define drive command to during tele - op
-        driveCommand = new Drive();
 
         // OI must be constructed after subsystems. If the OI creates Commands
         //(which it very likely will), subsystems are not guaranteed to be
@@ -58,6 +60,14 @@ public class Robot extends TimedRobot {
         autoChooser.addObject("Figure 8", new AutonomousCommand("Figure Eight"));
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
+
+        // Drive Control Selection
+        driveChooser = new SendableChooser<>();
+        driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
+        driveChooser.addObject("Tank Drive", new TankDrive());
+        driveChooser.addObject("Curvature Drive", new CurvatureDrive());
+
+        SmartDashboard.putData(driveChooser);
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -94,16 +104,15 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopInit() {
-        // This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
+        // Ends autonomous command
         if (autonomousCommand != null) autonomousCommand.cancel();
 
-        if (driveCommand != null) {
+        // Get selected drive command and start it
+        if (driveChooser.getSelected() != null) {
+            driveCommand = driveChooser.getSelected();
             driveCommand.start();
         } else {
-            System.err.println("teleopInit() Failed to start Drive command due to null");
+            System.err.println("teleopInit() failed to start drive command due to null");
         }
     }
 

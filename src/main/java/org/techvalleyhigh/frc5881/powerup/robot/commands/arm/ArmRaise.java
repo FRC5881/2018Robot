@@ -13,7 +13,7 @@ public class ArmRaise extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    // Drive code to run during
+    // ArcadeDrive code to run during
     @Override
     protected void execute() {
         Robot.arm.move(Arm.armSpeed);
