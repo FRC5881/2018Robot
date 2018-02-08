@@ -131,10 +131,10 @@ public class MotionProfile extends Command {
             Trajectory.Segment segment = trajectory.get(i);
 
             // Configure point for talon
-            double positionRot = segment.position;
-            double velocityRPM = segment.velocity;
-            point.position = positionRot * DriveControl.distancePerTick; // Convert rotations to units
-            point.velocity = velocityRPM * 4096d / 600d; // Convert RPM to Units/100ms
+            double positionF = segment.position;
+            double velocityFPS = segment.velocity;
+            point.position = positionF * DriveControl.ticksPerFoot * DriveControl.getScaleTicksPerFoot(); // Convert feet to ticks
+            point.velocity = velocityFPS * DriveControl.ticksPerFoot * DriveControl.getScaleTicksPerFoot() / 100d; // Convert Feet per Second to ticks/100ms
 
             // Not functional yet (reference dumpster fire)
             point.headingDeg = 0;
