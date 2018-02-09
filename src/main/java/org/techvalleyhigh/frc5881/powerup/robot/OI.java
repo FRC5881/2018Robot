@@ -3,7 +3,12 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLift;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmLower;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmRaise;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorOpen;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLiftAuto;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLowerAuto;
 
 /**
  * Controls operator interfaces, such as controllers

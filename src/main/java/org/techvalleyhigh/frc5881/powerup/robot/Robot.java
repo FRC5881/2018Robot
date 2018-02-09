@@ -60,6 +60,8 @@ public class Robot extends TimedRobot {
         autoChooser.addObject("Figure 8", new AutonomousCommand("Figure Eight"));
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
+        //TODO: Test this code to see if it actually works and then adapt it to the Autonomous Decoder code
+        SmartDashboard.putString("Test String", "Hello World");
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
