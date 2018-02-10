@@ -15,8 +15,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 
-import static com.ctre.phoenix.motion.SetValueMotionProfile.Enable;
-
 
 /**
  * Command to handle autonomous motion profiling
