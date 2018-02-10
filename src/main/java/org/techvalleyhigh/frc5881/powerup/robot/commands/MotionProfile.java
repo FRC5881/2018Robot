@@ -71,7 +71,7 @@ public class MotionProfile extends Command {
 
         // Set up configs
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-                Trajectory.Config.SAMPLES_HIGH, 0.05, 5, 4, 60);
+                Trajectory.Config.SAMPLES_HIGH, 0.05, 1, 4, 60);
 
         // Generate trajectory
         Trajectory trajectory = Pathfinder.generate(this.waypoints, config);
@@ -120,10 +120,10 @@ public class MotionProfile extends Command {
 
     protected boolean isFinished() {
         RobotMap.driveFrontRight.getMotionProfileStatus(status);
-
+        System.out.println("Error: " + RobotMap.driveFrontLeft.getClosedLoopError(0));
         //System.out.println("status: " + status.activePointValid);
         //System.out.println("isLast: " + status.isLast);
-        return status.activePointValid && status.isLast;
+        return RobotMap.driveFrontLeft.getClosedLoopError(0) == 0;
     }
 
     /**

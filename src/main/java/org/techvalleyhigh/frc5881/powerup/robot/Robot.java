@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
         autoChooser.addDefault("Do Nothing", new AutonomousCommand("None"));
         autoChooser.addObject("Figure 8", new AutonomousCommand("Figure Eight"));
         autoChooser.addObject("Test", new AutonomousCommand("Test"));
+        autoChooser.addObject("Foot", new AutonomousCommand("Foot"));
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
 
