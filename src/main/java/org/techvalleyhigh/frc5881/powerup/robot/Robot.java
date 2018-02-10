@@ -11,6 +11,9 @@ import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
+
+import java.util.ArrayList;
 
 
 public class Robot extends TimedRobot {
@@ -27,6 +30,7 @@ public class Robot extends TimedRobot {
     // Define auto code
     public static Command autonomousCommand;
     public static SendableChooser<AutonomousCommand> autoChooser;
+
 
     /**
      * This function is run when the robot is first started up and should be
@@ -61,7 +65,7 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
         //TODO: Test this code to see if it actually works and then adapt it to the Autonomous Decoder code
-        SmartDashboard.putString("Test String", "Hello World");
+        SmartDashboard.putString("Possible Paths", "1-4,7-10,15-20,22,24");
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -77,11 +81,29 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
         Scheduler.getInstance().run();
+
+        // TODO Pull SD Auto Value and check for valid
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)){
+            SmartDashboard.putBoolean("Paths Are Valid", true);
+        }
+        else {
+            System.out.println("Warning! Current chosen path is invalid! Please input path number!");
+            SmartDashboard.putBoolean("Paths Are Valid", false);
+        }
     }
 
     @Override
     public void autonomousInit() {
+        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
+
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
+            ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
+
+            //TODO Check and run
+            AutonomousCommand run = new AutonomousCommand(autoOptions);
+        }
         if (autoChooser.getSelected() != null) {
             autonomousCommand = autoChooser.getSelected();
             autonomousCommand.start();

@@ -2,18 +2,19 @@ package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles;
 
 import jaci.pathfinder.Waypoint;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.ProfileGroup;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
 import java.util.HashMap;
 
+import static openrio.powerup.MatchData.GameFeature.*;
+import static openrio.powerup.MatchData.OwnedSide.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.AutoTarget.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
 /**
  * Static class storing autonomous routines starting in the left position
  */
-public class MiddleStartingProfiles extends ProfileGroup {
+public class MiddleStartingProfiles {
     private static HashMap<Integer, Autonomous> autos = new HashMap<>();
 
     // Right Side Switch
@@ -24,7 +25,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(12, 4, 0),
             TrajectoryUtil.rightSideSwitch
     };
-    private static final Autonomous auto_20 = new Autonomous(path_20, defaultConfig, SWITCH_RIGHT);
+    private static final Autonomous auto_20 = new Autonomous(path_20, defaultConfig, SWITCH_NEAR, RIGHT);
 
     // Right Side Switch Wide
     private static final Waypoint[] path_21 = new Waypoint[]{
@@ -34,7 +35,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(10, 2, 0),
             TrajectoryUtil.rightSideSwitch
     };
-    private static final Autonomous auto_21 = new Autonomous(path_21, defaultConfig, SWITCH_RIGHT);
+    private static final Autonomous auto_21 = new Autonomous(path_21, defaultConfig, SWITCH_NEAR, RIGHT);
 
     // Right Front Switch
     private static final Waypoint[] path_22 = new Waypoint[]{
@@ -43,7 +44,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(5, 9, Math.toRadians(-40)),
             TrajectoryUtil.rightFrontSwitch
     };
-    private static final Autonomous auto_22 = new Autonomous(path_22, defaultConfig, SWITCH_RIGHT);
+    private static final Autonomous auto_22 = new Autonomous(path_22, defaultConfig, SWITCH_NEAR, RIGHT);
 
     // Left Side Switch
     private static final Waypoint[] path_23 = new Waypoint[]{
@@ -52,7 +53,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(10.5, 24, 0),
             TrajectoryUtil.leftSideSwitch
     };
-    private static final Autonomous auto_23 = new Autonomous(path_23, defaultConfig, SWITCH_LEFT);
+    private static final Autonomous auto_23 = new Autonomous(path_23, defaultConfig, SWITCH_NEAR, LEFT);
 
     // Left Side Switch
     private static final Waypoint[] path_24 = new Waypoint[]{
@@ -62,14 +63,14 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(10 ,25, 0),
             TrajectoryUtil.leftSideSwitch
     };
-    private static final Autonomous auto_24 = new Autonomous(path_24, defaultConfig, SWITCH_LEFT);
+    private static final Autonomous auto_24 = new Autonomous(path_24, defaultConfig, SWITCH_NEAR, LEFT);
 
     // Left Front Switch
     private static final Waypoint[] path_25 = new Waypoint[]{
             TrajectoryUtil.startMiddle,
             TrajectoryUtil.leftFrontSwitch
     };
-    private static final Autonomous auto_25 = new Autonomous(path_25, defaultConfig, SWITCH_LEFT);
+    private static final Autonomous auto_25 = new Autonomous(path_25, defaultConfig, SWITCH_NEAR, LEFT);
 
     // Right Side Scale
     private static final Waypoint[] path_26 = new Waypoint[]{
@@ -79,7 +80,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(22.15, 3, 0),
             TrajectoryUtil.rightSideScale
     };
-    private static final Autonomous auto_26 = new Autonomous(path_26, defaultConfig, SCALE_RIGHT);
+    private static final Autonomous auto_26 = new Autonomous(path_26, defaultConfig, SCALE, RIGHT);
 
     // Right Front Scale
     private static final Waypoint[] path_27 = new Waypoint[] {
@@ -88,7 +89,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(14, 4, 0),
             TrajectoryUtil.rightFrontScale
     };
-    private static final Autonomous auto_27 = new Autonomous(path_27, defaultConfig, SCALE_RIGHT);
+    private static final Autonomous auto_27 = new Autonomous(path_27, defaultConfig, SCALE, RIGHT);
 
     // Left Side Scale
     private static final Waypoint[] path_28 = new Waypoint[] {
@@ -98,7 +99,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(22.15, 24, 0),
             TrajectoryUtil.leftSideScale
     };
-    private static final Autonomous auto_28 = new Autonomous(path_28, defaultConfig, SCALE_LEFT);
+    private static final Autonomous auto_28 = new Autonomous(path_28, defaultConfig, SCALE, LEFT);
 
     // Left Front Scale
     private static final Waypoint[] path_29 = new Waypoint[] {
@@ -107,7 +108,7 @@ public class MiddleStartingProfiles extends ProfileGroup {
             new Waypoint(14, 23, 0),
             TrajectoryUtil.leftFrontScale
     };
-    private static final Autonomous auto_29 = new Autonomous(path_29, defaultConfig, SCALE_LEFT);
+    private static final Autonomous auto_29 = new Autonomous(path_29, defaultConfig, SCALE, LEFT);
 
     static {
         autos.put(20, auto_20);
@@ -120,5 +121,9 @@ public class MiddleStartingProfiles extends ProfileGroup {
         autos.put(27, auto_27);
         autos.put(28, auto_28);
         autos.put(29, auto_29);
+    }
+
+    public static HashMap<Integer, Autonomous> getAutos() {
+        return autos;
     }
 }
