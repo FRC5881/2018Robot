@@ -5,8 +5,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -35,22 +33,33 @@ public class RobotMap {
         driveFrontLeft.setName("ArcadeDrive", "Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+        driveFrontLeft.config_kP(0 , 0.013, 10);
+        driveFrontLeft.config_kI(0, 0.001, 10);
+        driveFrontLeft.config_kD(0, 0.012, 10);
+        driveFrontLeft.config_kF(0, 0, 10);
+        driveFrontLeft.setSensorPhase(true);
 
         driveBackLeft = new WPI_TalonSRX(11);
         driveBackLeft.setName("ArcadeDrive", "Back Left");
         LiveWindow.add(driveBackLeft);
-        driveBackLeft.set(ControlMode.Follower, 0);
+        driveBackLeft.set(ControlMode.Follower, 10);
 
         driveFrontRight = new WPI_TalonSRX(12);
         driveFrontRight.setName("ArcadeDrive", "Front Right");
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
+        driveFrontRight.config_kP(0 , 0.013, 10);
+        driveFrontRight.config_kI(0, 0.001, 10);
+        driveFrontRight.config_kD(0, 0.012, 10);
+        driveFrontRight.config_kF(0, 0, 10);
+
 
         driveBackRight = new WPI_TalonSRX(13);
         driveBackRight.setName("ArcadeDrive", "Back Right");
         LiveWindow.add(driveBackRight);
-        driveBackRight.set(ControlMode.Follower, 1);
+        driveBackRight.set(ControlMode.Follower, 12);
 
+        /*
         //elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
         elevatorTalonMaster.setName("elevator", "Master");
@@ -72,10 +81,6 @@ public class RobotMap {
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
 
-        //Gyro
-        digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
-        digitalGyro.setName("Gyro", "Gyro");
-        LiveWindow.add(digitalGyro);
 
         //Pneumatic Compressor
         compressor = new Compressor(0);
@@ -86,5 +91,12 @@ public class RobotMap {
         doubleSolenoid = new DoubleSolenoid(0, 1);
         doubleSolenoid.setName("DoubleSolenoid", "Double Solenoid");
         LiveWindow.add(doubleSolenoid);
+        */
+
+        //Gyro
+        digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+        digitalGyro.setName("Gyro", "Gyro");
+        LiveWindow.add(digitalGyro);
+
     }
 }

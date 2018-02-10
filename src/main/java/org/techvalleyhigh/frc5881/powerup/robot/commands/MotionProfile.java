@@ -15,6 +15,8 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 
+import static com.ctre.phoenix.motion.SetValueMotionProfile.Enable;
+
 
 /**
  * Command to handle autonomous motion profiling
@@ -35,6 +37,7 @@ public class MotionProfile extends Command {
      */
     public MotionProfile(Waypoint[] waypoints) {
         this.waypoints = waypoints;
+        Robot.driveControl.robotDrive.setSafetyEnabled(false);
         requires(Robot.driveControl);
     }
 
@@ -84,18 +87,21 @@ public class MotionProfile extends Command {
         // Push trajectories into the talons
         pushTrajectory(leftTrajectory, RobotMap.driveFrontLeft);
         pushTrajectory(rightTrajectory, RobotMap.driveFrontRight);
+
+        // Make sure there's some points in the buffer before going at it
+        RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
+        RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
     }
 
     protected void execute() {
-        System.out.println("Execute");
+        //System.out.println("Execute");
         // Update the status
-        RobotMap.driveFrontRight.getMotionProfileStatus(status);
 
-        // Make sure there's some points in the buffer before going at it
+        /*
         if (status.btmBufferCnt > kMinPointsTalon) {
-            RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
-            RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
+
         }
+        */
     }
 
     protected void end() {
@@ -113,7 +119,10 @@ public class MotionProfile extends Command {
     }
 
     protected boolean isFinished() {
-        System.out.println(status.activePointValid && status.isLast);
+        RobotMap.driveFrontRight.getMotionProfileStatus(status);
+
+        //System.out.println("status: " + status.activePointValid);
+        //System.out.println("isLast: " + status.isLast);
         return status.activePointValid && status.isLast;
     }
 
@@ -134,15 +143,27 @@ public class MotionProfile extends Command {
             double positionF = segment.position;
             double velocityFPS = segment.velocity;
             point.position = positionF * DriveControl.ticksPerFoot * DriveControl.getScaleTicksPerFoot(); // Convert feet to ticks
-            point.velocity = velocityFPS * DriveControl.ticksPerFoot * DriveControl.getScaleTicksPerFoot() / 100d; // Convert Feet per Second to ticks/100ms
+            point.velocity = velocityFPS * DriveControl.ticksPerFoot * DriveControl.getScaleTicksPerFoot()  / 100d; // Convert Feet per Second to ticks/100ms
 
             // Not functional yet (reference dumpster fire)
             point.headingDeg = 0;
             point.profileSlotSelect0 = 0;
+            point.profileSlotSelect1 = 0;
+            point.timeDur = TrajectoryPoint.TrajectoryDuration.Trajectory_Duration_0ms;
 
             // Record whether a segment is first or last
             point.zeroPos = i == 0;
             point.isLastPoint = (i + 1) == trajectory.length();
+
+
+            System.out.print("pos: " + point.position);
+            System.out.print( " velo: " + point.velocity);
+            System.out.print( " heading: " + point.headingDeg);
+            System.out.print(" profile0: " + point.profileSlotSelect0);
+            System.out.print(" profile1: " + point.profileSlotSelect1);
+            System.out.print(" zero: " + point.zeroPos);
+            System.out.println(" is last point: " + point.isLastPoint);
+
 
             // Finally push into the talon
             talon.pushMotionProfileTrajectory(point);

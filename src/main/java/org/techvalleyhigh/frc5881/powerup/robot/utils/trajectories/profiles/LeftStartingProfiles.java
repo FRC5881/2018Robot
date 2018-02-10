@@ -2,7 +2,6 @@ package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles;
 
 import jaci.pathfinder.Waypoint;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.ProfileGroup;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
 import java.util.HashMap;
@@ -10,10 +9,11 @@ import java.util.HashMap;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.AutoTarget.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
+
 /**
  * Class full of static variables storing autonomous routines starting in the left position
  */
-public class LeftStartingProfiles implements ProfileGroup {
+public class LeftStartingProfiles {
     private static HashMap<Integer, Autonomous> autos = new HashMap<>();
     
     // Left Side Switch
@@ -93,7 +93,11 @@ public class LeftStartingProfiles implements ProfileGroup {
         autos.put(6, auto_6);
     }
 
-    public static Autonomous getAuto(int autoNum) {
-        return autos.get(autoNum);
+    /**
+     * Get for autos hast map
+     * @return HashMap of autos
+     */
+    public static HashMap<Integer, Autonomous> getAutos() {
+        return autos;
     }
 }

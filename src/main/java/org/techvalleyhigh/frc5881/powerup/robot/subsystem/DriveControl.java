@@ -29,14 +29,14 @@ public class DriveControl extends Subsystem {
 
     private static final double deadZone = 0.1;
 
-    private DifferentialDrive robotDrive;
+    public DifferentialDrive robotDrive;
 
     /**
      * Used for converting feet to ticks.
      * ticks per foot = 2( pi )( wheel radius ) / (ticks per rotation)
      * 2( pi )( 0.5 ) / 4096 = pi / 4096
      */
-    public static final double ticksPerFoot = Math.PI / 4096;
+    public static final double ticksPerFoot = 4096 / Math.PI;
 
 
     // ----------------------- Subsystem Control ----------------------- //
@@ -79,8 +79,8 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(SCALE_TICKS_PER_FOOT, 1);
 
         // Joystick sensitivities
-        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 1);
-        SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, 1);
+        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, -1);
+        SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class DriveControl extends Subsystem {
     }
 
     public static double getXAxisSensitivity() {
-        return SmartDashboard.getNumber(X_AXIS_SENSITIVITY, 1);
+        return SmartDashboard.getNumber(X_AXIS_SENSITIVITY, -1);
     }
 
     public static double getYAxisSensitivity() {
@@ -136,7 +136,7 @@ public class DriveControl extends Subsystem {
     }
 
     public static double getScaleTicksPerFoot() {
-        return SmartDashboard.getNumber(SCALE_TICKS_PER_FOOT, 1);
+        return SmartDashboard.getNumber(SCALE_TICKS_PER_FOOT, -1);
     }
 
     /* --- Scale methods for joystick inputs --- */

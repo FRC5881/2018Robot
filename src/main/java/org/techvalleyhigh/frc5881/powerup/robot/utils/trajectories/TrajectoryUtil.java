@@ -64,8 +64,8 @@ public class TrajectoryUtil {
     /**
      * Takes in the only 2 parameters we'll likely ever change using Trajectory.Config velocity and acceleration
      * And returns Trajectory.Config with everything else defaults
-     * @param max_velocity
-     * @param max_acceleration
+     * @param max_velocity max velocity to generate trajectories can drive
+     * @param max_acceleration max acceleration the bot should never pass
      * @return {Trajectory.Config} our default trajectory with edited velocity and acceleration
      */
     public static Trajectory.Config ourConfig(double max_velocity, double max_acceleration) {
@@ -77,27 +77,57 @@ public class TrajectoryUtil {
      * Possible auto targets the bot can reach left/right is in respect of our drive team
      */
     public enum AutoTarget {
-        // Left side of the near switch
+        /**
+         * Left side of the near switch
+         */
         SWITCH_LEFT,
 
-        // Right side of the near switch
+        /**
+         * Right side of the near switch
+         */
         SWITCH_RIGHT,
 
-        // Left side of the scale
+        /**
+         * Left side of the switch
+         */
         SCALE_LEFT,
 
-        // Right side of the scale
+        /**
+         * Right side of the switch
+         */
         SCALE_RIGHT,
 
-        // Simply the autonomous line
+        /**
+         * Simply the autonomous line
+         */
         AUTO_LINE
     }
 
     /**
-     * Returns array of waypoints that paths out a figure eight with a given width and height
-     * (figure eights fits inside a rectangle of width by height)
+     * Possible starting locations
      */
-    public Waypoint[] CustomFigureEight(double width, double height) {
+    public enum StartingLocations {
+        /**
+         * Left starting location
+         */
+        LEFT,
+        /**
+         * Middle starting location
+         */
+        MIDDLE,
+        /**
+         * Right starting location
+         */
+        RIGHT
+    }
+
+    /**
+     * Returns array of waypoints that paths out a figure eight fits tightly inside a rectangle
+     * @param width width of the rectangle
+     * @param height height of the rectangle
+     * @return Waypoint[] of generated figure eight
+     */
+    public static Waypoint[] customFigureEight(double width, double height) {
         return new Waypoint[] {
                 new Waypoint(width / 2, 0, 0),
                 new Waypoint(width, height / 4, Math.PI / 4),

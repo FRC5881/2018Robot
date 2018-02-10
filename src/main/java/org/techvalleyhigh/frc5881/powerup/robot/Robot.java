@@ -19,9 +19,9 @@ public class Robot extends TimedRobot {
     // Define OI and subsystems
     public static OI oi;
     public static DriveControl driveControl;
-    public static Manipulator manipulator;
-    public static Arm arm;
-    public static Elevator elevator;
+    //public static Manipulator manipulator;
+    //public static Arm arm;
+    //public static Elevator elevator;
 
     // Define drive code
     public static SendableChooser<Command> driveChooser;
@@ -41,9 +41,9 @@ public class Robot extends TimedRobot {
 
         // Define Subsystems
         driveControl = new DriveControl();
-        manipulator = new Manipulator();
-        arm = new Arm();
-        elevator = new Elevator();
+        //manipulator = new Manipulator();
+        //arm = new Arm();
+        //elevator = new Elevator();
 
         // OI must be constructed after subsystems. If the OI creates Commands
         //(which it very likely will), subsystems are not guaranteed to be
@@ -58,10 +58,12 @@ public class Robot extends TimedRobot {
         autoChooser = new SendableChooser<>();
         autoChooser.addDefault("Do Nothing", new AutonomousCommand("None"));
         autoChooser.addObject("Figure 8", new AutonomousCommand("Figure Eight"));
+        autoChooser.addObject("Test", new AutonomousCommand("Test"));
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
 
         // Drive Control Selection
+        System.out.print("drive");
         driveChooser = new SendableChooser<>();
         driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());

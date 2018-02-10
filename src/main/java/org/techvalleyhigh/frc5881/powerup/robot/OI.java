@@ -3,7 +3,6 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLift;
 
 /**
  * Controls operator interfaces, such as controllers
@@ -88,6 +87,5 @@ public class OI {
         startButton = new JoystickButton(xboxController, BUTTON_START);
 
         // Add commands down here
-        yButton.whenPressed(new ElevatorLift());
     }
 }
