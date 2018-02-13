@@ -103,6 +103,8 @@ public class Robot extends TimedRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
+        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
         Scheduler.getInstance().run();
     }
 

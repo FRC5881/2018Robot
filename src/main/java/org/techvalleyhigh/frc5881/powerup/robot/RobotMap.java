@@ -33,10 +33,6 @@ public class RobotMap {
         driveFrontLeft.setName("ArcadeDrive", "Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-        driveFrontLeft.config_kP(0 , 0.013, 10);
-        driveFrontLeft.config_kI(0, 0.001, 10);
-        driveFrontLeft.config_kD(0, 0.012, 10);
-        driveFrontLeft.config_kF(0, 0, 10);
         driveFrontLeft.setSensorPhase(true);
 
         driveBackLeft = new WPI_TalonSRX(11);
@@ -48,11 +44,6 @@ public class RobotMap {
         driveFrontRight.setName("ArcadeDrive", "Front Right");
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
-        driveFrontRight.config_kP(0 , 0.013, 10);
-        driveFrontRight.config_kI(0, 0.001, 10);
-        driveFrontRight.config_kD(0, 0.012, 10);
-        driveFrontRight.config_kF(0, 0, 10);
-
 
         driveBackRight = new WPI_TalonSRX(13);
         driveBackRight.setName("ArcadeDrive", "Back Right");

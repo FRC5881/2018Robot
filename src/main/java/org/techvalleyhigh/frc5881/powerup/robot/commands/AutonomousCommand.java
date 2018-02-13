@@ -33,7 +33,7 @@ public class AutonomousCommand extends CommandGroup {
             } else if (routine.equals("Foot")) {
                 Waypoint[] foot = new Waypoint[] {
                         new Waypoint(0, 0, 0),
-                        new Waypoint(1, 0, 0),
+                        new Waypoint(3, 0, 0),
                 };
                 addSequential(new MotionProfile(foot));
             }

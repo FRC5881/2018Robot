@@ -4,9 +4,9 @@ import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
@@ -14,6 +14,8 @@ import jaci.pathfinder.modifiers.TankModifier;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
+
+import java.util.ArrayList;
 
 
 /**
@@ -26,6 +28,10 @@ public class MotionProfile extends Command {
 
     private Waypoint[] waypoints;
     private MotionProfileStatus status = new MotionProfileStatus();
+    private ArrayList<TrajectoryPoint> left = new ArrayList<>();
+    private ArrayList<TrajectoryPoint> right = new ArrayList<>();
+    private Integer bufferedLeft = 0;
+    private Integer bufferedRight = 0;
 
     // TODO: Once motion profiling works add Trajectory.Config to constructor to handle different speeds / accelerations / etc
 
@@ -56,6 +62,9 @@ public class MotionProfile extends Command {
      */
     protected void initialize() {
         System.out.println("INIT");
+        // Init PID controls
+        Robot.driveControl.initPID();
+
         // Change control modes
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
         RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
@@ -69,7 +78,7 @@ public class MotionProfile extends Command {
 
         // Set up configs
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-                Trajectory.Config.SAMPLES_HIGH, 0.05, 1, 4, 60);
+                Trajectory.Config.SAMPLES_HIGH, 0.02, Robot.driveControl.getVelocity(), Robot.driveControl.getAcceleration(), 60);
 
         // Generate trajectory
         Trajectory trajectory = Pathfinder.generate(this.waypoints, config);
@@ -83,8 +92,8 @@ public class MotionProfile extends Command {
         Trajectory rightTrajectory = modifier.getRightTrajectory();
 
         // Push trajectories into the talons
-        pushTrajectory(leftTrajectory, RobotMap.driveFrontLeft);
-        pushTrajectory(rightTrajectory, RobotMap.driveFrontRight);
+        pushTrajectory(leftTrajectory, left);
+        pushTrajectory(rightTrajectory, right);
 
         // Make sure there's some points in the buffer before going at it
         RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
@@ -92,14 +101,29 @@ public class MotionProfile extends Command {
     }
 
     protected void execute() {
-        //System.out.println("Execute");
-        // Update the status
+        MotionProfileStatus leftStatus = new MotionProfileStatus();
+        RobotMap.driveFrontLeft.getMotionProfileStatus(leftStatus);
+        MotionProfileStatus rightStatus = new MotionProfileStatus();
+        RobotMap.driveFrontRight.getMotionProfileStatus(rightStatus);
 
-        /*
-        if (status.btmBufferCnt > kMinPointsTalon) {
+        SmartDashboard.putNumber("Right Error", RobotMap.driveFrontRight.getClosedLoopError(0));
+        SmartDashboard.putNumber("Left Error", RobotMap.driveFrontLeft.getClosedLoopError(0));
 
+        for (int i = 0; i < leftStatus.topBufferRem && bufferedLeft < left.size(); i++) {
+            //System.out.println(leftStatus.topBufferRem + " " + leftStatus.btmBufferCnt);
+            //System.out.println("Time " + System.nanoTime());
+            MotionProfileStatus test = new MotionProfileStatus();
+            RobotMap.driveFrontLeft.getMotionProfileStatus(test);
+            //System.out.println(test.isLast);
+
+            RobotMap.driveFrontLeft.pushMotionProfileTrajectory(left.get(bufferedLeft));
+            bufferedLeft++;
         }
-        */
+
+        for (int i = 0; i < rightStatus.topBufferRem && bufferedRight < right.size(); i++) {
+            RobotMap.driveFrontRight.pushMotionProfileTrajectory(right.get(bufferedRight));
+            bufferedRight++;
+        }
     }
 
     protected void end() {
@@ -107,8 +131,10 @@ public class MotionProfile extends Command {
         notifier.stop();
 
         System.out.println("end");
-        RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
-        RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
+        //System.out.println(RobotMap.driveFrontRight.getSelectedSensorPosition(0));
+        RobotMap.driveFrontRight.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
+        RobotMap.driveFrontLeft.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
+        Robot.driveControl.stopDrive();
         System.out.println("Motion profile finished");
     }
 
@@ -117,19 +143,29 @@ public class MotionProfile extends Command {
     }
 
     protected boolean isFinished() {
-        RobotMap.driveFrontRight.getMotionProfileStatus(status);
-        System.out.println("Error: " + RobotMap.driveFrontLeft.getClosedLoopError(0));
-        //System.out.println("status: " + status.activePointValid);
-        //System.out.println("isLast: " + status.isLast);
-        return RobotMap.driveFrontLeft.getClosedLoopError(0) == 0;
+        MotionProfileStatus status = new MotionProfileStatus();
+        RobotMap.driveFrontLeft.getMotionProfileStatus(status);
+
+        //System.out.println(bufferedLeft);
+        System.out.println(status.btmBufferCnt);
+        System.out.println("isLast: " + status.isLast);
+        System.out.println("activeValid: " + status.activePointValid);
+        return status.btmBufferCnt == 0;
+//        return status.isLast && status.activePointValid && bufferedLeft == left.size();
+
+        //System.out.println("Error: " + RobotMap.driveFrontLeft.getClosedLoopError(0) + " , " + RobotMap.driveFrontRight.getClosedLoopError(0));
+
+        //RobotMap.driveFrontRight.getMotionProfileStatus(status);
+
+        //return Math.abs(RobotMap.driveFrontLeft.getClosedLoopError(0)) <= Robot.driveControl.getAllowed_Error()
+        //        || Math.abs(RobotMap.driveFrontRight.getClosedLoopError(0)) < Robot.driveControl.getAllowed_Error();
     }
 
     /**
      * Loops through each segment in trajectory and pushes it into talon's buffer
      * @param trajectory input trajectory to loop through
-     * @param talon the talon to trajectory into
      */
-    private void pushTrajectory(Trajectory trajectory, WPI_TalonSRX talon) {
+    private void pushTrajectory(Trajectory trajectory, ArrayList<TrajectoryPoint> list) {
         TrajectoryPoint point = new TrajectoryPoint();
 
         for (int i = 0; i < trajectory.length(); i++) {
@@ -153,7 +189,7 @@ public class MotionProfile extends Command {
             point.zeroPos = i == 0;
             point.isLastPoint = (i + 1) == trajectory.length();
 
-
+            /*
             System.out.print("pos: " + point.position);
             System.out.print( " velo: " + point.velocity);
             System.out.print( " heading: " + point.headingDeg);
@@ -161,10 +197,10 @@ public class MotionProfile extends Command {
             System.out.print(" profile1: " + point.profileSlotSelect1);
             System.out.print(" zero: " + point.zeroPos);
             System.out.println(" is last point: " + point.isLastPoint);
-
-
-            // Finally push into the talon
-            talon.pushMotionProfileTrajectory(point);
+            */
+            list.add(point);
         }
+
+        System.out.println("list " + list.size());
     }
 }

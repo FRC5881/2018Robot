@@ -33,10 +33,16 @@ public class DriveControl extends Subsystem {
 
     /**
      * Used for converting feet to ticks.
-     * ticks per foot = 2( pi )( wheel radius ) / (ticks per rotation)
-     * 2( pi )( 0.5 ) / 4096 = pi / 4096
+     * 1 rotation = 2( pi )( wheel radius )
+     * 1 rotation = 2( pi )( 1/4 feet )
+     * 1 rotation = pi / 2 feet
+     * 1 tick = pi / (2 * 1440) feet
+     * k ticks = k * pi / (2 * 1440) feet // k is number of ticks
+     * d = pi * k / (2 * 1440) // d feet to travel
+     * 2 * 1440 * d / pi feet = k ticks
+     * 2 * 1440 / pi = ticks per foot
      */
-    public static final double ticksPerFoot = 4096 / Math.PI;
+    public static final double ticksPerFoot = 2 * 1440 / Math.PI;
 
 
     // ----------------------- Subsystem Control ----------------------- //
@@ -81,7 +87,24 @@ public class DriveControl extends Subsystem {
         // Joystick sensitivities
         SmartDashboard.putNumber(X_AXIS_SENSITIVITY, -1);
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
+
+        // Pid controls
+        SmartDashboard.putNumber("Left kP", 0.013);
+        SmartDashboard.putNumber("Left kI", 0.001);
+        SmartDashboard.putNumber("Left kD", 0.012);
+        SmartDashboard.putNumber("Left kF", 0);
+
+        SmartDashboard.putNumber("Right kP", 0.013);
+        SmartDashboard.putNumber("Right kI", 0.001);
+        SmartDashboard.putNumber("Right kD", 0.012);
+        SmartDashboard.putNumber("Right kF", 0);
+
+        SmartDashboard.putNumber("Allowed Error", 5);
+
+        SmartDashboard.putNumber("Acceleration", 1);
+        SmartDashboard.putNumber("Velocity", 1);
     }
+
 
     @Override
     public void initDefaultCommand() {
@@ -183,7 +206,7 @@ public class DriveControl extends Subsystem {
         robotDrive.curvatureDrive(speed, rotation, isQuickTurn);
     }
 
-    public void rawTenkDrive(double right, double left) {
+    public void rawTankDrive(double right, double left) {
         updateDashboard();
 
         robotDrive.tankDrive(left, right);
@@ -197,5 +220,68 @@ public class DriveControl extends Subsystem {
         RobotMap.driveFrontLeft.stopMotor();
     }
 
-    // Add PID controls down here if need be
+    public void zeroEncoders() {
+        RobotMap.driveFrontRight.setSelectedSensorPosition(0, 0, 10);
+        RobotMap.driveFrontLeft.setSelectedSensorPosition(0, 0,10);
+    }
+
+    public void initPID() {
+        zeroEncoders();
+
+        RobotMap.driveFrontLeft.config_kP(0 , 1023 * getLeft_kP(), 10);
+        RobotMap.driveFrontLeft.config_kI(0, 1023 * getLeft_kI(), 10);
+        RobotMap.driveFrontLeft.config_kD(0, 1023 * getLeft_kD(), 10);
+        RobotMap.driveFrontLeft.config_kF(0, 1023 * getLeft_kF(), 10);
+
+        RobotMap.driveFrontRight.config_kP(0 , 1023 * getRight_kP(), 10);
+        RobotMap.driveFrontRight.config_kI(0, 1023 * getRight_kI(), 10);
+        RobotMap.driveFrontRight.config_kD(0, 1023 * getRight_kD(), 10);
+        RobotMap.driveFrontRight.config_kF(0, 1023 * getRight_kF(), 10);
+
+        RobotMap.driveFrontLeft.configAllowableClosedloopError(0, 100, 10);
+    }
+
+    public double getLeft_kP() {
+        return SmartDashboard.getNumber("Left kP", 0.013);
+    }
+
+    public double getLeft_kI() {
+        return SmartDashboard.getNumber("Left kI", 0.001);
+    }
+
+    public double getLeft_kD() {
+        return SmartDashboard.getNumber("Left kD", 0.012);
+    }
+
+    public double getLeft_kF() {
+        return SmartDashboard.getNumber("Left kF", 0d);
+    }
+
+    public double getRight_kP() {
+        return SmartDashboard.getNumber("Right kP", 0.013);
+    }
+
+    public double getRight_kI() {
+        return SmartDashboard.getNumber("Right kI", 0.001);
+    }
+
+    public double getRight_kD() {
+        return SmartDashboard.getNumber("Right kD", 0.012);
+    }
+
+    public double getRight_kF() {
+        return SmartDashboard.getNumber("Right kF", 0d);
+    }
+
+    public double getAllowed_Error() {
+        return SmartDashboard.getNumber("Allowed Error", 5);
+    }
+
+    public double getAcceleration() {
+        return SmartDashboard.getNumber("Acceleration", 1);
+    }
+
+    public double getVelocity() {
+        return SmartDashboard.getNumber("Velocity", 1);
+    }
 }
