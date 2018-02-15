@@ -69,11 +69,15 @@ public class DriveControl extends Subsystem {
         // Calibrate gyro on robot start up
         calibrateGyro();
 
+        setMotorSafety(false);
+
         // Create Differential ArcadeDrive Object
         SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft);
         SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight);
 
         robotDrive = new DifferentialDrive(m_left, m_right);
+        robotDrive.stopMotor();
+        robotDrive.setSafetyEnabled(false);
 
         // Set "dead zone" on the joystick stick inputs
         robotDrive.setDeadband(deadZone);
@@ -89,26 +93,28 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
 
         // Pid controls
-        SmartDashboard.putNumber("Left kP", 0.013);
-        SmartDashboard.putNumber("Left kI", 0.001);
-        SmartDashboard.putNumber("Left kD", 0.012);
-        SmartDashboard.putNumber("Left kF", 0);
+        SmartDashboard.putNumber("Left kP", 2.0);
+        SmartDashboard.putNumber("Left kI", 0.0);
+        SmartDashboard.putNumber("Left kD", 20.0);
+        SmartDashboard.putNumber("Left kF", 0.076);
 
-        SmartDashboard.putNumber("Right kP", 0.013);
-        SmartDashboard.putNumber("Right kI", 0.001);
-        SmartDashboard.putNumber("Right kD", 0.012);
-        SmartDashboard.putNumber("Right kF", 0);
+        SmartDashboard.putNumber("Right kP", 2.0);
+        SmartDashboard.putNumber("Right kI", 0.0);
+        SmartDashboard.putNumber("Right kD", 20.0);
+        SmartDashboard.putNumber("Right kF", 0.076);
 
         SmartDashboard.putNumber("Allowed Error", 5);
 
         SmartDashboard.putNumber("Acceleration", 1);
         SmartDashboard.putNumber("Velocity", 1);
+
+        setMotorSafety(false);
     }
 
 
     @Override
     public void initDefaultCommand() {
-        setDefaultCommand(new ArcadeDrive());
+        //setDefaultCommand(new ArcadeDrive());
     }
 
     // ----------------------- GYRO ----------------------- //
@@ -228,17 +234,24 @@ public class DriveControl extends Subsystem {
     public void initPID() {
         zeroEncoders();
 
-        RobotMap.driveFrontLeft.config_kP(0 , 1023 * getLeft_kP(), 10);
-        RobotMap.driveFrontLeft.config_kI(0, 1023 * getLeft_kI(), 10);
-        RobotMap.driveFrontLeft.config_kD(0, 1023 * getLeft_kD(), 10);
-        RobotMap.driveFrontLeft.config_kF(0, 1023 * getLeft_kF(), 10);
+        RobotMap.driveFrontLeft.config_kP(0 , getLeft_kP(), 10);
+        RobotMap.driveFrontLeft.config_kI(0, getLeft_kI(), 10);
+        RobotMap.driveFrontLeft.config_kD(0, getLeft_kD(), 10);
+        RobotMap.driveFrontLeft.config_kF(0, getLeft_kF(), 10);
 
-        RobotMap.driveFrontRight.config_kP(0 , 1023 * getRight_kP(), 10);
-        RobotMap.driveFrontRight.config_kI(0, 1023 * getRight_kI(), 10);
-        RobotMap.driveFrontRight.config_kD(0, 1023 * getRight_kD(), 10);
-        RobotMap.driveFrontRight.config_kF(0, 1023 * getRight_kF(), 10);
+        RobotMap.driveFrontRight.config_kP(0 , getRight_kP(), 10);
+        RobotMap.driveFrontRight.config_kI(0, getRight_kI(), 10);
+        RobotMap.driveFrontRight.config_kD(0, getRight_kD(), 10);
+        RobotMap.driveFrontRight.config_kF(0, getRight_kF(), 10);
 
         RobotMap.driveFrontLeft.configAllowableClosedloopError(0, 100, 10);
+    }
+
+    public void setMotorSafety(boolean enable) {
+        RobotMap.driveFrontLeft.setSafetyEnabled(enable);
+        RobotMap.driveFrontRight.setSafetyEnabled(enable);
+        RobotMap.driveBackRight.setSafetyEnabled(enable);
+        RobotMap.driveBackLeft.setSafetyEnabled(enable);
     }
 
     public double getLeft_kP() {

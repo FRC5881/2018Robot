@@ -107,7 +107,7 @@ public class MotionProfileExample {
      * @param talon
      *            reference to Talon object to fetch motion profile status from.
      */
-    public MotionProfileExample(TalonSRX talon) {
+    public MotionProfileExample(TalonSRX talon, double [][] points) {
         _talon = talon;
         /*
          * since our MP is 10ms per point, set the control frame rate and the
@@ -160,6 +160,7 @@ public class MotionProfileExample {
                  * something is wrong. Talon is not present, unplugged, breaker
                  * tripped
                  */
+                System.out.println("Motion Profile : Talon Timeout");
             } else {
                 --_loopTimeout;
             }
