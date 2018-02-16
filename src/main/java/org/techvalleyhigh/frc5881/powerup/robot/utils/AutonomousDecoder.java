@@ -53,7 +53,6 @@ public class AutonomousDecoder {
                 }
             }
         }
-        //
         System.out.println("Auto Options: " + resultArray);
         //Returns the array so that the array can be utilized in other places
         return resultArray;

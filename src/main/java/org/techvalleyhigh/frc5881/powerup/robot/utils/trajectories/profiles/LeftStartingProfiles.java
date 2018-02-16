@@ -1,7 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles;
 
 import jaci.pathfinder.Waypoint;
-import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 

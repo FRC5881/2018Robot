@@ -116,7 +116,7 @@ public class DriveControl extends Subsystem {
         robotDrive.arcadeDrive(move, turn, true);
     }
 
-    public void rawTenkDrive(double right, double left) {
+    public void rawTankDrive(double right, double left) {
         updateDashboard();
 
         robotDrive.tankDrive(left, right);

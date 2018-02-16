@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import static openrio.powerup.MatchData.GameFeature.*;
 import static openrio.powerup.MatchData.OwnedSide.*;
-import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.AutoTarget.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
 /**

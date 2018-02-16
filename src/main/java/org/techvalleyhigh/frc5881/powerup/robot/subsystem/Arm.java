@@ -12,7 +12,7 @@ public class Arm extends Subsystem {
      */
     private static final double deadZone = 1/5;
 
-    public static final double armSpeed = 0.5;
+    private static final double armSpeed = 0.5;
 
     public Arm() {
         super();
