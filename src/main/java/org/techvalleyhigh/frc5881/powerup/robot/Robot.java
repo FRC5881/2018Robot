@@ -8,13 +8,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
-
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
@@ -53,6 +48,7 @@ public class Robot extends TimedRobot {
 
         // Instantiate the command used for the autonomous period
         autonomousCommand = null;
+        driveCommand = null;
 
         // Add Auto commands to the smart dashboard
         autoChooser = new SendableChooser<>();
@@ -70,7 +66,7 @@ public class Robot extends TimedRobot {
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
 
-        SmartDashboard.putData(driveChooser);
+        SmartDashboard.putData("Drive Mode Selection", driveChooser);
 
         SmartDashboard.putData(Scheduler.getInstance());
 
@@ -103,12 +99,14 @@ public class Robot extends TimedRobot {
     /**
      * This function is called periodically during autonomous
      */
+    @Override
     public void autonomousPeriodic() {
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
         Scheduler.getInstance().run();
     }
 
+    @Override
     public void teleopInit() {
         // Ends autonomous command
         if (autonomousCommand != null) autonomousCommand.cancel();
@@ -125,6 +123,7 @@ public class Robot extends TimedRobot {
     /**
      * This function is called periodically during operator control
      */
+    @Override
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
     }
@@ -132,6 +131,7 @@ public class Robot extends TimedRobot {
     /**
      * This function is called periodically during test mode
      */
+    @Override
     public void testPeriodic() {
 
     }

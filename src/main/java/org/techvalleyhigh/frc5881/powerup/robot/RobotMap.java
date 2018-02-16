@@ -2,6 +2,7 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -56,6 +57,7 @@ public class RobotMap {
         LiveWindow.add(driveBackRight);
         driveBackRight.set(ControlMode.Follower, 12);
 
+        /*
         // Talons for the Elevator
         elevatorTalonMaster = new WPI_TalonSRX(4);
         elevatorTalonMaster.setName("elevator", "Master");
@@ -100,5 +102,6 @@ public class RobotMap {
         buddyBarDoubleSolenoid = new DoubleSolenoid(20,4, 5);
         buddyBarDoubleSolenoid.setName("Buddy Bar Solenoid", "Buddy Bar Solenoid One");
         LiveWindow.add(buddyBarDoubleSolenoid);
+        */
     }
 }

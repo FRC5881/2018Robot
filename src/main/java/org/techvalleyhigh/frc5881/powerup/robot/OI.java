@@ -3,12 +3,6 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmLower;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmRaise;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorClose;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorOpen;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLiftAuto;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLowerAuto;
 
 /**
  * Controls operator interfaces, such as controllers
@@ -144,19 +138,6 @@ public class OI {
         coPilotControllerRightBumper = new JoystickButton(xboxController2, BUTTON_RIGHT_BUMPER);
         coPilotControllerBackButton = new JoystickButton(xboxController2, BUTTON_BACK);
         coPilotControllerStartButton = new JoystickButton(xboxController2, BUTTON_START);
-
-        //When the "a" button is pressed the elevator rises to the next level
-        coPilotControllerButtonA.whenPressed(new ElevatorLowerAuto());
-        //When the y button is pressed the elevator rises to the next level
-        coPilotControllerButtonY.whenPressed(new ElevatorLiftAuto());
-        //When the x button is pressed the grabber closes
-        coPilotControllerButtonX.whenPressed(new ManipulatorClose());
-        //When the b button is pressed the grabber opens
-        coPilotControllerButtonB.whenPressed(new ManipulatorOpen());
-        //When the start button is pressed the arm rises
-        coPilotControllerStartButton.whenPressed(new ArmRaise());
-        //When the back button is pressed the arm lowers
-        coPilotControllerBackButton.whenPressed(new ArmLower());
 
         //Turns the rumble off
         xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
