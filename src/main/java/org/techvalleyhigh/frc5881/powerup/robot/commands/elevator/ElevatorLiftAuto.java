@@ -1,16 +1,13 @@
 /*
-package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
-
+package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ManipulatorOpen extends Command {
+public class ElevatorLiftAuto extends Command {
 
-    @Override
-    protected synchronized void requires(Subsystem subsystem) {
-        super.requires(Robot.manipulator);
+    public ElevatorLiftAuto() {
+        requires(Robot.elevator);
     }
 
     @Override
@@ -19,7 +16,7 @@ public class ManipulatorOpen extends Command {
 
     @Override
     protected void execute() {
-        Robot.manipulator.openGrabbers();
+        Robot.elevator.nextUpRise();
     }
 
     @Override
@@ -29,7 +26,7 @@ public class ManipulatorOpen extends Command {
 
     @Override
     protected void end() {
-        Robot.manipulator.stop();
+        Robot.elevator.stop();
     }
 
     @Override

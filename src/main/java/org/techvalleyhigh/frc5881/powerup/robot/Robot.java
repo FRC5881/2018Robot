@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
@@ -30,7 +31,6 @@ public class Robot extends TimedRobot {
     // Define auto code
     public static Command autonomousCommand;
     public static SendableChooser<AutonomousCommand> autoChooser;
-
 
     /**
      * This function is run when the robot is first started up and should be

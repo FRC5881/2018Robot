@@ -1,12 +1,10 @@
-/*
 package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
-
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ManipulatorOpen extends Command {
+public class ManipulatorClose extends Command {
 
     @Override
     protected synchronized void requires(Subsystem subsystem) {
@@ -19,7 +17,7 @@ public class ManipulatorOpen extends Command {
 
     @Override
     protected void execute() {
-        Robot.manipulator.openGrabbers();
+        Robot.manipulator.closeGrabbers();
     }
 
     @Override
@@ -37,4 +35,3 @@ public class ManipulatorOpen extends Command {
         end();
     }
 }
-*/

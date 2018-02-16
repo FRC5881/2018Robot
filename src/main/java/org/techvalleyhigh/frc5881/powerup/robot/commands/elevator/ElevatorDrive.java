@@ -1,12 +1,11 @@
-/*
-package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator;
+/*package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 
-public class ElevatorLower extends Command {
-    public ElevatorLower() {
+public class ElevatorDrive extends Command {
+
+    public ElevatorDrive() {
         requires(Robot.elevator);
     }
 
@@ -17,7 +16,8 @@ public class ElevatorLower extends Command {
 
     @Override
     protected void execute(){
-        Robot.elevator.drive(Elevator.lowerSpeed);
+        Robot.elevator.driveJoystickInput();
+        System.out.println("Running");
     }
 
     @Override
@@ -34,5 +34,4 @@ public class ElevatorLower extends Command {
     protected void interrupted() {
         end();
     }
-}
-*/
+}*/

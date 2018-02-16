@@ -1,10 +1,7 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import jaci.pathfinder.Waypoint;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.motion.GeneratedMotionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.LeftStartingProfiles;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.MiddleStartingProfiles;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.RightStartingProfiles;
