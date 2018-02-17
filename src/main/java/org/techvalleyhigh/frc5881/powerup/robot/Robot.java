@@ -10,6 +10,12 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
+
+import java.util.ArrayList;
+
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
@@ -50,15 +56,6 @@ public class Robot extends TimedRobot {
         autonomousCommand = null;
         driveCommand = null;
 
-        // Add Auto commands to the smart dashboard
-        autoChooser = new SendableChooser<>();
-        autoChooser.addDefault("Do Nothing", new AutonomousCommand("None"));
-        autoChooser.addObject("Figure 8", new AutonomousCommand("Figure Eight"));
-        autoChooser.addObject("Test", new AutonomousCommand("Test"));
-        autoChooser.addObject("Foot", new AutonomousCommand("Foot"));
-
-        SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
-
         // Drive Control Selection
         System.out.print("drive");
         driveChooser = new SendableChooser<>();
@@ -69,7 +66,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
 
         SmartDashboard.putData(Scheduler.getInstance());
-
     }
 
     /**
@@ -83,11 +79,29 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
         Scheduler.getInstance().run();
+
+        // TODO Pull SD Auto Value and check for valid
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)){
+            SmartDashboard.putBoolean("Paths Are Valid", true);
+        }
+        else {
+            System.out.println("Warning! Current chosen path is invalid! Please input path number!");
+            SmartDashboard.putBoolean("Paths Are Valid", false);
+        }
     }
 
     @Override
     public void autonomousInit() {
+        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
+
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
+            ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
+
+            //TODO Check and run
+            AutonomousCommand run = new AutonomousCommand(autoOptions);
+        }
         if (autoChooser.getSelected() != null) {
             autonomousCommand = autoChooser.getSelected();
             autonomousCommand.start();

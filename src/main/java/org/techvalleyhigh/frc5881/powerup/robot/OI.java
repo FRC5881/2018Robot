@@ -118,7 +118,6 @@ public class OI {
         // Button 7 == Back Button
         // Button 8 == Start Button
 
-
         driveControllerButtonA = new JoystickButton(xboxController, BUTTON_A);
         driveControllerButtonB = new JoystickButton(xboxController, BUTTON_B);
         driveControllerButtonX = new JoystickButton(xboxController, BUTTON_X);

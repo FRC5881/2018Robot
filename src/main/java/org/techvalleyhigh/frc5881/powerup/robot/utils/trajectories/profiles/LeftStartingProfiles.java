@@ -6,12 +6,12 @@ import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUti
 
 import java.util.HashMap;
 
-import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.AutoTarget.*;
+import static openrio.powerup.MatchData.GameFeature.*;
+import static openrio.powerup.MatchData.OwnedSide.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
-
 /**
- * Class full of static variables storing autonomous routines starting in the left position
+ * Static class storing autonomous routines starting in the left position
  */
 public class LeftStartingProfiles {
     private static HashMap<Integer, Autonomous> autos = new HashMap<>();
@@ -22,7 +22,7 @@ public class LeftStartingProfiles {
             new Waypoint(13.5, 23, 0), // Middle Point
             TrajectoryUtil.leftSideSwitch // Ending Point
     };
-    private static final Autonomous auto_0 = new Autonomous(path_0, defaultConfig, SWITCH_LEFT); // Autonomous Object
+    private static final Autonomous auto_0 = new Autonomous(path_0, defaultConfig, SWITCH_NEAR, LEFT); // Autonomous Object
     
     // Left Front Switch
     private static final Waypoint[] path_1 = new Waypoint[]{
@@ -30,7 +30,7 @@ public class LeftStartingProfiles {
             new Waypoint(8,18.25, 0),
             TrajectoryUtil.leftFrontSwitch
     };
-    private static final Autonomous auto_1 = new Autonomous(path_1, defaultConfig, SWITCH_LEFT);
+    private static final Autonomous auto_1 = new Autonomous(path_1, defaultConfig, SWITCH_NEAR, LEFT);
     
     // Right Side Switch
     private static final Waypoint[] path_2 = new Waypoint[]{
@@ -38,7 +38,7 @@ public class LeftStartingProfiles {
             new Waypoint(5, 11, Math.toRadians(-90)),
             TrajectoryUtil.rightSideSwitch
     };
-    private static final Autonomous auto_2 = new Autonomous(path_2, defaultConfig, SWITCH_RIGHT);
+    private static final Autonomous auto_2 = new Autonomous(path_2, defaultConfig, SWITCH_NEAR, RIGHT);
     
     // Left Side Scale
     private static final Waypoint[] path_3 = new Waypoint[]{
@@ -47,7 +47,7 @@ public class LeftStartingProfiles {
             new Waypoint(22, 24.5, 0),
             TrajectoryUtil.leftSideScale
     };
-    private static final Autonomous auto_3 = new Autonomous(path_3, defaultConfig, SCALE_LEFT);
+    private static final Autonomous auto_3 = new Autonomous(path_3, defaultConfig, SCALE, LEFT);
     
     // Left Front Scale
     private static final Waypoint[] path_4 = new Waypoint[]{
@@ -56,7 +56,7 @@ public class LeftStartingProfiles {
             new Waypoint(21, 21, Math.toRadians(-45)),
             TrajectoryUtil.leftFrontScale
     };
-    private static final Autonomous auto_4 = new Autonomous(path_4, defaultConfig, SCALE_LEFT);
+    private static final Autonomous auto_4 = new Autonomous(path_4, defaultConfig, SCALE, LEFT);
     
     // Right Side Scale
     private static final Waypoint[] path_5 = new Waypoint[]{
@@ -70,7 +70,7 @@ public class LeftStartingProfiles {
             new Waypoint(16.5, 3.25, Math.toRadians(-200)),
             TrajectoryUtil.rightSideScale
     };
-    private static final Autonomous auto_5 = new Autonomous(path_5, defaultConfig, SCALE_LEFT);
+    private static final Autonomous auto_5 = new Autonomous(path_5, defaultConfig, SCALE, RIGHT);
     
     // Right Front Scale
     private static final Waypoint[] path_6 = new Waypoint[]{
@@ -81,7 +81,7 @@ public class LeftStartingProfiles {
             new Waypoint(22.25, 6.5, 0),
             TrajectoryUtil.rightFrontScale
     };
-    private static final Autonomous auto_6 = new Autonomous(path_6, TrajectoryUtil.ourConfig(4.25, 4), SCALE_RIGHT);
+    private static final Autonomous auto_6 = new Autonomous(path_6, TrajectoryUtil.ourConfig(4.25, 4), SCALE, RIGHT);
     
     static {
         autos.put(0, auto_0);
@@ -93,10 +93,6 @@ public class LeftStartingProfiles {
         autos.put(6, auto_6);
     }
 
-    /**
-     * Get for autos hast map
-     * @return HashMap of autos
-     */
     public static HashMap<Integer, Autonomous> getAutos() {
         return autos;
     }

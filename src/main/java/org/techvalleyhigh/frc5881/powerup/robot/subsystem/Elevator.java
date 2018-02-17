@@ -80,12 +80,12 @@ public class Elevator extends Subsystem {
         System.out.println(getHeight());
         // If we're trying to go up, and we haven't passed max height -> it's okay
         if (speed > 0 && getHeight() < maxSafeRotations) {
-            elevatorTalonMaster.set(speed);
+            elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
             System.out.println("Up");
             // If we're trying to go down, and haven't passed bottom -> it's okay
         } else if(speed < 0 && getHeight() > 0) {
             System.out.println("Down");
-            elevatorTalonMaster.set(speed);
+            elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
         } else {
             elevatorTalonMaster.stopMotor();
         }
