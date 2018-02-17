@@ -36,7 +36,7 @@ public class RobotMap {
 
     public static void init() {
         //Talons
-        driveFrontLeft = new WPI_TalonSRX(0);
+        driveFrontLeft = new WPI_TalonSRX(10);
         driveFrontLeft.setName("Drive", "Talon Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -56,6 +56,11 @@ public class RobotMap {
         driveBackRight.setName("Drive", "Back Right");
         LiveWindow.add(driveBackRight);
         driveBackRight.set(ControlMode.Follower, 12);
+
+        // Gyro
+        digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+        digitalGyro.setName("Gyro", "Gyro");
+        LiveWindow.add(digitalGyro);
 
         /*
         // Talons for the Elevator
@@ -78,11 +83,6 @@ public class RobotMap {
         armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
-
-        // Gyro
-        digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
-        digitalGyro.setName("Gyro", "Gyro");
-        LiveWindow.add(digitalGyro);
 
         //Pneumatic Compressor
         compressor = new Compressor(20);

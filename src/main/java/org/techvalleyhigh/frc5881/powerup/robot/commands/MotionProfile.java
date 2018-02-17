@@ -5,9 +5,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.modifiers.TankModifier;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
@@ -21,16 +21,26 @@ public class MotionProfile extends Command {
     private WPI_TalonSRX leftMotor;
     private MotionProfileExample rightProfile;
     private MotionProfileExample leftProfile;
+    private Autonomous auto;
 
     public MotionProfile(Autonomous auto) {
+        System.out.println("MotionProfile Constructed");
         requires(Robot.driveControl);
+        this.auto = auto;
+    }
+
+    @Override
+    protected void initialize() {
+        System.out.println("Init profile");
+
+        // Get pid values
+        Robot.driveControl.initPID();
 
         // Define leading motor controllers
         leftMotor = RobotMap.driveFrontLeft;
         rightMotor = RobotMap.driveFrontRight;
 
         // ---- Create Trajectories ---- //
-
         // Generate trajectory
         Trajectory trajectory = Pathfinder.generate(auto.getPath(), auto.getConfig());
 
@@ -49,25 +59,20 @@ public class MotionProfile extends Command {
         // init profiles
         leftProfile = new MotionProfileExample(leftMotor, leftPoints);
         rightProfile = new MotionProfileExample(rightMotor, rightPoints);
-    }
 
-    @Override
-    protected void initialize() {
-        System.out.println("Init profile");
-        // Get pid values
-        Robot.driveControl.initPID();
+        // Convert seconds to milliseconds
+        int time = Double.valueOf(auto.getConfig().dt * 1000).intValue();
 
-        /* Our profile uses 10ms timing */
-        rightMotor.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs);
-        leftMotor.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs);
+        // Set timing for profile
+        rightMotor.configMotionProfileTrajectoryPeriod(time, Constants.kTimeoutMs);
+        leftMotor.configMotionProfileTrajectoryPeriod(time, Constants.kTimeoutMs);
 
         /*
          * status 10 provides the trajectory target for motion profile AND
          * motion magic
          */
-        rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
-        leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
-
+        rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
+        leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
 
         leftProfile.startMotionProfile();
         rightProfile.startMotionProfile();
@@ -81,6 +86,18 @@ public class MotionProfile extends Command {
          */
         leftProfile.control();
         rightProfile.control();
+
+        SmartDashboard.putNumber("target left", leftMotor.getActiveTrajectoryPosition());
+        SmartDashboard.putNumber("target right", rightMotor.getActiveTrajectoryPosition());
+
+        SmartDashboard.putNumber("Left Error", leftMotor.getClosedLoopError(0));
+        SmartDashboard.putNumber("Right Error", rightMotor.getClosedLoopError(0));
+
+        SmartDashboard.putNumber("left speed", leftMotor.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("right speed", rightMotor.getSelectedSensorVelocity(0));
+
+        SmartDashboard.putNumber("Target left speed", leftMotor.getActiveTrajectoryVelocity());
+        SmartDashboard.putNumber("Target right speed", rightMotor.getActiveTrajectoryVelocity());
 
         SetValueMotionProfile leftSetOutput = leftProfile.getSetValue();
         SetValueMotionProfile rightSetOutput = rightProfile.getSetValue();

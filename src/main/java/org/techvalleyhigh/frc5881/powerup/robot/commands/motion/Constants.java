@@ -1,15 +1,11 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.motion;
 
 public class Constants {
-    /** which Talon on CANBus */
-    public static final int kTalonID = 10;
-
     /**
-     * How many sensor units per rotation. Using Robot2 Magnetic Encoder.
+     * How many sensor units per rotation.
      *
-     * @link https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
      */
-    public static final double kSensorUnitsPerRotation = 4096;
+    public static final double kSensorUnitsPerRotation = 1440;
 
     /**
      * Which PID slot to pull gains from. Starting 2018, you can choose from

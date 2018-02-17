@@ -69,8 +69,6 @@ public class DriveControl extends Subsystem {
         // Calibrate gyro on robot start up
         calibrateGyro();
 
-        setMotorSafety(false);
-
         // Create Differential ArcadeDrive Object
         SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft);
         SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight);
@@ -78,6 +76,7 @@ public class DriveControl extends Subsystem {
         robotDrive = new DifferentialDrive(m_left, m_right);
         robotDrive.stopMotor();
         robotDrive.setSafetyEnabled(false);
+        setMotorSafety(false);
 
         // Set "dead zone" on the joystick stick inputs
         robotDrive.setDeadband(deadZone);
@@ -107,8 +106,6 @@ public class DriveControl extends Subsystem {
 
         SmartDashboard.putNumber("Acceleration", 1);
         SmartDashboard.putNumber("Velocity", 1);
-
-        setMotorSafety(false);
     }
 
 
@@ -189,7 +186,7 @@ public class DriveControl extends Subsystem {
         double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
         double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
 
-        robotDrive.curvatureDrive(scaleXAxis(x), scaleYAxis(y), isQuickTurn);
+        robotDrive.curvatureDrive(scaleXAxis(x), scaleYAxis(y), !isQuickTurn);
     }
 
     public void tankJoystickInputs() {

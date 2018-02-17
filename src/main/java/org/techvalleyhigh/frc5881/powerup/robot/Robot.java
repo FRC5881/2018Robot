@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -10,8 +11,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
 
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ public class Robot extends TimedRobot {
 
     // Define auto code
     public static Command autonomousCommand;
-    public static SendableChooser<AutonomousCommand> autoChooser;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -56,8 +54,9 @@ public class Robot extends TimedRobot {
         autonomousCommand = null;
         driveCommand = null;
 
+        SmartDashboard.putString("Possible Paths", "None");
+
         // Drive Control Selection
-        System.out.print("drive");
         driveChooser = new SendableChooser<>();
         driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
@@ -79,34 +78,39 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        updateSensors();
+
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
         Scheduler.getInstance().run();
 
-        // TODO Pull SD Auto Value and check for valid
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)){
             SmartDashboard.putBoolean("Paths Are Valid", true);
         }
         else {
-            System.out.println("Warning! Current chosen path is invalid! Please input path number!");
+            //System.out.println("Warning! Current chosen path is invalid! Please input path number!");
             SmartDashboard.putBoolean("Paths Are Valid", false);
         }
     }
 
     @Override
     public void autonomousInit() {
+        System.out.println("Auto Init");
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
 
-        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
-            ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
+        // Clear trajectories and PID set point
+        RobotMap.driveFrontRight.clearMotionProfileTrajectories();
+        RobotMap.driveFrontLeft.clearMotionProfileTrajectories();
 
-            //TODO Check and run
-            AutonomousCommand run = new AutonomousCommand(autoOptions);
-        }
-        if (autoChooser.getSelected() != null) {
-            autonomousCommand = autoChooser.getSelected();
+        RobotMap.driveFrontRight.pidWrite(0);
+        RobotMap.driveFrontLeft.pidWrite(0);
+
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
+            // Get int ranges
+            ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
+            // Set autonomous command
+            System.out.println("Command");
+            autonomousCommand = new AutonomousCommand(autos);
             autonomousCommand.start();
-        } else {
-            System.out.println("Null Auto Chooser");
         }
     }
 
@@ -115,8 +119,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+        updateSensors();
+        MotionProfileStatus status = new MotionProfileStatus();
+        RobotMap.driveFrontLeft.getMotionProfileStatus(status);
+        SmartDashboard.putNumber("Buffer Count", status.btmBufferCnt);
+
         Scheduler.getInstance().run();
     }
 
@@ -139,6 +146,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+        updateSensors();
         Scheduler.getInstance().run();
     }
 
@@ -148,5 +156,10 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
 
+    }
+
+    public void updateSensors() {
+        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
     }
 }

@@ -87,6 +87,11 @@ public class MotionProfileExample {
     private static final int kNumLoopsTimeout = 10;
 
     /**
+     * Stores trajectory points
+     */
+    private double[][] _points;
+
+    /**
      * Lets create a periodic task to funnel our trajectory points into our talon.
      * It doesn't need to be very accurate, just needs to keep pace with the motion
      * profiler executer.  Now if you're trajectory points are slow, there is no need
@@ -107,8 +112,9 @@ public class MotionProfileExample {
      * @param talon
      *            reference to Talon object to fetch motion profile status from.
      */
-    public MotionProfileExample(TalonSRX talon, double [][] points) {
+    public MotionProfileExample(TalonSRX talon, double [][] _points) {
         _talon = talon;
+        this._points = _points;
         /*
          * since our MP is 10ms per point, set the control frame rate and the
          * notifer to half that
@@ -252,9 +258,10 @@ public class MotionProfileExample {
         retval = retval.valueOf(durationMs);
 
         /* check that it is valid */
-        if (retval.value != durationMs) {
-            DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);
-        }
+        //if (retval.value != durationMs) {
+          //  DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);
+        //}
+
         /* pass to caller */
         return retval;
     }
@@ -262,7 +269,7 @@ public class MotionProfileExample {
     /** Start filling the MPs to all of the involved Talons. */
     private void startFilling() {
         /* since this example only has one talon, just update that one */
-        startFilling(GeneratedMotionProfile.Points, GeneratedMotionProfile.kNumPoints);
+        startFilling(_points, _points.length);
     }
 
     private void startFilling(double[][] profile, int totalCnt) {
@@ -270,7 +277,7 @@ public class MotionProfileExample {
         /* create an empty point */
         TrajectoryPoint point = new TrajectoryPoint();
 
-        /* did we get an underrun condition since last time we checked ? */
+        /* did we get an under run condition since last time we checked ? */
         if (_status.hasUnderrun) {
             /*
              * clear the error. This flag does not auto clear, this way
@@ -282,7 +289,7 @@ public class MotionProfileExample {
          * just in case we are interrupting another MP and there is still buffer
          * points in memory, clear it.
          */
-        _talon.clearMotionProfileTrajectories();
+        System.out.println(_talon.clearMotionProfileTrajectories());
 
         /* set the base trajectory period to zero, use the individual trajectory period below */
         _talon.configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);

@@ -8,7 +8,7 @@ public class JaciToTalon {
         double[][] output = new double[trajectory.length()][3];
 
         // Save delta time form 1st segment, since they're all the same anyway
-        double dt = trajectory.get(0).dt;
+        double dt = trajectory.get(0).dt * 1000;
 
         // For each segment
         for (int i = 0; i < trajectory.length(); i++) {
