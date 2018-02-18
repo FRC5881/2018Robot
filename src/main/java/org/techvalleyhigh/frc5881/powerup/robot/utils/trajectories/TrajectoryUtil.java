@@ -26,7 +26,9 @@ public class TrajectoryUtil {
     public static final Trajectory.Config defaultConfig = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
             Trajectory.Config.SAMPLES_HIGH, 0.05, 5, 4, 60);
 
-    // Test Figure Eight
+    /**
+     * Set of waypoints that together generate a figure eight for testing
+     */
     public static final Waypoint[] testFigureEight = new Waypoint[] {
             new Waypoint(10, 5, Math.toRadians(0)),
             new Waypoint(15, 10, Math.toRadians(90)),
@@ -39,7 +41,12 @@ public class TrajectoryUtil {
             new Waypoint(10, 5, Math.toRadians(0))
     };
 
-    // Helper function ;)
+    /**
+     * Reflects inputs across the line y = 13.5 and negate angles
+     * Since the field is nicely symmetrical this allows us to flip auto paths from the left side to the right side
+     * @param input input waypoints
+     * @return
+     */
     public static Waypoint[] mirror(Waypoint[] input) {
         Waypoint[] ret = input.clone();
 
@@ -59,19 +66,54 @@ public class TrajectoryUtil {
      * And returns Trajectory.Config with everything else defaults
      * @param max_velocity
      * @param max_acceleration
-     * @return
+     * @return {Trajectory.Config} our default trajectory with edited velocity and acceleration
      */
     public static Trajectory.Config ourConfig(double max_velocity, double max_acceleration) {
         return new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
                 0.5, max_velocity, max_acceleration, 60);
     }
 
-    // Possible auto targets
+    /**
+     * Possible auto targets the bot can reach left/right is in respect of our drive team
+     */
     public enum AutoTarget {
+        /**
+         *Left side of the near switch
+         */
         SWITCH_LEFT,
+        /**
+         * Right side of the near switch
+         */
         SWITCH_RIGHT,
+        /**
+         * Left side of the scale
+         */
         SCALE_LEFT,
+        /**
+         * Right side of the scale
+         */
         SCALE_RIGHT,
+        /**
+         * Simply the autonomous line
+         */
         AUTO_LINE
+    }
+
+    /**
+     * Creates a custom figure eight according to the given "height" and "width"
+     *@param width The max width of the figure eight
+     *@param height The max length of the figure eight
+     */
+    public Waypoint[] CustomFigureEight(double width, double height) {
+        return new Waypoint[] {
+                new Waypoint(width / 2, 0, 0),
+                new Waypoint(width, height / 4, Math.PI / 4),
+                new Waypoint(width / 2, height / 2, Math.toRadians(135)),
+                new Waypoint(0, height / 2, Math.PI / 4),
+                new Waypoint(width / 2, height, 0),
+                new Waypoint(width, 3 * width / 4, -Math.PI / 4),
+                new Waypoint(width / 2, height / 2, Math.toRadians(-135)),
+                new Waypoint(0, height / 4, -Math.PI / 4)
+        };
     }
 }

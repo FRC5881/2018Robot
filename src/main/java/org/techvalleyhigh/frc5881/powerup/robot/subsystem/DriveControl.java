@@ -1,6 +1,5 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -8,20 +7,37 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.Drive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 
 
 public class DriveControl extends Subsystem {
-    /**
-     * String used for SmartDashboard key for Auto Gyro Tolerance
-     */
+    //SmartDashboard key for Auto Gyro Tolerance
     private static final String AUTO_GYRO_TOLERANCE = "Auto Gyro Tolerance (+- Deg)";
 
-    public static final double distancePerTick = 4 * 18.84954 / 4096;
+    // SmartDashboard key for Auto Turn Speed
+    private static final String AUTO_TURN_SPEED = "Auto Turn Speed %";
+
+    // SmartDashboard key for X_AXIS sensitivity
+    private static final String X_AXIS_SENSITIVITY = "X Axis sensitivity on drive controls";
+
+    // SmartDashboard key for Y_AXIS sensitivity
+    private static final String Y_AXIS_SENSITIVITY = "Y Axis sensitivity on drive controls";
+
+    // SmartDashboard key for ticks per foot scalar
+    private static final String SCALE_TICKS_PER_FOOT = "Ticks per foot scalar";
+
+
+    private static final double deadZone = 0.1;
 
     private DifferentialDrive robotDrive;
 
-    private static final double deadZone = 0.1;
+    /**
+     * Used for converting feet to ticks.
+     * ticks per foot = 2( pi )( wheel radius ) / (ticks per rotation)
+     * 2( pi )( 0.5 ) / 4096 = pi / 4096
+     */
+    public static final double ticksPerFoot = Math.PI / 4096;
+
 
     // ----------------------- Subsystem Control ----------------------- //
     /**
@@ -44,17 +60,32 @@ public class DriveControl extends Subsystem {
      * Initialize SmartDashboard and other local variables
      */
     public void init() {
+        // Calibrate gyro on robot start up
         calibrateGyro();
 
-        SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft, RobotMap.driveBackLeft);
-        SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight, RobotMap.driveBackRight);
+        // Create Differential ArcadeDrive Object
+        SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft);
+        SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight);
 
         robotDrive = new DifferentialDrive(m_left, m_right);
+
+        // Set "dead zone" on the joystick stick inputs
+        robotDrive.setDeadband(deadZone);
+
+        /* --- Put SmartDashboard values ---*/
+        // Auto values
+        SmartDashboard.putNumber(AUTO_GYRO_TOLERANCE, 5);
+        SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.25);
+        SmartDashboard.putNumber(SCALE_TICKS_PER_FOOT, 1);
+
+        // Joystick sensitivities
+        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 1);
+        SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, 1);
     }
 
     @Override
     public void initDefaultCommand() {
-        setDefaultCommand(new Drive());
+        setDefaultCommand(new ArcadeDrive());
     }
 
     // ----------------------- GYRO ----------------------- //
@@ -91,29 +122,65 @@ public class DriveControl extends Subsystem {
     }
 
     // ----------------------- DRIVE HANDLING ----------------------- //
-    public void driveJoystickInputs() {
-        double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
-        double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
-
-        // Add a dead zone to the joysticks
-        x = Math.abs(x) > deadZone ? x : 0;
-        y = Math.abs(y) > deadZone ? y : 0;
-
-        robotDrive.arcadeDrive(x, y, true);
+    /* --- Getters for SmartDashboard drive values --- */
+    public static double getAutoTurnSpeed() {
+        return SmartDashboard.getNumber(AUTO_TURN_SPEED, 0.25);
     }
 
-    /**
-     * Command the drive motors to move and turn without correcting for deadzone or scaling.
-     * Joystick input should NOT be fed through this function.
-     *
-     * @param move Motor amount to move from -1 to 1
-     * @param turn Motor amount to turn from -1 to 1
-     */
+    public static double getXAxisSensitivity() {
+        return SmartDashboard.getNumber(X_AXIS_SENSITIVITY, 1);
+    }
 
+    public static double getYAxisSensitivity() {
+        return SmartDashboard.getNumber(Y_AXIS_SENSITIVITY, 1);
+    }
+
+    public static double getScaleTicksPerFoot() {
+        return SmartDashboard.getNumber(SCALE_TICKS_PER_FOOT, 1);
+    }
+
+    /* --- Scale methods for joystick inputs --- */
+    // Scale joysticks by a constant
+    private double scaleXAxis(double x) {
+        return x * getXAxisSensitivity();
+    }
+    private double scaleYAxis(double y) {
+        return y * getYAxisSensitivity();
+    }
+
+    /* --- Joystick drive methods --- */
+    public void arcadeJoystickInputs() {
+        double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
+        double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
+
+        robotDrive.arcadeDrive(scaleXAxis(x), scaleYAxis(y), true);
+    }
+
+    public void curvatureJoystickInputs(boolean isQuickTurn) {
+        double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
+        double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
+
+        robotDrive.curvatureDrive(scaleXAxis(x), scaleYAxis(y), isQuickTurn);
+    }
+
+    public void tankJoystickInputs() {
+        double right = Robot.oi.xboxController.getRawAxis(OI.RightYAxis);
+        double left = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
+
+        robotDrive.tankDrive(scaleYAxis(right), scaleYAxis(left), true);
+    }
+
+    /* --- Raw drive methods to be used during autonomous --- */
     public void rawArcadeDrive(double move, double turn) {
         updateDashboard();
 
         robotDrive.arcadeDrive(move, turn, true);
+    }
+
+    public void rawCurvatureDrive(double speed, double rotation, boolean isQuickTurn) {
+        updateDashboard();
+
+        robotDrive.curvatureDrive(speed, rotation, isQuickTurn);
     }
 
     public void rawTankDrive(double right, double left) {
@@ -128,38 +195,7 @@ public class DriveControl extends Subsystem {
     public void stopDrive() {
         RobotMap.driveFrontRight.stopMotor();
         RobotMap.driveFrontLeft.stopMotor();
-        RobotMap.driveBackRight.stopMotor();
-        RobotMap.driveBackLeft.stopMotor();
     }
 
-    public void changeMode(ControlMode mode, double value) {
-        RobotMap.driveFrontRight.set(mode, value);
-        RobotMap.driveFrontLeft.set(mode, value);
-    }
-
-    // ----------------------- PID CONTROL ----------------------- //
-    /*
-    WORK IN PROGRESS
-    // TODO: PID CONTROL
-    private static final int kTimeoutMs = 10;
-    // TODO: What does error physically mean?
-    private static final int kError = 1;
-
-    public void initPid() {
-        RobotMap.driveFrontLeft.configAllowableClosedloopError(0, kError, kTimeoutMs);
-
-        RobotMap.driveFrontLeft.config_kF(0, 0.0, kTimeoutMs);
-        RobotMap.driveFrontLeft.config_kP(0, 0.1, kTimeoutMs);
-        RobotMap.driveFrontLeft.config_kI(0, 0.0, kTimeoutMs);
-        RobotMap.driveFrontLeft.config_kD(0, 0.0, kTimeoutMs);
-
-        RobotMap.driveFrontRight.configAllowableClosedloopError(0, kError, kTimeoutMs);
-
-        RobotMap.driveFrontRight.config_kF(0, 0.0, kTimeoutMs);
-        RobotMap.driveFrontRight.config_kP(0, 0.1, kTimeoutMs);
-        RobotMap.driveFrontRight.config_kI(0, 0.0, kTimeoutMs);
-        RobotMap.driveFrontRight.config_kD(0, 0.0, kTimeoutMs);
-    }
-         */
-
+    // Add PID controls down here if need be
 }

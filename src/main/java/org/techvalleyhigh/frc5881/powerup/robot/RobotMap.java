@@ -13,9 +13,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 public class RobotMap {
     //Gyro
     public static ADXRS450_Gyro digitalGyro;
-    //Talons for driving
-
-    // Talons
+    //Talons
     public static WPI_TalonSRX driveFrontLeft;
     public static WPI_TalonSRX driveFrontRight;
     public static WPI_TalonSRX driveBackLeft;
@@ -34,42 +32,31 @@ public class RobotMap {
 
     public static void init() {
         //Talons for Driving
-        driveFrontLeft = new WPI_TalonSRX(10);
-        driveFrontLeft.setName("Drive", "Front Left");
-        driveFrontLeft = new WPI_TalonSRX(0);
+        driveFrontLeft = new WPI_TalonSRX(10);;
         driveFrontLeft.setName("Drive Talon Left", "Talon Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
         driveBackLeft = new WPI_TalonSRX(11);
-        driveBackLeft.setName("Drive", "Back Left");
-        driveBackLeft = new WPI_TalonSRX(2);
         driveBackLeft.setName("Drive Talon Left", "Talon Back Left");
-        driveBackLeft.set(ControlMode.Follower, 0);
         LiveWindow.add(driveBackLeft);
         driveBackLeft.set(ControlMode.Follower, 0);
 
         driveFrontRight = new WPI_TalonSRX(12);
-        driveFrontRight.setName("Drive", "Front Right");
+        driveFrontRight.setName("ArcadeDrive", "Front Right");
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
-        driveBackRight = new WPI_TalonSRX(13);
-        driveBackRight.setName("Drive", "Back Right");
-        driveFrontRight = new WPI_TalonSRX(1);
-        driveFrontRight.setName("Drive Talon Right", "Talon Front Right");
-        LiveWindow.add(driveFrontRight);
-
         driveBackRight = new WPI_TalonSRX(3);
         driveBackRight.setName("Drive Talon Right", "Talon Back Right");
-        driveBackRight.set(ControlMode.Follower, 1);
         LiveWindow.add(driveBackRight);
-        //Talons for the Elevator
+        driveBackRight.set(ControlMode.Follower, 1);
+
+        //Elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
-        elevatorTalonMaster.setName("elevator", "Master");
+        elevatorTalonMaster.setName("Elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-        elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         elevatorTalonMaster.config_kD(0, 0.012, 20);
         elevatorTalonMaster.config_kI(0, 0.001, 20);
         elevatorTalonMaster.config_kP(0, 0.013, 20);

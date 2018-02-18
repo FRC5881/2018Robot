@@ -14,7 +14,6 @@ public class ArmLower extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    // Drive code to run during
     @Override
     protected void execute() {
       Robot.arm.driveJoystickInput();
@@ -25,8 +24,7 @@ public class ArmLower extends Command {
     protected boolean isFinished() {
         return false;
     }
-
-    // Called once/ after isFinished returns true
+    // Called once after isFinished returns true or command is interrupted
     @Override
     protected void end() {
         Robot.arm.stop();

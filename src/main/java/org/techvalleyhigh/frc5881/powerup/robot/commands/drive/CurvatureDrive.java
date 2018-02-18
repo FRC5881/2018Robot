@@ -1,18 +1,13 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-// WORK IN PROGRESS
 /**
- * Takes in relative degrees to turn during autonomous and will do just that, turn
+ * Runs Differential.curvatureDrive for testing
  */
-public class Turn extends Command {
-    private double relativeBearing;
-    private double absoluteBearing;
-
-    public Turn(double relativeBearing) {
-        this.relativeBearing = relativeBearing;
+public class CurvatureDrive extends Command {
+    public CurvatureDrive() {
         requires(Robot.driveControl);
     }
 
@@ -21,7 +16,6 @@ public class Turn extends Command {
      */
     @Override
     protected void initialize() {
-        this.absoluteBearing = this.relativeBearing + Robot.driveControl.getGyroAngle();
     }
 
     /**
@@ -30,16 +24,17 @@ public class Turn extends Command {
 
     @Override
     protected void execute() {
-        Robot.driveControl.rawCurvatureDrive(0, relativeBearing, true);
+        boolean isQuickTurn = Robot.oi.aButton.get();
+        Robot.driveControl.curvatureJoystickInputs(isQuickTurn);
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * End command once we are within gyro tolerance of our absolute bearing
+     * Since this is a drive command we never want it to end
      */
     @Override
     protected boolean isFinished() {
-        return Math.abs(this.absoluteBearing - Robot.driveControl.getGyroAngle()) < Robot.driveControl.getAutoGyroTolerance();
+        return false;
     }
 
     /**

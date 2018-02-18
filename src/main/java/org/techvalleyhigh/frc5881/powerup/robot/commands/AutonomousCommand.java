@@ -9,10 +9,10 @@ import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.Left
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.MiddleStartingProfiles;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.RightStartingProfiles;
 
+import java.util.HashMap;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class AutonomousCommand extends CommandGroup {
     @Override
@@ -29,7 +29,8 @@ public class AutonomousCommand extends CommandGroup {
         autos.putAll(LeftStartingProfiles.getAutos());
         autos.putAll(MiddleStartingProfiles.getAutos());
         autos.putAll(RightStartingProfiles.getAutos());
-        // Pass through decoder
+
+         // Pass through decoder
         ArrayList<Integer> chosen = AutonomousDecoder.getIntRanges(routine);
         // Filter
         for (Integer i: chosen) {
@@ -38,7 +39,7 @@ public class AutonomousCommand extends CommandGroup {
             if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
                 addSequential(new MotionProfile(auto.getPath()));
             }
-            
+
         }
         if (!routine.equals("None")) {
             // TODO: auto commands

@@ -97,12 +97,13 @@ public class OI {
      */
     public JoystickButton coPilotControllerRightBumper;
 
+    // Joysticks
     /**
      * Controls Left joystick, forward/backward for Arcade Drive
      */
     //TODO: figure out what number corresponds to the triggers on the controller
     public static int LeftYAxis = 1;
-
+    public static int LeftXAxis = 2;
     public static int RightYAxis = 3;
     public static int RightXAxis = 4;
 

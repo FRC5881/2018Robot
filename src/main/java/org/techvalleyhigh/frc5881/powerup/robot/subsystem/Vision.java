@@ -5,10 +5,9 @@ import org.techvalleyhigh.frc5881.powerup.robot.utils.vision.VisionCamera;
 
 
 /**
- *
+ * Holds vision cameras and preforms vision calculations
  */
 public class Vision extends Subsystem {
-    //We can totally have more than one camera up here
     /**
      * Holds the vision camera
      */
