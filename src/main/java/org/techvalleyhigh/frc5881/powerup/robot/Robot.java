@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
      */
     public void robotInit() {
         RobotMap.init();
+        elevator.enableRatchet();
 
         // Define Subsystems
         driveControl = new DriveControl();
@@ -88,6 +89,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        elevator.disableRatchet();
         System.out.println("We've been disabled :(");
     }
 
@@ -109,7 +111,6 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
-        Robot.elevator.enableRatchet();
 
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
             ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
