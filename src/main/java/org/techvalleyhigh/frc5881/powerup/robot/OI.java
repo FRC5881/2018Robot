@@ -3,6 +3,12 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmLower;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmRaise;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ManipulatorOpen;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLiftAuto;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorLowerAuto;
 
 /**
  * Controls operator interfaces, such as controllers
@@ -10,53 +16,95 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 public class OI {
     public GenericHID xboxController;
 
+    public GenericHID xboxController2;
+
     /**
      * a button is toggle on/off for intake
      */
-    public JoystickButton aButton;
+    public JoystickButton driveControllerButtonA;
 
     /**
      * b button is increase speed of shooter
      */
-    public JoystickButton bButton;
+    public JoystickButton driveControllerButtonB;
 
     /**
      * x button is decrease speed of shooter
      */
-    public JoystickButton xButton;
+    public JoystickButton driveControllerButtonX;
 
     /**
      * y button is being used for climber. Hold down y to climb
      */
-    public JoystickButton yButton;
+    public JoystickButton driveControllerButtonY;
 
     /**
      * back button is not being used as of 2/19
      */
-    public JoystickButton backButton;
+    public JoystickButton driveControllerBackButton;
 
     /**
      * start button is not being used as of 2/19
      */
-    public JoystickButton startButton;
+    public JoystickButton driveControllerStartButton;
 
     /**
      * left bumper is not being used as og 2/19
      */
-    public JoystickButton leftBumper;
+    public JoystickButton driveControllerLeftBumper;
 
     /**
      * right bumper is toggle on/off for shooter
      */
-    public JoystickButton rightBumper;
+    public JoystickButton driveControllerRightBumper;
 
+
+
+    public JoystickButton coPilotControllerButtonA;
+
+    /**
+     * b button is increase speed of shooter
+     */
+    public JoystickButton coPilotControllerButtonB;
+
+    /**
+     * x button is decrease speed of shooter
+     */
+    public JoystickButton coPilotControllerButtonX;
+
+    /**
+     * y button is being used for climber. Hold down y to climb
+     */
+    public JoystickButton coPilotControllerButtonY;
+
+    /**
+     * back button is not being used as of 2/19
+     */
+    public JoystickButton coPilotControllerBackButton;
+
+    /**
+     * start button is not being used as of 2/19
+     */
+    public JoystickButton coPilotControllerStartButton;
+
+    /**
+     * left bumper is not being used as og 2/19
+     */
+    public JoystickButton coPilotControllerLeftBumper;
+
+    /**
+     * right bumper is toggle on/off for shooter
+     */
+    public JoystickButton coPilotControllerRightBumper;
+
+    // Joysticks
     /**
      * Controls Left joystick, forward/backward for Arcade Drive
      */
+    //TODO: figure out what number corresponds to the triggers on the controller
     public static int LeftYAxis = 1;
-    /**
-     * Controls right joystick, Turning For Arcade Drive
-     */
+    public static int LeftXAxis = 2;
+    public static int RightYAxis = 3;
     public static int RightXAxis = 4;
 
     public static int BUTTON_A = 1;
@@ -71,24 +119,50 @@ public class OI {
     public OI() {
         xboxController = new Joystick(0);
 
+        xboxController2 = new Joystick(1);
+
         // Button 1 == A Button
         // Button 2 == B Button
         // Button 3 == X Button
         // Button 4 == Y Button
-        // Button 5 == leftBumper
-        // Button 6 == rightBumper
-        // Button 7 == backButton
-        // Button 8 == startButton
+        // Button 5 == Left Bumper
+        // Button 6 == Right Bumper
+        // Button 7 == Back Button
+        // Button 8 == Start Button
 
-        aButton = new JoystickButton(xboxController, BUTTON_A);
-        bButton = new JoystickButton(xboxController, BUTTON_B);
-        xButton = new JoystickButton(xboxController, BUTTON_X);
-        yButton = new JoystickButton(xboxController, BUTTON_Y);
-        leftBumper = new JoystickButton(xboxController, BUTTON_LEFT_BUMPER);
-        rightBumper = new JoystickButton(xboxController, BUTTON_RIGHT_BUMPER);
-        backButton = new JoystickButton(xboxController, BUTTON_BACK);
-        startButton = new JoystickButton(xboxController, BUTTON_START);
+        driveControllerButtonA = new JoystickButton(xboxController, BUTTON_A);
+        driveControllerButtonB = new JoystickButton(xboxController, BUTTON_B);
+        driveControllerButtonX = new JoystickButton(xboxController, BUTTON_X);
+        driveControllerButtonY = new JoystickButton(xboxController, BUTTON_Y);
+        driveControllerLeftBumper = new JoystickButton(xboxController, BUTTON_LEFT_BUMPER);
+        driveControllerRightBumper = new JoystickButton(xboxController, BUTTON_RIGHT_BUMPER);
+        driveControllerBackButton = new JoystickButton(xboxController, BUTTON_BACK);
+        driveControllerStartButton = new JoystickButton(xboxController, BUTTON_START);
 
-        // Put button controls down here
+        //buttons for the second controller
+        coPilotControllerButtonA = new JoystickButton(xboxController2, BUTTON_A);
+        coPilotControllerButtonB = new JoystickButton(xboxController2, BUTTON_B);
+        coPilotControllerButtonX = new JoystickButton(xboxController2, BUTTON_X);
+        coPilotControllerButtonY = new JoystickButton(xboxController2, BUTTON_Y);
+        coPilotControllerLeftBumper = new JoystickButton(xboxController2, BUTTON_LEFT_BUMPER);
+        coPilotControllerRightBumper = new JoystickButton(xboxController2, BUTTON_RIGHT_BUMPER);
+        coPilotControllerBackButton = new JoystickButton(xboxController2, BUTTON_BACK);
+        coPilotControllerStartButton = new JoystickButton(xboxController2, BUTTON_START);
+
+        //When the "a" button is pressed the elevator rises to the next level
+        coPilotControllerButtonA.whenPressed(new ElevatorLowerAuto());
+        //When the y button is pressed the elevator rises to the next level
+        coPilotControllerButtonY.whenPressed(new ElevatorLiftAuto());
+        //When the x button is pressed the grabber closes
+        coPilotControllerButtonX.whenPressed(new ManipulatorClose());
+        //When the b button is pressed the grabber opens
+        coPilotControllerButtonB.whenPressed(new ManipulatorOpen());
+        //When the start button is pressed the arm rises
+        coPilotControllerStartButton.whenPressed(new ArmRaise());
+        //When the back button is pressed the arm lowers
+        coPilotControllerBackButton.whenPressed(new ArmLower());
+
+        //Turns the rumble off
+        xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     }
 }

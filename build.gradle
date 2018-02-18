@@ -6,7 +6,7 @@ plugins {
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.07"
+    id "jaci.openrio.gradle.GradleRIO" version "2018.02.17"
 }
 
 group 'org.techvalleyhigh.frc5881.powerup'
@@ -43,6 +43,7 @@ dependencies {
     compile ctre()
     //compile navx(), bare
     compile openrio.powerup.matchData()
+    compile pathfinder()
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
