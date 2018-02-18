@@ -26,10 +26,11 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.motion;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class MotionProfileExample {
 
@@ -92,6 +93,16 @@ public class MotionProfileExample {
     private double[][] _points;
 
     /**
+     * Store current place in trajectory
+     */
+    private int currentPoint;
+
+    /**
+     * Stores whether drive talon is on the left side or not
+     */
+    private boolean isLeft;
+
+    /**
      * Lets create a periodic task to funnel our trajectory points into our talon.
      * It doesn't need to be very accurate, just needs to keep pace with the motion
      * profiler executer.  Now if you're trajectory points are slow, there is no need
@@ -112,9 +123,11 @@ public class MotionProfileExample {
      * @param talon
      *            reference to Talon object to fetch motion profile status from.
      */
-    public MotionProfileExample(TalonSRX talon, double [][] _points) {
+    public MotionProfileExample(TalonSRX talon, double [][] _points, boolean isLeft) {
         _talon = talon;
         this._points = _points;
+        this.currentPoint = 0;
+
         /*
          * since our MP is 10ms per point, set the control frame rate and the
          * notifer to half that
@@ -198,17 +211,34 @@ public class MotionProfileExample {
                          */
                         _state = 1;
                         _loopTimeout = kNumLoopsTimeout;
+
+                        /*
+                         * just in case we are interrupting another MP and there is still buffer
+                         * points in memory, clear it.
+                         */
+                        _talon.clearMotionProfileTrajectories();
+
+                        /* set the base trajectory period to zero, use the individual trajectory period below */
+                        _talon.configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
                     }
                     break;
-                case 1: /*
-                 * wait for MP to stream to Talon, really just the first few
-                 * points
-                 */
-                    /* do we have a minimum numberof points in Talon */
+                case 1:
                     if (_status.btmBufferCnt > kMinPointsInTalon) {
                         /* start (once) the motion profile */
-                        _setValue = SetValueMotionProfile.Enable;
                         /* MP will start once the control frame gets scheduled */
+                        _setValue = SetValueMotionProfile.Enable;
+                    }
+
+                    if (_status.btmBufferCnt + _status.topBufferCnt < Constants.maxTrajectories) {
+                        _loopTimeout = kNumLoopsTimeout;
+                        fill(currentPoint, Constants.maxTrajectories - (_status.btmBufferCnt + _status.topBufferCnt));
+                    }
+                    /*
+                     * wait for MP to stream to Talon, really just the first few
+                     * points
+                     */
+                    /* do we have a minimum numberof points in Talon */
+                    if (currentPoint >= _points.length) {
                         _state = 2;
                         _loopTimeout = kNumLoopsTimeout;
                     }
@@ -259,7 +289,7 @@ public class MotionProfileExample {
 
         /* check that it is valid */
         //if (retval.value != durationMs) {
-          //  DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);
+        //  DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);
         //}
 
         /* pass to caller */
@@ -269,10 +299,10 @@ public class MotionProfileExample {
     /** Start filling the MPs to all of the involved Talons. */
     private void startFilling() {
         /* since this example only has one talon, just update that one */
-        startFilling(_points, _points.length);
+        fill(currentPoint, Constants.maxTrajectories);
     }
 
-    private void startFilling(double[][] profile, int totalCnt) {
+    private void fill(int start, int cnt) {
 
         /* create an empty point */
         TrajectoryPoint point = new TrajectoryPoint();
@@ -285,35 +315,35 @@ public class MotionProfileExample {
              */
             _talon.clearMotionProfileHasUnderrun(0);
         }
-        /*
-         * just in case we are interrupting another MP and there is still buffer
-         * points in memory, clear it.
-         */
-        System.out.println(_talon.clearMotionProfileTrajectories());
-
-        /* set the base trajectory period to zero, use the individual trajectory period below */
-        _talon.configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
 
         /* This is fast since it's just into our TOP buffer */
-        for (int i = 0; i < totalCnt; ++i) {
-            double positionRot = profile[i][0];
-            double velocityRPM = profile[i][1];
+        for (int i = start; i < start + cnt && i < _points.length; ++i) {
+            Robot.driveControl.wrtieGyroPid(Robot.driveControl.getGyroAngle() - _points[i][3]);
+            double positionRot = _points[i][0];
+
+            SmartDashboard.putNumber("Is Left " + isLeft, Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1) / 2);
+
+            // Edit velocity to account for drift
+            double precentage = 1 + Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1) / 2;
+            double velocityRPM = _points[i][1] * precentage;
+
             /* for each point, fill our structure and pass it to API */
             point.position = positionRot * Constants.kSensorUnitsPerRotation; //Convert Revolutions to Units
             point.velocity = velocityRPM * Constants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
             point.headingDeg = 0; /* future feature - not used in this example*/
             point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
             point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
-            point.timeDur = GetTrajectoryDuration((int)profile[i][2]);
+            point.timeDur = GetTrajectoryDuration((int)_points[i][2]);
             point.zeroPos = false;
             if (i == 0)
                 point.zeroPos = true; /* set this to true on the first point */
 
             point.isLastPoint = false;
-            if ((i + 1) == totalCnt)
+            if ((i + 1) == _points.length)
                 point.isLastPoint = true; /* set this to true on the last point  */
 
             _talon.pushMotionProfileTrajectory(point);
+            currentPoint++;
         }
     }
     /**

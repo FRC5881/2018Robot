@@ -5,7 +5,7 @@ import jaci.pathfinder.Trajectory;
 public class JaciToTalon {
     public static double[][] makeProfile(Trajectory trajectory) {
         // Initiates 2d array
-        double[][] output = new double[trajectory.length()][3];
+        double[][] output = new double[trajectory.length()][4];
 
         // Save delta time form 1st segment, since they're all the same anyway
         double dt = trajectory.get(0).dt * 1000;
@@ -20,8 +20,11 @@ public class JaciToTalon {
             // Convert fps -> RPM
             double rpm = segment.velocity / (30d * Math.PI);
 
+            // Convert radians -> degrees
+            double heading = segment.heading * 180 / Math.PI;
+
             // Set value
-            output[i] = new double[] {rot, rpm, dt};
+            output[i] = new double[] {rot, rpm, dt, heading};
         }
         // Return
         return output;

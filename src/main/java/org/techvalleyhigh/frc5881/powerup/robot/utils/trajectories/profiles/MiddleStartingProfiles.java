@@ -122,6 +122,10 @@ public class MiddleStartingProfiles {
         autos.put(29, auto_29);
     }
 
+    /**
+     * Getter for all autos stored in this class
+     * @return HashMap of autos
+     */
     public static HashMap<Integer, Autonomous> getAutos() {
         return autos;
     }

@@ -4,6 +4,7 @@ import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
@@ -22,6 +23,12 @@ public class MotionProfile extends Command {
     private MotionProfileExample rightProfile;
     private MotionProfileExample leftProfile;
     private Autonomous auto;
+
+    /**
+     * gyrpPID outputs a value that needs to be applied to the power of drive motors to adjust heading
+     * -1 * output to left and output to right
+     */
+    private PIDController gyroPID;
 
     public MotionProfile(Autonomous auto) {
         System.out.println("MotionProfile Constructed");
@@ -57,8 +64,8 @@ public class MotionProfile extends Command {
         double[][] rightPoints = JaciToTalon.makeProfile(rightTrajectory);
 
         // init profiles
-        leftProfile = new MotionProfileExample(leftMotor, leftPoints);
-        rightProfile = new MotionProfileExample(rightMotor, rightPoints);
+        leftProfile = new MotionProfileExample(leftMotor, leftPoints, true);
+        rightProfile = new MotionProfileExample(rightMotor, rightPoints, false);
 
         // Convert seconds to milliseconds
         int time = Double.valueOf(auto.getConfig().dt * 1000).intValue();
@@ -87,6 +94,7 @@ public class MotionProfile extends Command {
         leftProfile.control();
         rightProfile.control();
 
+        // Put SmartDashboard values for testing
         SmartDashboard.putNumber("target left", leftMotor.getActiveTrajectoryPosition());
         SmartDashboard.putNumber("target right", rightMotor.getActiveTrajectoryPosition());
 
@@ -99,6 +107,7 @@ public class MotionProfile extends Command {
         SmartDashboard.putNumber("Target left speed", leftMotor.getActiveTrajectoryVelocity());
         SmartDashboard.putNumber("Target right speed", rightMotor.getActiveTrajectoryVelocity());
 
+        // Control motors
         SetValueMotionProfile leftSetOutput = leftProfile.getSetValue();
         SetValueMotionProfile rightSetOutput = rightProfile.getSetValue();
 
@@ -113,7 +122,7 @@ public class MotionProfile extends Command {
 
     @Override
     protected void end() {
-
+        System.out.println("Motion profile ended that shouldn't happen...");
     }
 
     @Override

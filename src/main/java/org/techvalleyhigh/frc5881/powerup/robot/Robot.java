@@ -122,7 +122,8 @@ public class Robot extends TimedRobot {
         updateSensors();
         MotionProfileStatus status = new MotionProfileStatus();
         RobotMap.driveFrontLeft.getMotionProfileStatus(status);
-        SmartDashboard.putNumber("Buffer Count", status.btmBufferCnt);
+        SmartDashboard.putNumber("Btm Buffer Count", status.btmBufferCnt);
+        SmartDashboard.putNumber("Top Buffer Count", status.topBufferCnt);
 
         Scheduler.getInstance().run();
     }
@@ -161,5 +162,9 @@ public class Robot extends TimedRobot {
     public void updateSensors() {
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+
+        SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
+        SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
+        SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
     }
 }

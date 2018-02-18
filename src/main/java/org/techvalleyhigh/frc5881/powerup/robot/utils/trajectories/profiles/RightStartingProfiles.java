@@ -95,6 +95,10 @@ public class RightStartingProfiles {
         autos.put(16, auto_16);
     }
 
+    /**
+     * Getter for all autos stored in this class
+     * @return HashMap of autos
+     */
     public static HashMap<Integer, Autonomous> getAutos() {
         return autos;
     }

@@ -74,54 +74,6 @@ public class TrajectoryUtil {
     }
 
     /**
-     * Possible auto targets the bot can reach left/right is in respect of our drive team
-     */
-    public enum AutoTarget {
-        /**
-         * Left side of the near switch
-         */
-        SWITCH_LEFT,
-
-        /**
-         * Right side of the near switch
-         */
-        SWITCH_RIGHT,
-
-        /**
-         * Left side of the switch
-         */
-        SCALE_LEFT,
-
-        /**
-         * Right side of the switch
-         */
-        SCALE_RIGHT,
-
-        /**
-         * Simply the autonomous line
-         */
-        AUTO_LINE
-    }
-
-    /**
-     * Possible starting locations
-     */
-    public enum StartingLocations {
-        /**
-         * Left starting location
-         */
-        LEFT,
-        /**
-         * Middle starting location
-         */
-        MIDDLE,
-        /**
-         * Right starting location
-         */
-        RIGHT
-    }
-
-    /**
      * Returns array of waypoints that paths out a figure eight fits tightly inside a rectangle
      * @param width width of the rectangle
      * @param height height of the rectangle

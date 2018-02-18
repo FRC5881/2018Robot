@@ -35,4 +35,10 @@ public class Constants {
      * Motor deadband, set to 1%.
      */
     public static final double kNeutralDeadband = 0.01;
+
+
+    /**
+     * Max number of points to hold in talon buffers
+     */
+    public static final int maxTrajectories = 6;
 }

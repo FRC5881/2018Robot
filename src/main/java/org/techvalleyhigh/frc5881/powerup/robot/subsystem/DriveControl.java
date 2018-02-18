@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -26,10 +27,15 @@ public class DriveControl extends Subsystem {
     // SmartDashboard key for ticks per foot scalar
     private static final String SCALE_TICKS_PER_FOOT = "Ticks per foot scalar";
 
-
+    // Joystick dead zone
     private static final double deadZone = 0.1;
 
+    // Robot drive
     public DifferentialDrive robotDrive;
+
+    // Gyro PID
+    private static PIDController gyroPID;
+    public double gyroPIDOutput;
 
     /**
      * Used for converting feet to ticks.
@@ -75,6 +81,8 @@ public class DriveControl extends Subsystem {
 
         robotDrive = new DifferentialDrive(m_left, m_right);
         robotDrive.stopMotor();
+
+        // Disable safety ¯\_(ツ)_/¯
         robotDrive.setSafetyEnabled(false);
         setMotorSafety(false);
 
@@ -88,7 +96,7 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(SCALE_TICKS_PER_FOOT, 1);
 
         // Joystick sensitivities
-        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, -1);
+        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 1);
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
 
         // Pid controls
@@ -102,10 +110,17 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Right kD", 20.0);
         SmartDashboard.putNumber("Right kF", 0.076);
 
+        SmartDashboard.putNumber("Gyro kP", 0.14);
+        SmartDashboard.putNumber("Gyro kI", 0.02);
+        SmartDashboard.putNumber("Gyro kD", 0.045);
+        SmartDashboard.putNumber("Gyro kF", 0.0);
+
         SmartDashboard.putNumber("Allowed Error", 5);
 
         SmartDashboard.putNumber("Acceleration", 1);
         SmartDashboard.putNumber("Velocity", 1);
+
+        initPID();
     }
 
 
@@ -241,7 +256,11 @@ public class DriveControl extends Subsystem {
         RobotMap.driveFrontRight.config_kD(0, getRight_kD(), 10);
         RobotMap.driveFrontRight.config_kF(0, getRight_kF(), 10);
 
-        RobotMap.driveFrontLeft.configAllowableClosedloopError(0, 100, 10);
+        gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
+                RobotMap.digitalGyro, output -> gyroPIDOutput = output);
+        gyroPID.enable();
+
+        // RobotMap.driveFrontLeft.configAllowableClosedloopError(0, 100, 10);
     }
 
     public void setMotorSafety(boolean enable) {
@@ -281,6 +300,42 @@ public class DriveControl extends Subsystem {
 
     public double getRight_kF() {
         return SmartDashboard.getNumber("Right kF", 0d);
+    }
+
+    public double getGyro_kP() {
+        return SmartDashboard.getNumber("Gyro kP", 0.14);
+    }
+
+    public double getGyro_kI() {
+        return SmartDashboard.getNumber("Gyro kI", 0.02);
+    }
+
+    public double getGyro_kD() {
+        return SmartDashboard.getNumber("Gyro kD", 0.045);
+    }
+
+    public double getGyro_kF() {
+        return SmartDashboard.getNumber("Gyro kF", 0.0);
+    }
+
+    /**
+     * edit the setpoint on the gyro PID
+     * @param setPoint absolute bearing in degrees.
+     */
+    public void wrtieGyroPid(double setPoint) {
+        gyroPID.setSetpoint(setPoint);
+    }
+
+    /**
+     * Get gyro pid setpoint
+     * @return
+     */
+    public double getGyroSetpoint() {
+        return gyroPID.getSetpoint();
+    }
+
+    public double getGyroError() {
+        return gyroPID.getError();
     }
 
     public double getAllowed_Error() {
