@@ -11,45 +11,75 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class RobotMap {
-    //Gyro
+    /**
+     * Gyro
+     */
     public static ADXRS450_Gyro digitalGyro;
-    //Talons
+    /**
+     * Front Left Drive Talon(is master for left)
+     */
     public static WPI_TalonSRX driveFrontLeft;
+    /**
+     * Front Right Drive Talon (is master for right)
+     */
     public static WPI_TalonSRX driveFrontRight;
+    /**
+     * Rear Left Drive Talon(is slave)
+     */
     public static WPI_TalonSRX driveBackLeft;
+    /**
+     * Rear Right Drive Talon(is slave)
+     */
     public static WPI_TalonSRX driveBackRight;
-    //Elevator Talons
+    /**
+     * Master Elevator Talon
+     */
     public  static WPI_TalonSRX elevatorTalonMaster;
+    /**
+     * Elevator Talon Follower
+     */
     public static WPI_TalonSRX elevatorTalonFollower;
-    //Talon for the arm
+    /**
+     * Arm Talon
+     */
     public static WPI_TalonSRX armTalon;
-    //Pneumatic Solenoids for the buddy bar and the grabber
+    /**
+     * Left Grabber Double Solenoid
+     */
     public static DoubleSolenoid leftGrabDoubleSolenoid;
+    /**
+     * Right Grabber Double Solenoid
+     */
     public static DoubleSolenoid rightGrabDoubleSolenoid;
+    /**
+     * Buddy Bar Double Solenoid
+     */
     public static DoubleSolenoid buddyBarDoubleSolenoid;
-    //Pneumatic Compressor for giving everything air
+    /**
+     * Pneumatic Compressor
+     */
     public static Compressor compressor;
 
     // TODO: Drive talons
     public static void init() {
         //Talons for Driving
-        driveFrontLeft = new WPI_TalonSRX(10);;
-        driveFrontLeft.setName("Drive Talon Left", "Talon Front Left");
+        driveFrontLeft = new WPI_TalonSRX(10);
+        driveFrontLeft.setName("Drive", "Talon Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
         driveBackLeft = new WPI_TalonSRX(11);
-        driveBackLeft.setName("Drive Talon Left", "Talon Back Left");
+        driveBackLeft.setName("Drive", "Talon Back Left");
         LiveWindow.add(driveBackLeft);
         driveBackLeft.set(ControlMode.Follower, 0);
 
         driveFrontRight = new WPI_TalonSRX(12);
-        driveFrontRight.setName("ArcadeDrive", "Front Right");
+        driveFrontRight.setName("Drive", "Talon Front Right");
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
         driveBackRight = new WPI_TalonSRX(3);
-        driveBackRight.setName("Drive Talon Right", "Talon Back Right");
+        driveBackRight.setName("Drive", "Talon Back Right");
         LiveWindow.add(driveBackRight);
         driveBackRight.set(ControlMode.Follower, 1);
 
@@ -64,7 +94,7 @@ public class RobotMap {
         LiveWindow.add(elevatorTalonMaster);
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
-        elevatorTalonFollower.setName("elevator", "Follow");
+        elevatorTalonFollower.setName("Elevator", "Follow");
         elevatorTalonFollower.set(ControlMode.Follower, 4);
         LiveWindow.add(elevatorTalonFollower);
 

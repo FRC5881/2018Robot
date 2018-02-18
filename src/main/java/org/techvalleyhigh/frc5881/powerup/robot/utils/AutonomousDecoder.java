@@ -4,7 +4,15 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Checks string to make sure it is a valid string of numbers, then compiles it into an array and returns it.
+ */
 public class AutonomousDecoder {
+    /**
+     * Checks to make sure that the given string is valid with the given criteria
+     * @param text is the string that is being checked whether or not it is valid
+     * @return returns true if the string is valid and false if it is not
+     */
     public static boolean isValidIntRangeInput(String text) {
         Pattern re_valid = Pattern.compile(
                 "# Validate comma separated integers/integer ranges.\n" +
@@ -28,6 +36,12 @@ public class AutonomousDecoder {
         if (m.matches())    return true;
         else                return false;
     }
+
+    /**
+     * Makes the given string into an array
+     * @param text is the string that is being made into an array
+     * @return Returns an array
+     */
     public static ArrayList<Integer> getIntRanges(String text) {
         Pattern re_next_val = Pattern.compile(
                 "# extract next integers/integer range value.    \n" +

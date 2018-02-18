@@ -29,8 +29,6 @@ public class Robot extends TimedRobot {
     public static Elevator elevator;
 
     // Define drive command
-
-    //public static Drive driveCommand;
     public static ElevatorDrive elevatorCommand;
     public static Command driveCommand;
 
