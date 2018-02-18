@@ -26,9 +26,13 @@ public class Robot extends TimedRobot {
     public static Manipulator manipulator;
     public static Arm arm;
     public static Elevator elevator;
+
     // Define drive command
+
     //public static Drive driveCommand;
     public static ElevatorDrive elevatorCommand;
+    public static Command driveCommand;
+
     public static SendableChooser<Command> driveChooser;
 
     // Define auto code
@@ -76,7 +80,7 @@ public class Robot extends TimedRobot {
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
 
-        SmartDashboard.putData(driveChooser);
+        SmartDashboard.putData("Drive Command", driveChooser);
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -100,7 +104,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putBoolean("Paths Are Valid", true);
         }
         else {
-            System.out.println("Warning! Current chosen path is invalid! Please input path number!");
+            //System.out.println("Warning! Current chosen path is invalid! Please input path number!");
             SmartDashboard.putBoolean("Paths Are Valid", false);
         }
     }
@@ -111,8 +115,6 @@ public class Robot extends TimedRobot {
 
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
             ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
-
-            //TODO Check and run
             AutonomousCommand run = new AutonomousCommand(autoOptions);
         }
         if (autoChooser.getSelected() != null) {
@@ -136,7 +138,9 @@ public class Robot extends TimedRobot {
 
         if (elevatorCommand != null) {
             elevatorCommand.start();
-        // Get selected drive command and start it
+            // Get selected drive command and start it
+        }
+
         if (driveChooser.getSelected() != null) {
             driveCommand = driveChooser.getSelected();
             driveCommand.start();

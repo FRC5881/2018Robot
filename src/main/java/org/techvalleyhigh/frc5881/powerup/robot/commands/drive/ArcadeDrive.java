@@ -22,8 +22,6 @@ public class ArcadeDrive extends Command {
 
     @Override
     protected void execute() {
-
-        Robot.driveControl.driveJoystickInputs();
         Robot.driveControl.arcadeJoystickInputs();
     }
 
