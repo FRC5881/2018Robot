@@ -7,23 +7,36 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
 
+/**
+ * Runs elevator either up to next level(switch or scale), down to next level or in which ever direction you move the thumb stick (Y-axis)
+ */
 public class Elevator extends Subsystem {
     /**
-     * Max height of linear rail
+     * Minimum amount of safe rotations
      */
-    // TODO: Find a real max height
-    //TODO: Find how many rotations it takes to get to switch
-    //TODO: Find how many rotations it takes to get elevator to scale
     private static final double minSafeRotations = 0;
+    // TODO: Find a real max height
+    /**
+     * Maximum amount of safe rotations
+     */
     private static final double maxSafeRotations = 10.0;
-
+    /**
+     * Dead zone
+     */
     private static final double deadZone = 1/5;
-
-    //8192 if needed to be known in the future
+    //TODO: Find how many rotations it takes to get to switch
+    /**
+     * Amount of rotations to get to height of switch with a cube
+     */
     private static final double switchRotations = 2;
-    //36864 ticks if needed to be known in the future
+    //TODO: Find how many rotations it takes to get elevator to scale
+    /**
+     * Amount of rotations to get to height of switch with a cube
+     */
     private static final double scaleRotations = 9;
-    // Percent to run motors
+    /**
+     * Percent of power to run motors at.
+     */
     private static final double raiseSpeed = 0.5;
 
     public Elevator(){

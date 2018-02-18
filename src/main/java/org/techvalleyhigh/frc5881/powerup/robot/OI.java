@@ -18,90 +18,28 @@ public class OI {
 
     public GenericHID xboxController2;
 
-    /**
-     * a button is toggle on/off for intake
-     */
     public JoystickButton driveControllerButtonA;
-
-    /**
-     * b button is increase speed of shooter
-     */
     public JoystickButton driveControllerButtonB;
-
-    /**
-     * x button is decrease speed of shooter
-     */
     public JoystickButton driveControllerButtonX;
-
-    /**
-     * y button is being used for climber. Hold down y to climb
-     */
     public JoystickButton driveControllerButtonY;
-
-    /**
-     * back button is not being used as of 2/19
-     */
     public JoystickButton driveControllerBackButton;
-
-    /**
-     * start button is not being used as of 2/19
-     */
     public JoystickButton driveControllerStartButton;
-
-    /**
-     * left bumper is not being used as og 2/19
-     */
     public JoystickButton driveControllerLeftBumper;
-
-    /**
-     * right bumper is toggle on/off for shooter
-     */
     public JoystickButton driveControllerRightBumper;
 
-
-
     public JoystickButton coPilotControllerButtonA;
-
-    /**
-     * b button is increase speed of shooter
-     */
     public JoystickButton coPilotControllerButtonB;
-
-    /**
-     * x button is decrease speed of shooter
-     */
     public JoystickButton coPilotControllerButtonX;
-
-    /**
-     * y button is being used for climber. Hold down y to climb
-     */
     public JoystickButton coPilotControllerButtonY;
-
-    /**
-     * back button is not being used as of 2/19
-     */
     public JoystickButton coPilotControllerBackButton;
-
-    /**
-     * start button is not being used as of 2/19
-     */
     public JoystickButton coPilotControllerStartButton;
-
-    /**
-     * left bumper is not being used as og 2/19
-     */
     public JoystickButton coPilotControllerLeftBumper;
-
-    /**
-     * right bumper is toggle on/off for shooter
-     */
     public JoystickButton coPilotControllerRightBumper;
 
     // Joysticks
     /**
      * Controls Left joystick, forward/backward for Arcade Drive
      */
-    //TODO: figure out what number corresponds to the triggers on the controller
     public static int LeftYAxis = 1;
     public static int LeftXAxis = 2;
     public static int RightYAxis = 3;
@@ -164,5 +102,6 @@ public class OI {
 
         //Turns the rumble off
         xboxController2.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+        xboxController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
     }
 }

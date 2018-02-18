@@ -10,10 +10,11 @@ import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.Midd
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.RightStartingProfiles;
 
 import java.util.HashMap;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
+/**
+ * Checks to see if given string has numbers that match up with pre-coded paths
+ */
 public class AutonomousCommand extends CommandGroup {
     @Override
     protected boolean isFinished() {
@@ -21,7 +22,8 @@ public class AutonomousCommand extends CommandGroup {
     }
 
     /**
-     *
+     * Checks to see if given string has either "Figure Eight"(in which it does the figure eight) or has a list of paths to
+     * check if possible to run.
      * @param routine input string "1,2,4-6"
      */
     public AutonomousCommand(String routine) {
