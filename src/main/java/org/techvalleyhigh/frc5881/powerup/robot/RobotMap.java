@@ -64,23 +64,29 @@ public class RobotMap {
         //Talons for Driving
         driveFrontLeft = new WPI_TalonSRX(10);
         driveFrontLeft.setName("Drive", "Talon Front Left");
+        driveFrontLeft.config_kD(0, 0.012, 20);
+        driveFrontLeft.config_kI(0, 0.001, 20);
+        driveFrontLeft.config_kP(0, 0.013, 20);
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
         driveBackLeft = new WPI_TalonSRX(11);
         driveBackLeft.setName("Drive", "Talon Back Left");
         LiveWindow.add(driveBackLeft);
-        driveBackLeft.set(ControlMode.Follower, 0);
+        driveBackLeft.set(ControlMode.Follower, 10);
 
         driveFrontRight = new WPI_TalonSRX(12);
         driveFrontRight.setName("Drive", "Talon Front Right");
+        driveFrontRight.config_kD(0, 0.012, 20);
+        driveFrontRight.config_kI(0, 0.001, 20);
+        driveFrontRight.config_kP(0, 0.013, 20);
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
         driveBackRight = new WPI_TalonSRX(3);
         driveBackRight.setName("Drive", "Talon Back Right");
         LiveWindow.add(driveBackRight);
-        driveBackRight.set(ControlMode.Follower, 1);
+        driveBackRight.set(ControlMode.Follower, 12);
 
         //Elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
@@ -102,7 +108,9 @@ public class RobotMap {
         armTalon.setName("arm", "Master");
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-        armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        armTalon.config_kD(0 ,0.012, 20);
+        armTalon.config_kI(0, 0.001, 20);
+        armTalon.config_kP(0, 0.013, 20);
         LiveWindow.add(armTalon);
 
         //Gyro
