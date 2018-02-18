@@ -34,7 +34,7 @@ public class RobotMap {
     /**
      * Master Elevator Talon
      */
-    public  static WPI_TalonSRX elevatorTalonMaster;
+    public static WPI_TalonSRX elevatorTalonMaster;
     /**
      * Elevator Talon Follower
      */
