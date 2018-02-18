@@ -31,7 +31,7 @@ public class MotionProfile extends Command {
 
     /**
      * Makes the drive talons drive a profile described by waypoints
-     * @param waypoints
+     * @param waypoints waypoints to go to
      */
     public MotionProfile(Waypoint[] waypoints) {
         this.waypoints = waypoints;

@@ -183,7 +183,7 @@ public class DriveControl extends Subsystem {
         robotDrive.curvatureDrive(speed, rotation, isQuickTurn);
     }
 
-    public void rawTenkDrive(double right, double left) {
+    public void rawTankDrive(double right, double left) {
         updateDashboard();
 
         robotDrive.tankDrive(left, right);

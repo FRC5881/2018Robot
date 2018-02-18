@@ -2,12 +2,13 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 
 public class ArmRaise extends Command {
+
     public ArmRaise() {
         requires(Robot.arm);
     }
+
     @Override
     protected void initialize() {
     }
@@ -16,7 +17,7 @@ public class ArmRaise extends Command {
     // ArcadeDrive code to run during
     @Override
     protected void execute() {
-        Robot.arm.move(Arm.armSpeed);
+        Robot.arm.driveJoystickInput();
     }
 
     // Make this return true when this Command no longer needs to run execute()

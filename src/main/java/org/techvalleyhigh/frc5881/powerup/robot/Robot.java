@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
@@ -13,6 +14,9 @@ import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
+
+import java.util.ArrayList;
 
 
 public class Robot extends TimedRobot {
@@ -23,14 +27,15 @@ public class Robot extends TimedRobot {
     public static Arm arm;
     public static Elevator elevator;
 
-    // Define drive code
-    public static SendableChooser<Command> driveChooser;
+    // Define drive command
+    public static ElevatorDrive elevatorCommand;
     public static Command driveCommand;
+
+    public static SendableChooser<Command> driveChooser;
 
     // Define auto code
     public static Command autonomousCommand;
     public static SendableChooser<AutonomousCommand> autoChooser;
-
 
     /**
      * This function is run when the robot is first started up and should be
@@ -44,6 +49,10 @@ public class Robot extends TimedRobot {
         manipulator = new Manipulator();
         arm = new Arm();
         elevator = new Elevator();
+
+        // Define drive and elevator command to during tele - op
+        //driveCommand = new Drive();
+        elevatorCommand = new ElevatorDrive();
 
         // OI must be constructed after subsystems. If the OI creates Commands
         //(which it very likely will), subsystems are not guaranteed to be
@@ -60,6 +69,8 @@ public class Robot extends TimedRobot {
         autoChooser.addObject("Figure 8", new AutonomousCommand("Figure Eight"));
 
         SmartDashboard.putData("Autonomous Mode Selection", autoChooser);
+        //TODO: Test this code to see if it actually works and then adapt it to the Autonomous Decoder code
+        SmartDashboard.putString("Possible Paths", "1-4,7-10,15-20,22,24");
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
@@ -67,7 +78,7 @@ public class Robot extends TimedRobot {
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
 
-        SmartDashboard.putData(driveChooser);
+        SmartDashboard.putData("Drive Command", driveChooser);
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -83,11 +94,27 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
         Scheduler.getInstance().run();
+
+        // TODO Pull SD Auto Value and check for valid
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)){
+            SmartDashboard.putBoolean("Paths Are Valid", true);
+        }
+        else {
+            //System.out.println("Warning! Current chosen path is invalid! Please input path number!");
+            SmartDashboard.putBoolean("Paths Are Valid", false);
+        }
     }
 
     @Override
     public void autonomousInit() {
+        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
+
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
+            ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
+            AutonomousCommand run = new AutonomousCommand(autoOptions);
+        }
         if (autoChooser.getSelected() != null) {
             autonomousCommand = autoChooser.getSelected();
             autonomousCommand.start();
@@ -107,7 +134,11 @@ public class Robot extends TimedRobot {
         // Ends autonomous command
         if (autonomousCommand != null) autonomousCommand.cancel();
 
-        // Get selected drive command and start it
+        if (elevatorCommand != null) {
+            elevatorCommand.start();
+            // Get selected drive command and start it
+        }
+
         if (driveChooser.getSelected() != null) {
             driveCommand = driveChooser.getSelected();
             driveCommand.start();
