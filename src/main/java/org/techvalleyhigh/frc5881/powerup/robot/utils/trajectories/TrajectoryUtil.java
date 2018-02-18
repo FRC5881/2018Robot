@@ -77,25 +77,32 @@ public class TrajectoryUtil {
      * Possible auto targets the bot can reach left/right is in respect of our drive team
      */
     public enum AutoTarget {
-        // Left side of the near switch
+        /**
+         *Left side of the near switch
+         */
         SWITCH_LEFT,
-
-        // Right side of the near switch
+        /**
+         * Right side of the near switch
+         */
         SWITCH_RIGHT,
-
-        // Left side of the scale
+        /**
+         * Left side of the scale
+         */
         SCALE_LEFT,
-
-        // Right side of the scale
+        /**
+         * Right side of the scale
+         */
         SCALE_RIGHT,
-
-        // Simply the autonomous line
+        /**
+         * Simply the autonomous line
+         */
         AUTO_LINE
     }
 
     /**
-     * Returns array of waypoints that paths out a figure eight with a given width and height
-     * (figure eights fits inside a rectangle of width by height)
+     * Creates a custom figure eight according to the given "height" and "width"
+     *@param width The max width of the figure eight
+     *@param height The max length of the figure eight
      */
     public Waypoint[] CustomFigureEight(double width, double height) {
         return new Waypoint[] {

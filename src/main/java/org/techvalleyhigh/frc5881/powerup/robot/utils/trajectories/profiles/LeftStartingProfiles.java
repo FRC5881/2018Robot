@@ -92,8 +92,11 @@ public class LeftStartingProfiles implements ProfileGroup {
         autos.put(5, auto_5);
         autos.put(6, auto_6);
     }
-
-    public static Autonomous getAuto(int autoNum) {
-        return autos.get(autoNum);
+    /**
+     * Getter for all autos stored in this class
+     * @return HashMap of autos
+    */
+    public static HashMap<Integer, Autonomous> getAutos() {
+        return autos;
     }
 }

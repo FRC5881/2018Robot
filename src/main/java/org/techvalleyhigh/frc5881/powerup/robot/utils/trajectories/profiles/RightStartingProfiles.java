@@ -94,8 +94,11 @@ public class RightStartingProfiles implements ProfileGroup {
         autos.put(15, auto_15);
         autos.put(16, auto_16);
     }
-
-    public static Autonomous getAuto(int autoNum) {
-        return autos.get(autoNum);
+    /**
+     * Getter for all autos stored in this class
+     * @return HashMap of autos
+     */
+    public static HashMap<Integer, Autonomous> getAutos() {
+        return autos;
     }
 }
