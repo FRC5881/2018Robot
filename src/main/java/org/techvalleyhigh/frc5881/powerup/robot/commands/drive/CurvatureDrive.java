@@ -24,7 +24,7 @@ public class CurvatureDrive extends Command {
 
     @Override
     protected void execute() {
-        boolean isQuickTurn = Robot.oi.aButton.get();
+        boolean isQuickTurn = Robot.oi.driveControllerButtonA.get();
         Robot.driveControl.curvatureJoystickInputs(isQuickTurn);
     }
 
