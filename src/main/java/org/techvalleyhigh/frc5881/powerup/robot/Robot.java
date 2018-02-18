@@ -15,9 +15,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
-
 import java.util.ArrayList;
-
 
 
 public class Robot extends TimedRobot {
@@ -111,6 +109,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
+        Robot.elevator.enableRatchet();
 
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
             ArrayList<Integer> autos = AutonomousDecoder.getIntRanges(autoOptions);
