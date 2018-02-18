@@ -2,21 +2,24 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.SPI;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class RobotMap {
     // Gyro
     public static ADXRS450_Gyro digitalGyro;
-
+  
     // Talons
     public static WPI_TalonSRX driveFrontLeft;
     public static WPI_TalonSRX driveFrontRight;
     public static WPI_TalonSRX driveBackLeft;
     public static WPI_TalonSRX driveBackRight;
+
     public static WPI_TalonSRX elevatorTalonMaster;
     public static WPI_TalonSRX elevatorTalonFollower;
 
@@ -27,25 +30,26 @@ public class RobotMap {
     public static Compressor compressor;
 
     public static void init() {
-        //Talons
-        driveFrontLeft = new WPI_TalonSRX(0);
-        driveFrontLeft.setName("Drive Talon Left", "Talon Front Left");
+        // Define talons with WPI_TalonSRX
+        driveFrontLeft = new WPI_TalonSRX(10);
+        driveFrontLeft.setName("ArcadeDrive", "Front Left");
         LiveWindow.add(driveFrontLeft);
+        driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
-        driveFrontRight = new WPI_TalonSRX(1);
-        driveFrontRight.setName("Drive Talon Right", "Talon Front Right");
-        LiveWindow.add(driveFrontRight);
-
-        driveBackLeft = new WPI_TalonSRX(2);
-        driveBackLeft.setName("Drive Talon Left", "Talon Back Left");
-        driveBackLeft.set(ControlMode.Follower, 0);
+        driveBackLeft = new WPI_TalonSRX(11);
+        driveBackLeft.setName("ArcadeDrive", "Back Left");
         LiveWindow.add(driveBackLeft);
+        driveBackLeft.set(ControlMode.Follower, 0);
 
-        driveBackRight = new WPI_TalonSRX(3);
-        driveBackRight.setName("Drive Talon Right", "Talon Back Right");
-        driveBackRight.set(ControlMode.Follower, 1);
+        driveFrontRight = new WPI_TalonSRX(12);
+        driveFrontRight.setName("ArcadeDrive", "Front Right");
+        LiveWindow.add(driveFrontRight);
+        driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
+
+        driveBackRight = new WPI_TalonSRX(13);
+        driveBackRight.setName("ArcadeDrive", "Back Right");
         LiveWindow.add(driveBackRight);
-
+        driveBackRight.set(ControlMode.Follower, 1);
 
         //elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
@@ -68,12 +72,10 @@ public class RobotMap {
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
 
-
         //Gyro
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
         digitalGyro.setName("Gyro", "Gyro");
         LiveWindow.add(digitalGyro);
-
 
         //Pneumatic Compressor
         compressor = new Compressor(0);

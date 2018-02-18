@@ -51,13 +51,10 @@ public class OI {
      */
     public JoystickButton rightBumper;
 
-    /**
-     * Controls Left joystick, forward/backward for Arcade Drive
-     */
+    // Joysticks
     public static int LeftYAxis = 1;
-    /**
-     * Controls right joystick, Turning For Arcade Drive
-     */
+    public static int RightYAxis = 2;
+    public static int LeftXAxis = 3;
     public static int RightXAxis = 4;
 
     public static int BUTTON_A = 1;
