@@ -158,6 +158,5 @@ public class Robot extends TimedRobot {
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
-        RobotMap.compressor.setClosedLoopControl(true);
     }
 }
