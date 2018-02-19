@@ -60,12 +60,15 @@ public class Arm extends Subsystem {
     public double getArm_kP() {
         return SmartDashboard.getNumber("Arm kP", 2);
     }
+
     public double getArm_kI() {
         return SmartDashboard.getNumber("Arm kI", 0);
     }
+
     public double getArm_kD() {
         return SmartDashboard.getNumber("Arm kD", 20);
     }
+
     public double getArm_kF() {
         return SmartDashboard.getNumber("Arm kF", 0.076);
     }
