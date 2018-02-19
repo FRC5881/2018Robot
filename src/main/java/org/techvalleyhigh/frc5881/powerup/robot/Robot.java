@@ -154,6 +154,9 @@ public class Robot extends TimedRobot {
         System.out.println(oi.pilotController.getPOV() + " POV");
     }
 
+    /**
+     * Update the sensors
+     */
     private void updateSensors() {
         SmartDashboard.putBoolean("Ratchet Enabled", elevator.getRatchetEnabled());
         SmartDashboard.putBoolean("Grabber Enabled", manipulator.getGrabberEnabled());
