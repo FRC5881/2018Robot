@@ -2,8 +2,10 @@ package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
+import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
 
@@ -55,6 +57,18 @@ public class Elevator extends Subsystem {
 
     public void init() {
         elevatorTalonMaster.setSelectedSensorPosition(0, 0, 20);
+
+        SmartDashboard.putNumber("Elevator kP", 2.0);
+        SmartDashboard.putNumber("Elevator kI", 0);
+        SmartDashboard.putNumber("Elevator kD", 20);
+        SmartDashboard.putNumber("Elevator kF", 0.076);
+    }
+
+    public void initPID() {
+        RobotMap.elevatorTalonMaster.config_kP(0, getElevator_kP(), 10);
+        RobotMap.elevatorTalonMaster.config_kI(0, getElevator_kI(), 10);
+        RobotMap.elevatorTalonMaster.config_kD(0, getElevator_kD(), 10);
+        RobotMap.elevatorTalonMaster.config_kF(0, getElevator_kF(), 10);
     }
 
     public void nextUpRise(){
@@ -110,5 +124,19 @@ public class Elevator extends Subsystem {
 
     public double getHeight() {
         return elevatorTalonMaster.getSelectedSensorPosition(0);
+    }
+
+    // ---- Getters for PID ---- //
+    public double getElevator_kP() {
+        return SmartDashboard.getNumber("Elevator kP", 2.0);
+    }
+    public double getElevator_kI() {
+        return SmartDashboard.getNumber("Elevator kI", 0);
+    }
+    public double getElevator_kD(){
+        return SmartDashboard.getNumber("Elevator kD", 20);
+    }
+    public double getElevator_kF() {
+        return SmartDashboard.getNumber("Elevator kF", 0.076);
     }
 }
