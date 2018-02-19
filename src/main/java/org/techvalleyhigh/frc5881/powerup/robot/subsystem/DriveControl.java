@@ -150,22 +150,22 @@ public class DriveControl extends Subsystem {
 
     /* --- Joystick drive methods --- */
     public void arcadeJoystickInputs() {
-        double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
-        double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
+        double x = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
+        double y = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
         robotDrive.arcadeDrive(scaleXAxis(x), scaleYAxis(y), true);
     }
 
     public void curvatureJoystickInputs(boolean isQuickTurn) {
-        double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
-        double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
+        double x = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
+        double y = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
         robotDrive.curvatureDrive(scaleXAxis(x), scaleYAxis(y), isQuickTurn);
     }
 
     public void tankJoystickInputs() {
-        double right = Robot.oi.xboxController.getRawAxis(OI.RightYAxis);
-        double left = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
+        double right = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS);
+        double left = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
         robotDrive.tankDrive(scaleYAxis(right), scaleYAxis(left), true);
     }

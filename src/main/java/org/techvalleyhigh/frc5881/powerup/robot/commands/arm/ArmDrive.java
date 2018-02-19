@@ -3,9 +3,8 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-
-public class ArmLower extends Command {
-    public ArmLower() {
+public class ArmDrive extends Command {
+    public ArmDrive() {
         requires(Robot.arm);
     }
 
@@ -14,9 +13,10 @@ public class ArmLower extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
+    // ArcadeDrive code to run during
     @Override
     protected void execute() {
-      Robot.arm.driveJoystickInput();
+        Robot.arm.driveControllerInput();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -24,7 +24,8 @@ public class ArmLower extends Command {
     protected boolean isFinished() {
         return false;
     }
-    // Called once after isFinished returns true or command is interrupted
+
+    // Called once after isFinished returns true
     @Override
     protected void end() {
         Robot.arm.stop();

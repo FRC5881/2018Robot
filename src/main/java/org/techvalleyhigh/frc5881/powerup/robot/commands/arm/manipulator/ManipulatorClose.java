@@ -1,14 +1,11 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ManipulatorOpen extends Command {
-
-    @Override
-    protected synchronized void requires(Subsystem subsystem) {
-        super.requires(Robot.manipulator);
+public class ManipulatorClose extends Command {
+    public ManipulatorClose() {
+        requires(Robot.manipulator);
     }
 
     @Override
@@ -17,17 +14,20 @@ public class ManipulatorOpen extends Command {
 
     @Override
     protected void execute() {
-        Robot.manipulator.openGrabbers();
+        Robot.manipulator.closeGrabbers();
     }
 
+    /**
+     * Make this return true when this Command no longer needs to run execute()
+     */
     @Override
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     @Override
     protected void end() {
-        Robot.manipulator.stop();
+        //Robot.manipulator.stop();
     }
 
     @Override

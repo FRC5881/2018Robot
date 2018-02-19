@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
@@ -11,7 +11,6 @@ public class ElevatorDisableRatchet extends Command {
 
     @Override
     protected void initialize() {
-        super.initialize();
     }
 
     @Override
@@ -21,21 +20,16 @@ public class ElevatorDisableRatchet extends Command {
 
     @Override
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     @Override
     protected void end() {
-        super.end();
+
     }
 
     @Override
     protected void interrupted() {
-        super.interrupted();
-    }
-
-    @Override
-    protected synchronized boolean isTimedOut() {
-        return super.isTimedOut();
+        end();
     }
 }

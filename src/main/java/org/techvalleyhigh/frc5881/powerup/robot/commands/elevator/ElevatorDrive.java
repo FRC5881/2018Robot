@@ -4,20 +4,24 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class ElevatorDrive extends Command {
-
     public ElevatorDrive() {
         requires(Robot.elevator);
     }
 
     @Override
     protected void initialize() {
-
+        Robot.elevator.initPID();
     }
 
     @Override
     protected void execute(){
-        Robot.elevator.driveJoystickInput();
-        //System.out.println("Running");
+        Robot.elevator.driveControllerInput();
+
+        if (Robot.oi.coPilotTopBackLeft.get()) {
+            Robot.elevator.setSwitch();
+        } else if (Robot.oi.coPilotTopBackRight.get()) {
+            Robot.elevator.setScale();
+        }
     }
 
     @Override
@@ -27,6 +31,7 @@ public class ElevatorDrive extends Command {
 
     @Override
     protected void end(){
+        System.out.println("Elevator drive command ended... That shouldn't happen");
         Robot.elevator.stop();
     }
 
@@ -35,3 +40,4 @@ public class ElevatorDrive extends Command {
         end();
     }
 }
+

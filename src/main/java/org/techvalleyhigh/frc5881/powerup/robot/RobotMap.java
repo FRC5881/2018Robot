@@ -65,24 +65,23 @@ public class RobotMap {
     public static Compressor compressor;
 
     public static void init() {
-        //Talons for Driving
-        //TODO: find pid values
-        driveFrontLeft = new WPI_TalonSRX(10);
+        // Talons for Driving
+        driveFrontLeft = new WPI_TalonSRX(103);
         driveFrontLeft.setName("Drive", "Talon Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
-        driveBackLeft = new WPI_TalonSRX(11);
+        driveBackLeft = new WPI_TalonSRX(102);
         driveBackLeft.setName("Drive", "Talon Back Left");
         LiveWindow.add(driveBackLeft);
         driveBackLeft.set(ControlMode.Follower, 10);
 
-        driveFrontRight = new WPI_TalonSRX(12);
+        driveFrontRight = new WPI_TalonSRX(101);
         driveFrontRight.setName("Drive", "Talon Front Right");
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
-        driveBackRight = new WPI_TalonSRX(3);
+        driveBackRight = new WPI_TalonSRX(100);
         driveBackRight.setName("Drive", "Talon Back Right");
         LiveWindow.add(driveBackRight);
         driveBackRight.set(ControlMode.Follower, 12);
@@ -92,6 +91,7 @@ public class RobotMap {
         elevatorTalonMaster.setName("Elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(elevatorTalonMaster);
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
@@ -99,11 +99,10 @@ public class RobotMap {
         elevatorTalonFollower.set(ControlMode.Follower, 4);
         LiveWindow.add(elevatorTalonFollower);
 
-        //Talon for the arm
+        // Arm talon
         armTalon = new WPI_TalonSRX(6);
         armTalon.setName("Arm", "Master");
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
-        armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
 
         //Gyro
@@ -118,20 +117,21 @@ public class RobotMap {
 
         //Pneumatic Solenoids for the Grabber
         rightGrabDoubleSolenoid = new DoubleSolenoid(20,0, 1);
-        rightGrabDoubleSolenoid.setName("Grabber Solenoid", "Right Solenoid");
+        rightGrabDoubleSolenoid.setName("Manipulator", "Right Solenoid");
         LiveWindow.add(rightGrabDoubleSolenoid);
 
         leftGrabDoubleSolenoid = new DoubleSolenoid(20,2, 3);
-        leftGrabDoubleSolenoid.setName("Grabber Solenoid", "Left Solenoid");
+        leftGrabDoubleSolenoid.setName("Manipulator", "Left Solenoid");
         LiveWindow.add(leftGrabDoubleSolenoid);
 
         //Pneumatic Solenoids for the Elevator Pancakes
         leftElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 4, 5);
-        leftElevatorPancakeDoubleSolenoid.setName("Pancake Double Solenoid", "Left Pancake Double Solenoid");
+        leftElevatorPancakeDoubleSolenoid.setName("Elevator", "Left Pancake Double Solenoid");
         LiveWindow.add(leftElevatorPancakeDoubleSolenoid);
 
         rightElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 6, 7);
-        rightElevatorPancakeDoubleSolenoid.setName("Pancake Double Solenoid", "Right Pancake Double Solenoid");
+        rightElevatorPancakeDoubleSolenoid.setName("Elevator", "Right Pancake Double Solenoid");
         LiveWindow.add(rightElevatorPancakeDoubleSolenoid);
+
     }
 }
