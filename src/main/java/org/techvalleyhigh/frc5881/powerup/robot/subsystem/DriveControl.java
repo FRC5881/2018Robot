@@ -110,9 +110,9 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Right kD", 20.0);
         SmartDashboard.putNumber("Right kF", 0.076);
 
-        SmartDashboard.putNumber("Gyro kP", 0.14);
-        SmartDashboard.putNumber("Gyro kI", 0.02);
-        SmartDashboard.putNumber("Gyro kD", 0.045);
+        SmartDashboard.putNumber("Gyro kP", 0.057);
+        SmartDashboard.putNumber("Gyro kI", 0.000000001);
+        SmartDashboard.putNumber("Gyro kD", 0.14);
         SmartDashboard.putNumber("Gyro kF", 0.0);
 
         SmartDashboard.putNumber("Allowed Error", 5);
@@ -120,6 +120,8 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Acceleration", 1);
         SmartDashboard.putNumber("Velocity", 1);
 
+        gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
+                RobotMap.digitalGyro, output -> gyroPIDOutput = output);
         initPID();
     }
 
@@ -162,6 +164,39 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
     }
 
+    /**
+     * edit the setpoint on the gyro PID
+     * @param setPoint absolute bearing in degrees.
+     */
+    public void writeGyroPid(double setPoint) {
+        gyroPID.setSetpoint(setPoint);
+    }
+
+    /**
+     * Get gyro pid setpoint
+     * @return a double the current gyro setpoint
+     */
+    public double getGyroSetpoint() {
+        return gyroPID.getSetpoint();
+    }
+
+    /**
+     * Get gyro pid error
+     * @return a double the current gyro error
+     */
+    public double getGyroError() {
+        return gyroPID.getError();
+    }
+
+    /**
+     * Get gyro pid on target
+     * @return true if pid is on target
+     */
+    public boolean getGyroOnTarget() {
+        return gyroPID.onTarget();
+    }
+
+
     // ----------------------- DRIVE HANDLING ----------------------- //
     /* --- Getters for SmartDashboard drive values --- */
     public static double getAutoTurnSpeed() {
@@ -201,21 +236,21 @@ public class DriveControl extends Subsystem {
         double x = Robot.oi.xboxController.getRawAxis(OI.RightXAxis);
         double y = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
 
-        robotDrive.curvatureDrive(scaleXAxis(x), scaleYAxis(y), !isQuickTurn);
+        rawCurvatureDrive(scaleXAxis(x), scaleYAxis(y), !isQuickTurn);
     }
 
     public void tankJoystickInputs() {
         double right = Robot.oi.xboxController.getRawAxis(OI.RightYAxis);
         double left = Robot.oi.xboxController.getRawAxis(OI.LeftYAxis);
 
-        robotDrive.tankDrive(scaleYAxis(right), scaleYAxis(left), true);
+        robotDrive.tankDrive(right, left, true);
     }
 
     /* --- Raw drive methods to be used during autonomous --- */
     public void rawArcadeDrive(double move, double turn) {
         updateDashboard();
 
-        robotDrive.arcadeDrive(move, turn, true);
+        robotDrive.arcadeDrive(turn, move, true);
     }
 
     public void rawCurvatureDrive(double speed, double rotation, boolean isQuickTurn) {
@@ -227,7 +262,7 @@ public class DriveControl extends Subsystem {
     public void rawTankDrive(double right, double left) {
         updateDashboard();
 
-        robotDrive.tankDrive(left, right);
+        robotDrive.tankDrive(left, right, true);
     }
 
     /**
@@ -243,9 +278,13 @@ public class DriveControl extends Subsystem {
         RobotMap.driveFrontLeft.setSelectedSensorPosition(0, 0,10);
     }
 
+    /**
+     * Init PID control values to be ready for driving
+     */
     public void initPID() {
         zeroEncoders();
 
+        // Update all PID values
         RobotMap.driveFrontLeft.config_kP(0 , getLeft_kP(), 10);
         RobotMap.driveFrontLeft.config_kI(0, getLeft_kI(), 10);
         RobotMap.driveFrontLeft.config_kD(0, getLeft_kD(), 10);
@@ -256,13 +295,23 @@ public class DriveControl extends Subsystem {
         RobotMap.driveFrontRight.config_kD(0, getRight_kD(), 10);
         RobotMap.driveFrontRight.config_kF(0, getRight_kF(), 10);
 
-        gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
-                RobotMap.digitalGyro, output -> gyroPIDOutput = output);
+        gyroPID.setP(getGyro_kP());
+        gyroPID.setI(getGyro_kI());
+        gyroPID.setD(getGyro_kD());
+        gyroPID.setF(getGyro_kF());
+        gyroPID.setPercentTolerance(getAutoGyroTolerance());
+        gyroPID.reset();
+
+        // Just keep the gyro pid running
         gyroPID.enable();
 
         // RobotMap.driveFrontLeft.configAllowableClosedloopError(0, 100, 10);
     }
 
+    /**
+     * Set motor safety on each drive motor
+     * @param enable boolean to set safety too
+     */
     public void setMotorSafety(boolean enable) {
         RobotMap.driveFrontLeft.setSafetyEnabled(enable);
         RobotMap.driveFrontRight.setSafetyEnabled(enable);
@@ -316,26 +365,6 @@ public class DriveControl extends Subsystem {
 
     public double getGyro_kF() {
         return SmartDashboard.getNumber("Gyro kF", 0.0);
-    }
-
-    /**
-     * edit the setpoint on the gyro PID
-     * @param setPoint absolute bearing in degrees.
-     */
-    public void wrtieGyroPid(double setPoint) {
-        gyroPID.setSetpoint(setPoint);
-    }
-
-    /**
-     * Get gyro pid setpoint
-     * @return
-     */
-    public double getGyroSetpoint() {
-        return gyroPID.getSetpoint();
-    }
-
-    public double getGyroError() {
-        return gyroPID.getError();
     }
 
     public double getAllowed_Error() {

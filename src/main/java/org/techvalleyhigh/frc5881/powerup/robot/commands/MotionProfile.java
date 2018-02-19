@@ -38,8 +38,6 @@ public class MotionProfile extends Command {
 
     @Override
     protected void initialize() {
-        System.out.println("Init profile");
-
         // Get pid values
         Robot.driveControl.initPID();
 
@@ -49,6 +47,9 @@ public class MotionProfile extends Command {
 
         // ---- Create Trajectories ---- //
         // Generate trajectory
+        System.out.println("Generating Path...");
+        long startTime = System.currentTimeMillis();
+
         Trajectory trajectory = Pathfinder.generate(auto.getPath(), auto.getConfig());
 
         // Change trajectory into a tank drive
@@ -63,7 +64,10 @@ public class MotionProfile extends Command {
         double[][] leftPoints = JaciToTalon.makeProfile(leftTrajectory);
         double[][] rightPoints = JaciToTalon.makeProfile(rightTrajectory);
 
-        // init profiles
+        long endTime = System.currentTimeMillis();
+        System.out.println("It took " + (startTime - endTime) + " Milliseconds");
+
+        // Init profiles
         leftProfile = new MotionProfileExample(leftMotor, leftPoints, true);
         rightProfile = new MotionProfileExample(rightMotor, rightPoints, false);
 
@@ -87,10 +91,7 @@ public class MotionProfile extends Command {
 
     @Override
     protected void execute() {
-        /*
-         * call this periodically, and catch the output. Only apply it if user
-         * wants to run MP.
-         */
+        //call this periodically, and catch the output.
         leftProfile.control();
         rightProfile.control();
 

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.Turn;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
 
     // Define drive code
     public static SendableChooser<Command> driveChooser;
+
     public static Command driveCommand;
 
     // Define auto code
@@ -62,6 +64,7 @@ public class Robot extends TimedRobot {
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
 
+        SmartDashboard.putNumber("Turn", 0);
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
 
         SmartDashboard.putData(Scheduler.getInstance());
@@ -103,6 +106,9 @@ public class Robot extends TimedRobot {
 
         RobotMap.driveFrontRight.pidWrite(0);
         RobotMap.driveFrontLeft.pidWrite(0);
+
+        //autonomousCommand = new Turn(SmartDashboard.getNumber("Turn", 0));
+        //autonomousCommand.start();
 
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
             // Get int ranges
@@ -159,6 +165,9 @@ public class Robot extends TimedRobot {
 
     }
 
+    /**
+     * Update the current sensors to the SmartDashboard
+     */
     public void updateSensors() {
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));

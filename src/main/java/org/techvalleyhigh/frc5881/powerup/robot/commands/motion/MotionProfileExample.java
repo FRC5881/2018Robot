@@ -318,14 +318,20 @@ public class MotionProfileExample {
 
         /* This is fast since it's just into our TOP buffer */
         for (int i = start; i < start + cnt && i < _points.length; ++i) {
-            Robot.driveControl.wrtieGyroPid(Robot.driveControl.getGyroAngle() - _points[i][3]);
-            double positionRot = _points[i][0];
+            // Edit velocity to account for drift using gyro pid
+            Robot.driveControl.writeGyroPid(_points[i][3] - Robot.driveControl.getGyroAngle());
+            double percentage = 1 + (Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1));
+            double velocityRPM = _points[i][1] * percentage;
 
-            SmartDashboard.putNumber("Is Left " + isLeft, Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1) / 2);
-
-            // Edit velocity to account for drift
-            double precentage = 1 + Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1) / 2;
-            double velocityRPM = _points[i][1] * precentage;
+            // Edit the position to account for drift using calculus
+            // Change in position = integral of the change in velocity (assume constant acceleration)
+            // d = v0 * dt + 0.5(v1 - v0)dt^2
+            double d = 0;
+            if (i + 1 < _points.length) {
+                double dt = _points[i][2] / 1000;
+                d = velocityRPM * (dt) + 0.5 * percentage * (_points[i + 1][1] - _points[i][1]) * (dt * dt);
+            }
+            double positionRot =_points[i][0] + d;
 
             /* for each point, fill our structure and pass it to API */
             point.position = positionRot * Constants.kSensorUnitsPerRotation; //Convert Revolutions to Units
