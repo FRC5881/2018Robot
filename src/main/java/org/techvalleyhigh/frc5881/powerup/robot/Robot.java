@@ -15,7 +15,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
-
 import java.util.ArrayList;
 
 
@@ -89,6 +88,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        elevator.disableRatchet();
         System.out.println("We've been disabled :(");
     }
 
@@ -158,6 +158,6 @@ public class Robot extends TimedRobot {
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
-
+        RobotMap.compressor.setClosedLoopControl(true);
     }
 }

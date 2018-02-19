@@ -1,6 +1,7 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
@@ -8,6 +9,8 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
+import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.leftElevatorPancakeDoubleSolenoid;
+import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.rightElevatorPancakeDoubleSolenoid;
 
 /**
  * Runs elevator either up to next level(switch or scale), down to next level or in which ever direction you move the thumb stick (Y-axis)
@@ -37,7 +40,7 @@ public class Elevator extends Subsystem {
      */
     private static final double scaleRotations = 9;
     /**
-     * Percent of power to run motors at.
+     * Percent of power to run motors at
      */
     private static final double raiseSpeed = 0.5;
 
@@ -56,6 +59,7 @@ public class Elevator extends Subsystem {
     }
 
     public void init() {
+        enableRatchet();
         elevatorTalonMaster.setSelectedSensorPosition(0, 0, 20);
 
         SmartDashboard.putNumber("Elevator kP", 2.0);
@@ -118,6 +122,14 @@ public class Elevator extends Subsystem {
         }
     }
 
+    public void enableRatchet(){
+        leftElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
+        rightElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+    public void disableRatchet(){
+        leftElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+        rightElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
     public void stop() {
         elevatorTalonMaster.stopMotor();
     }
