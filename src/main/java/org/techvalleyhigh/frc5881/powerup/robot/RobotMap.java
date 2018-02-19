@@ -34,7 +34,7 @@ public class RobotMap {
     /**
      * Master Elevator Talon
      */
-    public  static WPI_TalonSRX elevatorTalonMaster;
+    public static WPI_TalonSRX elevatorTalonMaster;
     /**
      * Elevator Talon Follower
      */
@@ -52,9 +52,13 @@ public class RobotMap {
      */
     public static DoubleSolenoid rightGrabDoubleSolenoid;
     /**
-     * Buddy Bar Double Solenoid
+     * Left Pancake Double Solenoid for Elevator
      */
-    public static DoubleSolenoid buddyBarDoubleSolenoid;
+    public static DoubleSolenoid leftElevatorPancakeDoubleSolenoid;
+    /**
+     * Right Pancake Double Solenoid for Elevator
+     */
+    public static DoubleSolenoid rightElevatorPancakeDoubleSolenoid;
     /**
      * Pneumatic Compressor
      */
@@ -62,6 +66,7 @@ public class RobotMap {
 
     public static void init() {
         //Talons for Driving
+        //TODO: find pid values
         driveFrontLeft = new WPI_TalonSRX(10);
         driveFrontLeft.setName("Drive", "Talon Front Left");
         LiveWindow.add(driveFrontLeft);
@@ -70,7 +75,7 @@ public class RobotMap {
         driveBackLeft = new WPI_TalonSRX(11);
         driveBackLeft.setName("Drive", "Talon Back Left");
         LiveWindow.add(driveBackLeft);
-        driveBackLeft.set(ControlMode.Follower, 0);
+        driveBackLeft.set(ControlMode.Follower, 10);
 
         driveFrontRight = new WPI_TalonSRX(12);
         driveFrontRight.setName("Drive", "Talon Front Right");
@@ -80,16 +85,13 @@ public class RobotMap {
         driveBackRight = new WPI_TalonSRX(3);
         driveBackRight.setName("Drive", "Talon Back Right");
         LiveWindow.add(driveBackRight);
-        driveBackRight.set(ControlMode.Follower, 1);
+        driveBackRight.set(ControlMode.Follower, 12);
 
         //Elevator Talons
         elevatorTalonMaster = new WPI_TalonSRX(4);
         elevatorTalonMaster.setName("Elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-        elevatorTalonMaster.config_kD(0, 0.012, 20);
-        elevatorTalonMaster.config_kI(0, 0.001, 20);
-        elevatorTalonMaster.config_kP(0, 0.013, 20);
         LiveWindow.add(elevatorTalonMaster);
 
         elevatorTalonFollower = new WPI_TalonSRX(5);
@@ -99,10 +101,9 @@ public class RobotMap {
 
         //Talon for the arm
         armTalon = new WPI_TalonSRX(6);
-        armTalon.setName("arm", "Master");
+        armTalon.setName("Arm", "Master");
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-        armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
 
         //Gyro
@@ -115,7 +116,7 @@ public class RobotMap {
         compressor.setName("Compressor", "Compressor");
         LiveWindow.add(compressor);
 
-        //Pneumatic Solenoids for the grabber
+        //Pneumatic Solenoids for the Grabber
         rightGrabDoubleSolenoid = new DoubleSolenoid(20,0, 1);
         rightGrabDoubleSolenoid.setName("Grabber Solenoid", "Right Solenoid");
         LiveWindow.add(rightGrabDoubleSolenoid);
@@ -124,9 +125,13 @@ public class RobotMap {
         leftGrabDoubleSolenoid.setName("Grabber Solenoid", "Left Solenoid");
         LiveWindow.add(leftGrabDoubleSolenoid);
 
-        //Pneumatic Solenoid for the buddy bar
-        buddyBarDoubleSolenoid = new DoubleSolenoid(20,4, 5);
-        buddyBarDoubleSolenoid.setName("Buddy Bar Solenoid", "Buddy Bar Solenoid One");
-        LiveWindow.add(buddyBarDoubleSolenoid);
+        //Pneumatic Solenoids for the Elevator Pancakes
+        leftElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 4, 5);
+        leftElevatorPancakeDoubleSolenoid.setName("Pancake Double Solenoid", "Left Pancake Double Solenoid");
+        LiveWindow.add(leftElevatorPancakeDoubleSolenoid);
+
+        rightElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 6, 7);
+        rightElevatorPancakeDoubleSolenoid.setName("Pancake Double Solenoid", "Right Pancake Double Solenoid");
+        LiveWindow.add(rightElevatorPancakeDoubleSolenoid);
     }
 }
