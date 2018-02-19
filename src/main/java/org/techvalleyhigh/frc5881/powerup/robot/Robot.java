@@ -42,7 +42,6 @@ public class Robot extends TimedRobot {
      */
     public void robotInit() {
         RobotMap.init();
-        elevator.enableRatchet();
 
         // Define Subsystems
         driveControl = new DriveControl();

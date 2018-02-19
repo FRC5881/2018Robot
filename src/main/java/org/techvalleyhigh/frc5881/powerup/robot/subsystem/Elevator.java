@@ -57,6 +57,7 @@ public class Elevator extends Subsystem {
     }
 
     public void init() {
+        enableRatchet();
         elevatorTalonMaster.setSelectedSensorPosition(0, 0, 20);
     }
 
