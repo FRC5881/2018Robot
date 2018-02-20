@@ -1,5 +1,8 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.motion;
 
+/**
+ * Should be unused just around for testing
+ */
 public class GeneratedMotionProfile {
     public static final int kNumPoints = 185;
     // Position (rotations) Velocity (RPM) Duration (ms)

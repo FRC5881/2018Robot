@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.ElevatorDisableRatchet;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.ElevatorEnableRatchet;
 
 /**
  * Controls operator interfaces, such as controllers
@@ -59,18 +61,18 @@ public class OI {
     public static final int PILOT_Z_ROTATION = 2;
     public static final int PILOT_SLIDER = 3;
 
-    public static final int BUTTON_TRIGGER = 0;
-    public static final int BUTTON_LEFT_TRIGGER = 1;
-    public static final int BUTTON_TOP_BACK_LEFT = 2;
-    public static final int BUTTON_TOP_BACK_RIGHT = 3;
-    public static final int BUTTON_TOP_FRONT_LEFT = 4;
-    public static final int BUTTON_TOP_FRONT_RIGHT = 5;
-    public static final int BUTTON_BOTTOM_LEFT_FORWARD = 6;
-    public static final int BUTTON_BOTTOM_RIGHT_FORWARD = 7;
-    public static final int BUTTON_BOTTOM_LEFT_MIDDLE = 8;
-    public static final int BUTTON_BOTTOM_RIGHT_MIDDLE = 9;
-    public static final int BUTTON_BOTTOM_LEFT_BACK = 10;
-    public static final int BUTTON_BOTTOM_RIGHT_BACK = 11;
+    public static final int BUTTON_TRIGGER = 1;
+    public static final int BUTTON_LEFT_TRIGGER = 2;
+    public static final int BUTTON_TOP_BACK_LEFT = 3;
+    public static final int BUTTON_TOP_BACK_RIGHT = 4;
+    public static final int BUTTON_TOP_FRONT_LEFT = 5;
+    public static final int BUTTON_TOP_FRONT_RIGHT = 6;
+    public static final int BUTTON_BOTTOM_LEFT_FORWARD = 7;
+    public static final int BUTTON_BOTTOM_RIGHT_FORWARD = 8;
+    public static final int BUTTON_BOTTOM_LEFT_MIDDLE = 9;
+    public static final int BUTTON_BOTTOM_RIGHT_MIDDLE = 10;
+    public static final int BUTTON_BOTTOM_LEFT_BACK = 11;
+    public static final int BUTTON_BOTTOM_RIGHT_BACK = 12;
 
     public OI() {
         // Define controllers as joysticks
@@ -108,5 +110,8 @@ public class OI {
         // Add commands below
         coPilotLeftTrigger.whenPressed(new ManipulatorOpen());
         coPilotTrigger.whenPressed(new ManipulatorClose());
+
+        coPilotBottomLeftBack.whenPressed(new ElevatorEnableRatchet());
+        coPilotBottomRightBack.whenPressed(new ElevatorDisableRatchet());
     }
 }

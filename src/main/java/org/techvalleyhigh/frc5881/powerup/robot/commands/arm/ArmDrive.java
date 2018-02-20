@@ -1,4 +1,3 @@
-/*
 package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -14,7 +13,6 @@ public class ArmDrive extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    // ArcadeDrive code to run during
     @Override
     protected void execute() {
         Robot.arm.driveControllerInput();
@@ -39,4 +37,3 @@ public class ArmDrive extends Command {
         end();
     }
 }
-*/

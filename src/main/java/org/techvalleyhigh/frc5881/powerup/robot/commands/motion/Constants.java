@@ -36,7 +36,6 @@ public class Constants {
      */
     public static final double kNeutralDeadband = 0.01;
 
-
     /**
      * Max number of points to hold in talon buffers
      */

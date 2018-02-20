@@ -128,7 +128,7 @@ public class DriveControl extends Subsystem {
 
     @Override
     public void initDefaultCommand() {
-        //setDefaultCommand(new ArcadeDrive());
+
     }
 
     // ----------------------- GYRO ----------------------- //

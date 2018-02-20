@@ -26,82 +26,87 @@ public class RobotMap {
     // Talon for the arm
     public static WPI_TalonSRX armTalon;
 
-    // Pneumatic Solenoids for the buddy bar and the grabber
+    // Pneumatic Solenoids for the and the grabber
     public static DoubleSolenoid leftGrabDoubleSolenoid;
     public static DoubleSolenoid rightGrabDoubleSolenoid;
-    public static DoubleSolenoid buddyBarDoubleSolenoid;
+
+    // Pneumatic Solenoids for the elevator
+    public static DoubleSolenoid leftElevatorPancakeDoubleSolenoid;
+    public static DoubleSolenoid rightElevatorPancakeDoubleSolenoid;
 
     // Pneumatic Compressor for giving everything air
     public static Compressor compressor;
 
     public static void init() {
         //Talons
-        driveFrontLeft = new WPI_TalonSRX(10);
+        driveFrontLeft = new WPI_TalonSRX(1);
         driveFrontLeft.setName("Drive", "Talon Front Left");
         LiveWindow.add(driveFrontLeft);
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
         driveFrontLeft.setSensorPhase(true);
 
-        driveBackLeft = new WPI_TalonSRX(11);
+        driveBackLeft = new WPI_TalonSRX(2);
         driveBackLeft.setName("Drive", "Back Left");
         LiveWindow.add(driveBackLeft);
-        driveBackLeft.set(ControlMode.Follower, 10);
+        driveBackLeft.set(ControlMode.Follower, 1);
 
-        driveFrontRight = new WPI_TalonSRX(12);
+        driveFrontRight = new WPI_TalonSRX(3);
         driveFrontRight.setName("Drive", "Front Right");
         LiveWindow.add(driveFrontRight);
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
 
-        driveBackRight = new WPI_TalonSRX(13);
+        driveBackRight = new WPI_TalonSRX(4);
         driveBackRight.setName("Drive", "Back Right");
         LiveWindow.add(driveBackRight);
-        driveBackRight.set(ControlMode.Follower, 12);
+        driveBackRight.set(ControlMode.Follower, 3);
 
         // Gyro
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
-        digitalGyro.setName("Gyro", "Gyro");
+        digitalGyro.setName("Drive", "Gyro");
         LiveWindow.add(digitalGyro);
 
-        /*
         // Talons for the Elevator
-        elevatorTalonMaster = new WPI_TalonSRX(4);
-        elevatorTalonMaster.setName("elevator", "Master");
+        elevatorTalonMaster = new WPI_TalonSRX(5);
+        elevatorTalonMaster.setName("Elevator", "Master");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(elevatorTalonMaster);
 
-        elevatorTalonFollower = new WPI_TalonSRX(5);
-        elevatorTalonFollower.setName("elevator", "Follow");
-        elevatorTalonFollower.set(ControlMode.Follower, 4);
+        elevatorTalonFollower = new WPI_TalonSRX(6);
+        elevatorTalonFollower.setName("Elevator", "Follow");
+        elevatorTalonFollower.set(ControlMode.Follower, 5);
         LiveWindow.add(elevatorTalonFollower);
 
         // Talon for the arm
-        armTalon = new WPI_TalonSRX(6);
-        armTalon.setName("arm", "Master");
+        armTalon = new WPI_TalonSRX(7);
+        armTalon.setName("Arm", "Master");
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         LiveWindow.add(armTalon);
 
-        //Pneumatic Compressor
+        // Pneumatic Compressor
         compressor = new Compressor(20);
         compressor.setName("Compressor", "Compressor");
         LiveWindow.add(compressor);
 
-        //Pneumatic Solenoids for the grabber
+        // Pneumatic Solenoids for the grabber
         rightGrabDoubleSolenoid = new DoubleSolenoid(20,0, 1);
-        rightGrabDoubleSolenoid.setName("Grabber Solenoid", "Right Solenoid");
+        rightGrabDoubleSolenoid.setName("Grabber", "Right Solenoid");
         LiveWindow.add(rightGrabDoubleSolenoid);
 
         leftGrabDoubleSolenoid = new DoubleSolenoid(20,2, 3);
-        leftGrabDoubleSolenoid.setName("Grabber Solenoid", "Left Solenoid");
+        leftGrabDoubleSolenoid.setName("Grabber", "Left Solenoid");
         LiveWindow.add(leftGrabDoubleSolenoid);
 
-        //Pneumatic Solenoid for the buddy bar
-        buddyBarDoubleSolenoid = new DoubleSolenoid(20,4, 5);
-        buddyBarDoubleSolenoid.setName("Buddy Bar Solenoid", "Buddy Bar Solenoid One");
-        LiveWindow.add(buddyBarDoubleSolenoid);
-        */
+        // Pneumatic Solenoid for elevator
+        leftElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 4, 5);
+        leftElevatorPancakeDoubleSolenoid.setName("Elevator", "Left Ratchet");
+        LiveWindow.add(leftElevatorPancakeDoubleSolenoid);
+
+        rightElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 6, 7);
+        rightElevatorPancakeDoubleSolenoid.setName("Elevator", "Right Ratchet");
+        LiveWindow.add(rightElevatorPancakeDoubleSolenoid);
     }
 }
