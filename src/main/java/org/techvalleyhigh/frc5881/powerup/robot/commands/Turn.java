@@ -21,7 +21,10 @@ public class Turn extends Command {
      */
     @Override
     protected void initialize() {
+        System.out.println("Turning " + this.absoluteBearing);
         this.absoluteBearing = this.relativeBearing + Robot.driveControl.getGyroAngle();
+        Robot.driveControl.initPID();
+        Robot.driveControl.writeGyroPid(absoluteBearing);
     }
 
     /**
@@ -30,7 +33,7 @@ public class Turn extends Command {
 
     @Override
     protected void execute() {
-        Robot.driveControl.rawCurvatureDrive(0, relativeBearing, true);
+        Robot.driveControl.rawArcadeDrive(0, Robot.driveControl.gyroPIDOutput * 0.75);
     }
 
     /**
@@ -39,7 +42,8 @@ public class Turn extends Command {
      */
     @Override
     protected boolean isFinished() {
-        return Math.abs(this.absoluteBearing - Robot.driveControl.getGyroAngle()) < Robot.driveControl.getAutoGyroTolerance();
+        System.out.println("Turn finished");
+        return Robot.driveControl.getGyroOnTarget();
     }
 
     /**

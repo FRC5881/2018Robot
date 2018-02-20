@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -7,15 +8,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.Turn;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
+
 import java.util.ArrayList;
 
 
@@ -32,6 +33,8 @@ public class Robot extends TimedRobot {
     public static ArmDrive armCommand;
     public static Command driveCommand;
     public static SendableChooser<Command> driveChooser;
+
+    public static Command driveCommand;
 
     // Define auto code
     public static Command autonomousCommand;
@@ -61,9 +64,10 @@ public class Robot extends TimedRobot {
 
         // Instantiate the command used for the autonomous period
         autonomousCommand = null;
+        driveCommand = null;
 
         // Add Auto commands to the smart dashboard
-        SmartDashboard.putString("Possible Paths", "1-4,7-10,15-20,22,24");
+        SmartDashboard.putString("Possible Paths", "None");
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
@@ -71,7 +75,8 @@ public class Robot extends TimedRobot {
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
 
-        SmartDashboard.putData("Drive Command", driveChooser);
+        SmartDashboard.putNumber("Turn", 0);
+        SmartDashboard.putData("Drive Mode Selection", driveChooser);
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -88,6 +93,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        updateSensors();
+
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
         Scheduler.getInstance().run();
 
@@ -96,7 +103,18 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        System.out.println("Auto Init");
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
+
+        // Clear trajectories and PID set point
+        RobotMap.driveFrontRight.clearMotionProfileTrajectories();
+        RobotMap.driveFrontLeft.clearMotionProfileTrajectories();
+
+        RobotMap.driveFrontRight.pidWrite(0);
+        RobotMap.driveFrontLeft.pidWrite(0);
+
+        //autonomousCommand = new Turn(SmartDashboard.getNumber("Turn", 0));
+        //autonomousCommand.start();
 
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
             AutonomousCommand autonomousCommand = new AutonomousCommand(autoOptions);
@@ -109,10 +127,18 @@ public class Robot extends TimedRobot {
     /**
      * This function is called periodically during autonomous
      */
+    @Override
     public void autonomousPeriodic() {
+        updateSensors();
+        MotionProfileStatus status = new MotionProfileStatus();
+        RobotMap.driveFrontLeft.getMotionProfileStatus(status);
+        SmartDashboard.putNumber("Btm Buffer Count", status.btmBufferCnt);
+        SmartDashboard.putNumber("Top Buffer Count", status.topBufferCnt);
+
         Scheduler.getInstance().run();
     }
 
+    @Override
     public void teleopInit() {
         // Ends autonomous command
         if (autonomousCommand != null) autonomousCommand.cancel();
@@ -143,17 +169,31 @@ public class Robot extends TimedRobot {
     /**
      * This function is called periodically during operator control
      */
+    @Override
     public void teleopPeriodic() {
+        updateSensors();
         Scheduler.getInstance().run();
     }
 
     /**
      * This function is called periodically during test mode
      */
+    @Override
     public void testPeriodic() {
         System.out.println(oi.pilotController.getPOV() + " POV");
     }
+    }
 
+    /**
+     * Update the current sensors to the SmartDashboard
+     */
+    public void updateSensors() {
+        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+
+        SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
+        SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
+        SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
     /**
      * Update the sensors
      */
@@ -162,5 +202,4 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Grabber Enabled", manipulator.getGrabberEnabled());
         SmartDashboard.putNumber("Right Encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left Encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
-    }
 }

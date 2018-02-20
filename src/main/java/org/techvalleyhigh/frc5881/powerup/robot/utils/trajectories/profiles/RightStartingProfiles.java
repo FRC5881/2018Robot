@@ -11,7 +11,7 @@ import static openrio.powerup.MatchData.OwnedSide.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
 /**
- * Class full of static variables storing autonomous routines starting in the left position
+ * Static class storing autonomous routines starting in the left position
  */
 public class RightStartingProfiles {
     private static HashMap<Integer, Autonomous> autos = new HashMap<>();
@@ -94,6 +94,7 @@ public class RightStartingProfiles {
         autos.put(15, auto_15);
         autos.put(16, auto_16);
     }
+
     /**
      * Getter for all autos stored in this class
      * @return HashMap of autos

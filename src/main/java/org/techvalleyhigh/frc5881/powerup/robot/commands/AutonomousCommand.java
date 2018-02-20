@@ -2,19 +2,15 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import openrio.powerup.MatchData;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.LeftStartingProfiles;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.MiddleStartingProfiles;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.Misc;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.RightStartingProfiles;
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-/**
- * Checks to see if given string has numbers that match up with pre-coded paths
- */
 public class AutonomousCommand extends CommandGroup {
     @Override
     protected boolean isFinished() {
@@ -22,31 +18,34 @@ public class AutonomousCommand extends CommandGroup {
     }
 
     /**
-     * Checks to see if given string has either "Figure Eight"(in which it does the figure eight) or has a list of paths to
-     * check if possible to run.
-     * @param routine input string "1,2,4-6"
+     *
+     * @param chosen array list of integers
      */
-    public AutonomousCommand(String routine) {
+    public AutonomousCommand(ArrayList<Integer> chosen) {
         HashMap<Integer, Autonomous> autos = new HashMap<>();
         autos.putAll(LeftStartingProfiles.getAutos());
         autos.putAll(MiddleStartingProfiles.getAutos());
         autos.putAll(RightStartingProfiles.getAutos());
+        autos.putAll(Misc.getAutos());
 
-         // Pass through decoder
-        ArrayList<Integer> chosen = AutonomousDecoder.getIntRanges(routine);
         // Filter
         for (Integer i: chosen) {
             Autonomous auto = autos.get(i);
-            //If statement checks to see it the MatchData's "owned side" is the same as the Autonomous command's version of "owned side"
-            if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
-                addSequential(new MotionProfile(auto.getPath()));
+            /*
+            If statement checks to see it the MatchData's "owned side"
+            is the same as the Autonomous command's version of "owned side"
+             */
+            if (auto.getFeature() == null) {
+                System.out.println("Overwriting auto choosing");
+                System.out.println("Added Auto " + i);
+                addSequential(new MotionProfile(auto));
+                break;
             }
 
-        }
-        if (!routine.equals("None")) {
-            // TODO: auto commands
-            if (routine.equals("Figure Eight")) {
-                addSequential(new MotionProfile(TrajectoryUtil.testFigureEight));
+            if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
+                System.out.println("Added Auto " + i);
+                addSequential(new MotionProfile(auto));
+                break;
             }
         }
     }

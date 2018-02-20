@@ -13,7 +13,6 @@ public class ArcadeDrive extends Command {
      */
     @Override
     protected void initialize() {
-        Robot.driveControl.init();
     }
 
     /**
