@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
@@ -71,8 +73,8 @@ public class Robot extends TimedRobot {
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
 
-        SmartDashboard.putNumber("Turn", 0);
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
+        SmartDashboard.putNumber("Turn", 0);
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -83,7 +85,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-        elevator.disableRatchet();
         System.out.println("We've been disabled :(");
     }
 
@@ -99,7 +100,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        System.out.println("Auto Init");
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
 
         // Clear trajectories and PID set point
@@ -137,8 +137,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        Command test = new ManipulatorClose();
+        test.start();
+
         // Ends autonomous command
         if (autonomousCommand != null) autonomousCommand.cancel();
+
 
         // Starts elevator command
         if (elevatorCommand != null) {
@@ -193,5 +197,9 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putBoolean("Ratchet Enabled", elevator.getRatchetEnabled());
         SmartDashboard.putBoolean("Grabber Enabled", manipulator.getGrabberEnabled());
+
+        SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
+
+        SmartDashboard.putNumber("Speed", driveControl.getVelocity());
     }
 }

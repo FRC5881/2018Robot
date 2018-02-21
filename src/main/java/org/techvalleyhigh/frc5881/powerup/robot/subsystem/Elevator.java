@@ -60,6 +60,7 @@ public class Elevator extends Subsystem {
     public void init() {
         enableRatchet();
         elevatorTalonMaster.setSelectedSensorPosition(0, 0, 20);
+        elevatorTalonMaster.set(ControlMode.Position.value);
 
         SmartDashboard.putNumber("Elevator kP", 2.0);
         SmartDashboard.putNumber("Elevator kI", 0);
@@ -79,7 +80,7 @@ public class Elevator extends Subsystem {
     }
 
     // ---- Drive --- //
-    public void driveControllerInput(){
+    public void driveControllerInput() {
         int pov = Robot.oi.pilotController.getPOV();
         int speed = 0;
         if (pov == 315 || pov == 0 || pov == 45) {
@@ -89,8 +90,8 @@ public class Elevator extends Subsystem {
         }
         speed *= (1 + Robot.oi.pilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
 
-        //addPosition(speed * 770);
-        elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
+        addPosition(speed * 770);
+        //elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
     }
 
     // Stops motor

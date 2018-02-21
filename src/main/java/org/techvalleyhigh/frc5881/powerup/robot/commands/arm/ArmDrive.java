@@ -10,6 +10,7 @@ public class ArmDrive extends Command {
 
     @Override
     protected void initialize() {
+        System.out.println("Initializing arm command");
     }
 
     // Called repeatedly when this Command is scheduled to run

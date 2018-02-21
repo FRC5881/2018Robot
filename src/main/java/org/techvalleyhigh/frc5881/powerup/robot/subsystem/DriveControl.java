@@ -30,12 +30,19 @@ public class DriveControl extends Subsystem {
     // Joystick dead zone
     private static final double deadZone = 0.1;
 
+    // Max speeds
+    private static final double maxForward = 1500;
+    private static final double maxReverse = -1500;
+
     // Robot drive
     public DifferentialDrive robotDrive;
 
     // Gyro PID
     private static PIDController gyroPID;
+    private static PIDController speedPID;
+
     public double gyroPIDOutput;
+    public double speedPIDOutput;
 
     /**
      * Used for converting feet to ticks.
@@ -122,6 +129,9 @@ public class DriveControl extends Subsystem {
 
         gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
                 RobotMap.digitalGyro, output -> gyroPIDOutput = output);
+
+        //speedPID = new PIDController(getSpeed_kP(), getSpeed_kI(), getSpeed_kD(), getSpeed_kF(),
+          //      getVelocity(), output -> speedPIDOutput = output);
         initPID();
     }
 
@@ -133,7 +143,7 @@ public class DriveControl extends Subsystem {
 
     // ----------------------- GYRO ----------------------- //
     /**
-     * Calibrate the Gyro on init
+     * Calibrate the Gyro, it takes ~15 seconds
      */
     public void calibrateGyro() {
         RobotMap.digitalGyro.calibrate();
@@ -194,6 +204,23 @@ public class DriveControl extends Subsystem {
      */
     public boolean getGyroOnTarget() {
         return gyroPID.onTarget();
+    }
+
+    // Getters for PID
+    public double getGyro_kP() {
+        return SmartDashboard.getNumber("Gyro kP", 0.14);
+    }
+
+    public double getGyro_kI() {
+        return SmartDashboard.getNumber("Gyro kI", 0.02);
+    }
+
+    public double getGyro_kD() {
+        return SmartDashboard.getNumber("Gyro kD", 0.045);
+    }
+
+    public double getGyro_kF() {
+        return SmartDashboard.getNumber("Gyro kF", 0.0);
     }
 
 
@@ -263,6 +290,13 @@ public class DriveControl extends Subsystem {
         updateDashboard();
 
         robotDrive.tankDrive(left, right, true);
+    }
+
+    public double getVelocity() {
+        double v1 = RobotMap.driveFrontRight.getSelectedSensorVelocity(0);
+        //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
+
+        return v1;
     }
 
     /**
@@ -351,31 +385,19 @@ public class DriveControl extends Subsystem {
         return SmartDashboard.getNumber("Right kF", 0d);
     }
 
-    public double getGyro_kP() {
-        return SmartDashboard.getNumber("Gyro kP", 0.14);
+    public double getSpeed_kP() {
+        return SmartDashboard.getNumber("Speed kP", 2.0);
     }
 
-    public double getGyro_kI() {
-        return SmartDashboard.getNumber("Gyro kI", 0.02);
+    public double getSpeed_kI() {
+        return SmartDashboard.getNumber("Speed kI", 0.0);
     }
 
-    public double getGyro_kD() {
-        return SmartDashboard.getNumber("Gyro kD", 0.045);
+    public double getSpeed_kD() {
+        return SmartDashboard.getNumber("Speed kD", 20.0);
     }
 
-    public double getGyro_kF() {
-        return SmartDashboard.getNumber("Gyro kF", 0.0);
-    }
-
-    public double getAllowed_Error() {
-        return SmartDashboard.getNumber("Allowed Error", 5);
-    }
-
-    public double getAcceleration() {
-        return SmartDashboard.getNumber("Acceleration", 1);
-    }
-
-    public double getVelocity() {
-        return SmartDashboard.getNumber("Velocity", 1);
+    public double getSpeed_kF() {
+        return SmartDashboard.getNumber("Speed kF", 0.076);
     }
 }
