@@ -3,18 +3,14 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-/**
- * Implements tankDrive feature
- */
-public class TankDrive extends Command {
-    public TankDrive() {
+public class ArcadedPID extends Command {
+    public ArcadedPID() {
         requires(Robot.driveControl);
     }
 
     /**
      * Called just before this Command runs the first time
      */
-
     @Override
     protected void initialize() {
     }
@@ -22,10 +18,9 @@ public class TankDrive extends Command {
     /**
      * Called repeatedly when this Command is scheduled to run
      */
-
     @Override
     protected void execute() {
-        Robot.driveControl.tankJoystickInputs();
+        Robot.driveControl.arcadedPID();
     }
 
     /**
@@ -54,4 +49,3 @@ public class TankDrive extends Command {
         end();
     }
 }
-

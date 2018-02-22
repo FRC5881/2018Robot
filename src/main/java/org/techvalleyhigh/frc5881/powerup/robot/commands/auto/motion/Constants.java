@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.motion;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion;
 
 public class Constants {
     /**

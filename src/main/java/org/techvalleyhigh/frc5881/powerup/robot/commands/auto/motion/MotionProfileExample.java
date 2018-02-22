@@ -1,5 +1,5 @@
 /**
- * Example logic for firing and managing motion profiles.
+ * Example logic for firing and managing auto profiles.
  * This example sends MPs, waits for them to finish
  * Although this code uses a CANTalon, nowhere in this module do we changeMode() or call set() to change the output.
  * This is done in Robot2.java to demonstrate how to change control modes on the fly.
@@ -18,10 +18,10 @@
  * getControlMode, to check if we are in Motion Profile Control mode.
  *
  * Example of advanced features not demonstrated here...
- * [1] Calling pushMotionProfileTrajectory() continuously while the Talon executes the motion profile, thereby keeping it going indefinitely.
+ * [1] Calling pushMotionProfileTrajectory() continuously while the Talon executes the auto profile, thereby keeping it going indefinitely.
  * [2] Instead of setting the sensor position to zero at the start of each MP, the program could offset the MP's position based on current position.
  */
-package org.techvalleyhigh.frc5881.powerup.robot.commands.motion;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -29,13 +29,12 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.Notifier;
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class MotionProfileExample {
 
     /**
-     * The status of the motion profile executer and buffer inside the Talon.
+     * The status of the auto profile executer and buffer inside the Talon.
      * Instead of creating a new one every time we call getMotionProfileStatus,
      * keep one copy.
      */
@@ -46,12 +45,12 @@ public class MotionProfileExample {
 
     /**
      * reference to the talon we plan on manipulating. We will not changeMode()
-     * or call set(), just get motion profile status and make decisions based on
-     * motion profile.
+     * or call set(), just get auto profile status and make decisions based on
+     * auto profile.
      */
     private TalonSRX _talon;
     /**
-     * State machine to make sure we let enough of the motion profile stream to
+     * State machine to make sure we let enough of the auto profile stream to
      * talon before we fire it.
      */
     private int _state = 0;
@@ -77,7 +76,7 @@ public class MotionProfileExample {
      */
     private SetValueMotionProfile _setValue = SetValueMotionProfile.Disable;
     /**
-     * How many trajectory points do we wait for before firing the motion
+     * How many trajectory points do we wait for before firing the auto
      * profile.
      */
     private static final int kMinPointsInTalon = 5;
@@ -104,7 +103,7 @@ public class MotionProfileExample {
 
     /**
      * Lets create a periodic task to funnel our trajectory points into our talon.
-     * It doesn't need to be very accurate, just needs to keep pace with the motion
+     * It doesn't need to be very accurate, just needs to keep pace with the auto
      * profiler executer.  Now if you're trajectory points are slow, there is no need
      * to do this, just call _talon.processMotionProfileBuffer() in your teleop loop.
      * Generally speaking you want to call it at least twice as fast as the duration
@@ -121,11 +120,12 @@ public class MotionProfileExample {
      * C'tor
      *
      * @param talon
-     *            reference to Talon object to fetch motion profile status from.
+     *            reference to Talon object to fetch auto profile status from.
      */
     public MotionProfileExample(TalonSRX talon, double [][] _points, boolean isLeft) {
         _talon = talon;
         this._points = _points;
+        this.isLeft = isLeft;
         this.currentPoint = 0;
 
         /*
@@ -163,7 +163,7 @@ public class MotionProfileExample {
      * Called every loop.
      */
     public void control() {
-        /* Get the motion profile status every loop */
+        /* Get the auto profile status every loop */
         _talon.getMotionProfileStatus(_status);
 
         /*
@@ -224,7 +224,7 @@ public class MotionProfileExample {
                     break;
                 case 1:
                     if (_status.btmBufferCnt > kMinPointsInTalon) {
-                        /* start (once) the motion profile */
+                        /* start (once) the auto profile */
                         /* MP will start once the control frame gets scheduled */
                         _setValue = SetValueMotionProfile.Enable;
                     }
@@ -269,7 +269,7 @@ public class MotionProfileExample {
                     break;
             }
 
-            /* Get the motion profile status every loop */
+            /* Get the auto profile status every loop */
             _talon.getMotionProfileStatus(_status);
             _heading = _talon.getActiveTrajectoryHeading();
             _pos = _talon.getActiveTrajectoryPosition();
@@ -319,12 +319,13 @@ public class MotionProfileExample {
         /* This is fast since it's just into our TOP buffer */
         for (int i = start; i < start + cnt && i < _points.length; ++i) {
             // Edit velocity to account for drift using gyro pid
-            Robot.driveControl.writeGyroPid(_points[i][3] - Robot.driveControl.getGyroAngle());
+            Robot.driveControl.setGyroPid(_points[i][3] - Robot.driveControl.getGyroAngle());
             double percentage = 1 + (Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1));
             double velocityRPM = _points[i][1] * percentage;
 
             // Edit the position to account for drift using calculus
             // Change in position = integral of the change in velocity (assume constant acceleration)
+            // d = v0 * t + 0.5 * a * t^2
             // d = v0 * dt + 0.5(v1 - v0)dt^2
             double d = 0;
             if (i + 1 < _points.length) {
@@ -363,8 +364,8 @@ public class MotionProfileExample {
     /**
      *
      * @return the output value to pass to Talon's set() routine. 0 for disable
-     *         motion-profile output, 1 for enable motion-profile, 2 for hold
-     *         current motion profile trajectory point.
+     *         auto-profile output, 1 for enable auto-profile, 2 for hold
+     *         current auto profile trajectory point.
      */
     public SetValueMotionProfile getSetValue() {
         return _setValue;

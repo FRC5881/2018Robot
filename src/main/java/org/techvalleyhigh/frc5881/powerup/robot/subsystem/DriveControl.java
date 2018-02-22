@@ -8,39 +8,40 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.SpeedPID;
 
 
 public class DriveControl extends Subsystem {
-    //SmartDashboard key for Auto Gyro Tolerance
-    private static final String AUTO_GYRO_TOLERANCE = "Auto Gyro Tolerance (+- Deg)";
+    // SmartDashboard key for Gyro Tolerance
+    private static final String GYRO_TOLERANCE = "Gyro Tolerance %";
+
+    // SmartDashboard key for Speed Tolerance
+    private static final String SPEED_TOLERANCE = "Speed Tolerance %";
 
     // SmartDashboard key for Auto Turn Speed
     private static final String AUTO_TURN_SPEED = "Auto Turn Speed %";
 
     // SmartDashboard key for X_AXIS sensitivity
-    private static final String X_AXIS_SENSITIVITY = "X Axis sensitivity on drive controls";
+    private static final String X_AXIS_SENSITIVITY = "X Axis sensitivity";
 
     // SmartDashboard key for Y_AXIS sensitivity
-    private static final String Y_AXIS_SENSITIVITY = "Y Axis sensitivity on drive controls";
-
-    // SmartDashboard key for ticks per foot scalar
-    private static final String SCALE_TICKS_PER_FOOT = "Ticks per foot scalar";
+    private static final String Y_AXIS_SENSITIVITY = "Y Axis sensitivity";
 
     // Joystick dead zone
     private static final double deadZone = 0.1;
 
-    // Max speeds
+    // Max speeds ticks / 100 ms
     private static final double maxForward = 1500;
     private static final double maxReverse = -1500;
 
     // Robot drive
-    public DifferentialDrive robotDrive;
+    private DifferentialDrive robotDrive;
 
-    // Gyro PID
+    // PIDs
     private static PIDController gyroPID;
     private static PIDController speedPID;
 
+    // PID outputs
     public double gyroPIDOutput;
     public double speedPIDOutput;
 
@@ -56,7 +57,6 @@ public class DriveControl extends Subsystem {
      * 2 * 1440 / pi = ticks per foot
      */
     public static final double ticksPerFoot = 2 * 1440 / Math.PI;
-
 
     // ----------------------- Subsystem Control ----------------------- //
     /**
@@ -82,59 +82,119 @@ public class DriveControl extends Subsystem {
         // Calibrate gyro on robot start up
         calibrateGyro();
 
-        // Create Differential ArcadeDrive Object
+        // Create DifferentialDrive for all our control needs
         SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft);
         SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight);
-
         robotDrive = new DifferentialDrive(m_left, m_right);
+
+        // Clear stop motors just in case there was some left over nonsense
         robotDrive.stopMotor();
 
         // Disable safety ¯\_(ツ)_/¯
         robotDrive.setSafetyEnabled(false);
         setMotorSafety(false);
 
-        // Set "dead zone" on the joystick stick inputs
+        // Set "dead zone" on differential drive inputs
         robotDrive.setDeadband(deadZone);
 
-        /* --- Put SmartDashboard values ---*/
+        // Put PID values
+        putSmartDashboard();
+
+        // Create PID controls
+        gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
+                RobotMap.digitalGyro, output -> gyroPIDOutput = output);
+
+        speedPID = new PIDController(getSpeed_kP(), getSpeed_kI(), getSpeed_kD(), getSpeed_kF(),
+                new SpeedPID(), output -> speedPIDOutput = output);
+
+        initPID();
+    }
+
+    /**
+     * Puts values on Smart Dashboard
+     */
+    private void putSmartDashboard() {
         // Auto values
-        SmartDashboard.putNumber(AUTO_GYRO_TOLERANCE, 5);
-        SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.25);
-        SmartDashboard.putNumber(SCALE_TICKS_PER_FOOT, 1);
+        SmartDashboard.putNumber(GYRO_TOLERANCE, 5);
+        SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.75);
 
         // Joystick sensitivities
         SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 1);
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
 
-        // Pid controls
+        // --- Pid controls --- //
+        // Left Motors
         SmartDashboard.putNumber("Left kP", 2.0);
         SmartDashboard.putNumber("Left kI", 0.0);
         SmartDashboard.putNumber("Left kD", 20.0);
         SmartDashboard.putNumber("Left kF", 0.076);
 
+        // Right Motors
         SmartDashboard.putNumber("Right kP", 2.0);
         SmartDashboard.putNumber("Right kI", 0.0);
         SmartDashboard.putNumber("Right kD", 20.0);
         SmartDashboard.putNumber("Right kF", 0.076);
 
+        // Gyro
         SmartDashboard.putNumber("Gyro kP", 0.057);
         SmartDashboard.putNumber("Gyro kI", 0.000000001);
         SmartDashboard.putNumber("Gyro kD", 0.14);
         SmartDashboard.putNumber("Gyro kF", 0.0);
 
-        SmartDashboard.putNumber("Allowed Error", 5);
-
-        SmartDashboard.putNumber("Acceleration", 1);
-        SmartDashboard.putNumber("Velocity", 1);
-
-        gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
-                RobotMap.digitalGyro, output -> gyroPIDOutput = output);
-
-        //speedPID = new PIDController(getSpeed_kP(), getSpeed_kI(), getSpeed_kD(), getSpeed_kF(),
-          //      getVelocity(), output -> speedPIDOutput = output);
-        initPID();
+        // Speed
+        SmartDashboard.putNumber("Speed kP", 2.0);
+        SmartDashboard.putNumber("Speed kI", 0.0);
+        SmartDashboard.putNumber("Speed kD", 20.0);
+        SmartDashboard.putNumber("Speed kF", 0.076);
     }
 
+    /**
+     * Init PID control values to be ready for driving
+     */
+    public void initPID() {
+        zeroEncoders();
+
+        // Set motor PID values
+        RobotMap.driveFrontLeft.config_kP(0 , getLeft_kP(), 10);
+        RobotMap.driveFrontLeft.config_kI(0, getLeft_kI(), 10);
+        RobotMap.driveFrontLeft.config_kD(0, getLeft_kD(), 10);
+        RobotMap.driveFrontLeft.config_kF(0, getLeft_kF(), 10);
+
+        RobotMap.driveFrontRight.config_kP(0 , getRight_kP(), 10);
+        RobotMap.driveFrontRight.config_kI(0, getRight_kI(), 10);
+        RobotMap.driveFrontRight.config_kD(0, getRight_kD(), 10);
+        RobotMap.driveFrontRight.config_kF(0, getRight_kF(), 10);
+
+        // Set other PID values
+        gyroPID.setP(getGyro_kP());
+        gyroPID.setI(getGyro_kI());
+        gyroPID.setD(getGyro_kD());
+        gyroPID.setF(getGyro_kF());
+        gyroPID.setPercentTolerance(getGyroTolerance());
+        gyroPID.reset();
+
+        speedPID.setP(getSpeed_kP());
+        speedPID.setI(getSpeed_kI());
+        speedPID.setD(getSpeed_kD());
+        speedPID.setF(getSpeed_kF());
+        speedPID.setPercentTolerance(getSpeedTolerance());
+        speedPID.reset();
+
+        // Just keep the PIDs running
+        gyroPID.enable();
+        speedPID.enable();
+    }
+
+    /**
+     * Set motor safety on each drive motor
+     * @param enable boolean to set safety too
+     */
+    public void setMotorSafety(boolean enable) {
+        RobotMap.driveFrontLeft.setSafetyEnabled(enable);
+        RobotMap.driveFrontRight.setSafetyEnabled(enable);
+        RobotMap.driveBackRight.setSafetyEnabled(enable);
+        RobotMap.driveBackLeft.setSafetyEnabled(enable);
+    }
 
     @Override
     public void initDefaultCommand() {
@@ -142,6 +202,7 @@ public class DriveControl extends Subsystem {
     }
 
     // ----------------------- GYRO ----------------------- //
+
     /**
      * Calibrate the Gyro, it takes ~15 seconds
      */
@@ -163,8 +224,8 @@ public class DriveControl extends Subsystem {
      *
      * @return Number of degrees of tolerance +-
      */
-    public int getAutoGyroTolerance() {
-        return (int) SmartDashboard.getNumber(AUTO_GYRO_TOLERANCE, 5);
+    public int getGyroTolerance() {
+        return (int) SmartDashboard.getNumber(GYRO_TOLERANCE, 5);
     }
 
     /**
@@ -178,10 +239,11 @@ public class DriveControl extends Subsystem {
      * edit the setpoint on the gyro PID
      * @param setPoint absolute bearing in degrees.
      */
-    public void writeGyroPid(double setPoint) {
+    public void setGyroPid(double setPoint) {
         gyroPID.setSetpoint(setPoint);
     }
 
+    // Getters for PID
     /**
      * Get gyro pid setpoint
      * @return a double the current gyro setpoint
@@ -206,7 +268,6 @@ public class DriveControl extends Subsystem {
         return gyroPID.onTarget();
     }
 
-    // Getters for PID
     public double getGyro_kP() {
         return SmartDashboard.getNumber("Gyro kP", 0.14);
     }
@@ -225,24 +286,20 @@ public class DriveControl extends Subsystem {
 
 
     // ----------------------- DRIVE HANDLING ----------------------- //
-    /* --- Getters for SmartDashboard drive values --- */
-    public static double getAutoTurnSpeed() {
-        return SmartDashboard.getNumber(AUTO_TURN_SPEED, 0.25);
+    // ---- Getters for SmartDashboard drive values ---- //
+    public double getAutoTurnSpeed() {
+        return SmartDashboard.getNumber(AUTO_TURN_SPEED, 0.75);
     }
 
-    public static double getXAxisSensitivity() {
+    public double getXAxisSensitivity() {
         return SmartDashboard.getNumber(X_AXIS_SENSITIVITY, -1);
     }
 
-    public static double getYAxisSensitivity() {
+    public double getYAxisSensitivity() {
         return SmartDashboard.getNumber(Y_AXIS_SENSITIVITY, 1);
     }
 
-    public static double getScaleTicksPerFoot() {
-        return SmartDashboard.getNumber(SCALE_TICKS_PER_FOOT, -1);
-    }
-
-    /* --- Scale methods for joystick inputs --- */
+    // --- Scale methods for joystick inputs --- //
     // Scale joysticks by a constant
     private double scaleXAxis(double x) {
         return x * getXAxisSensitivity();
@@ -251,19 +308,19 @@ public class DriveControl extends Subsystem {
         return y * getYAxisSensitivity();
     }
 
-    /* --- Joystick drive methods --- */
+    // --- Joystick drive methods --- //
     public void arcadeJoystickInputs() {
-        double x = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
-        double y = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
+        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
+        double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
-        robotDrive.arcadeDrive(scaleXAxis(x), scaleYAxis(y), true);
+        robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), true);
     }
 
     public void curvatureJoystickInputs(boolean isQuickTurn) {
-        double x = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
-        double y = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
+        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
+        double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
-        rawCurvatureDrive(scaleXAxis(x), scaleYAxis(y), !isQuickTurn);
+        robotDrive.curvatureDrive(scaleXAxis(turn), scaleYAxis(speed), !isQuickTurn);
     }
 
     public void tankJoystickInputs() {
@@ -273,7 +330,7 @@ public class DriveControl extends Subsystem {
         robotDrive.tankDrive(right, left, true);
     }
 
-    /* --- Raw drive methods to be used during autonomous --- */
+    // --- Raw drive methods to be used during autonomous --- //
     public void rawArcadeDrive(double move, double turn) {
         updateDashboard();
 
@@ -292,67 +349,8 @@ public class DriveControl extends Subsystem {
         robotDrive.tankDrive(left, right, true);
     }
 
-    public double getVelocity() {
-        double v1 = RobotMap.driveFrontRight.getSelectedSensorVelocity(0);
-        //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
 
-        return v1;
-    }
-
-    /**
-     * Stops all drive motors
-     */
-    public void stopDrive() {
-        RobotMap.driveFrontRight.stopMotor();
-        RobotMap.driveFrontLeft.stopMotor();
-    }
-
-    public void zeroEncoders() {
-        RobotMap.driveFrontRight.setSelectedSensorPosition(0, 0, 10);
-        RobotMap.driveFrontLeft.setSelectedSensorPosition(0, 0,10);
-    }
-
-    /**
-     * Init PID control values to be ready for driving
-     */
-    public void initPID() {
-        zeroEncoders();
-
-        // Update all PID values
-        RobotMap.driveFrontLeft.config_kP(0 , getLeft_kP(), 10);
-        RobotMap.driveFrontLeft.config_kI(0, getLeft_kI(), 10);
-        RobotMap.driveFrontLeft.config_kD(0, getLeft_kD(), 10);
-        RobotMap.driveFrontLeft.config_kF(0, getLeft_kF(), 10);
-
-        RobotMap.driveFrontRight.config_kP(0 , getRight_kP(), 10);
-        RobotMap.driveFrontRight.config_kI(0, getRight_kI(), 10);
-        RobotMap.driveFrontRight.config_kD(0, getRight_kD(), 10);
-        RobotMap.driveFrontRight.config_kF(0, getRight_kF(), 10);
-
-        gyroPID.setP(getGyro_kP());
-        gyroPID.setI(getGyro_kI());
-        gyroPID.setD(getGyro_kD());
-        gyroPID.setF(getGyro_kF());
-        gyroPID.setPercentTolerance(getAutoGyroTolerance());
-        gyroPID.reset();
-
-        // Just keep the gyro pid running
-        gyroPID.enable();
-
-        // RobotMap.driveFrontLeft.configAllowableClosedloopError(0, 100, 10);
-    }
-
-    /**
-     * Set motor safety on each drive motor
-     * @param enable boolean to set safety too
-     */
-    public void setMotorSafety(boolean enable) {
-        RobotMap.driveFrontLeft.setSafetyEnabled(enable);
-        RobotMap.driveFrontRight.setSafetyEnabled(enable);
-        RobotMap.driveBackRight.setSafetyEnabled(enable);
-        RobotMap.driveBackLeft.setSafetyEnabled(enable);
-    }
-
+    // ---- Getters ---- //
     public double getLeft_kP() {
         return SmartDashboard.getNumber("Left kP", 0.013);
     }
@@ -385,6 +383,58 @@ public class DriveControl extends Subsystem {
         return SmartDashboard.getNumber("Right kF", 0d);
     }
 
+    // ----------------------- Speed Control ----------------------- //
+
+    /**
+     * Implements gyro and speed PIDs into arcade drive for added control w/ joysticks
+     */
+    public void arcadedPID() {
+        // Get scaled inputs
+        double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
+        double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
+
+        // If speed or gyro PID is on target reset it to clear integral error
+        if (getSpeedOnTarget()) speedPID.reset();
+        if (getGyroOnTarget()) gyroPID.reset();
+
+        setGyroPid(turn);
+        setSpeedPID(speed);
+
+        rawArcadeDrive(speedPIDOutput, gyroPIDOutput);
+    }
+
+    /**
+     * returns the robots current average velocity
+     * @return average of the right speed and left speed in ticks per 100 ms
+     */
+    public double getVelocity() {
+        double v1 = RobotMap.driveFrontRight.getSelectedSensorVelocity(0);
+        //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
+        //return v1 + v2 / 2
+        return v1;
+    }
+
+    public void setSpeedPID(double setpoint) {
+        speedPID.setSetpoint(setpoint);
+    }
+
+    // Getters
+    public double getSpeedSetpoint() {
+        return speedPID.getSetpoint();
+    }
+
+    public double getSpeedError() {
+        return speedPID.getError();
+    }
+
+    public boolean getSpeedOnTarget() {
+        return speedPID.onTarget();
+    }
+
+    public double getSpeedTolerance() {
+        return SmartDashboard.getNumber(SPEED_TOLERANCE, 5);
+    }
+
     public double getSpeed_kP() {
         return SmartDashboard.getNumber("Speed kP", 2.0);
     }
@@ -399,5 +449,18 @@ public class DriveControl extends Subsystem {
 
     public double getSpeed_kF() {
         return SmartDashboard.getNumber("Speed kF", 0.076);
+    }
+
+    /**
+     * Stops all drive motors
+     */
+    public void stopDrive() {
+        RobotMap.driveFrontRight.stopMotor();
+        RobotMap.driveFrontLeft.stopMotor();
+    }
+
+    public void zeroEncoders() {
+        RobotMap.driveFrontRight.setSelectedSensorPosition(0, 0, 10);
+        RobotMap.driveFrontLeft.setSelectedSensorPosition(0, 0,10);
     }
 }

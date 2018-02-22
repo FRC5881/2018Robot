@@ -3,9 +3,9 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ElevatorDisableRatchet extends Command {
+public class DisableRatchet extends Command {
 
-    public ElevatorDisableRatchet(){
+    public DisableRatchet(){
         requires(Robot.elevator);
     }
 

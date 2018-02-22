@@ -8,14 +8,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
@@ -72,6 +71,7 @@ public class Robot extends TimedRobot {
         driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
+        driveChooser.addObject("Arcaded PID drive", new ArcadeDrive());
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
         SmartDashboard.putNumber("Turn", 0);
@@ -127,6 +127,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         updateSensors();
+
+        // Extra debugging
         MotionProfileStatus status = new MotionProfileStatus();
         RobotMap.driveFrontLeft.getMotionProfileStatus(status);
         SmartDashboard.putNumber("Btm Buffer Count", status.btmBufferCnt);
@@ -152,6 +154,7 @@ public class Robot extends TimedRobot {
             System.err.println("teleopInit() failed to start elevator command due to null");
         }
 
+        // Start arm command
         if (armCommand != null) {
             armCommand.start();
         } else {
@@ -173,6 +176,16 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         updateSensors();
+
+        // If the drive commands end restart them
+        if (!elevatorCommand.isRunning()) {
+            elevatorCommand.start();
+        }
+
+        if (!armCommand.isRunning()) {
+            armCommand.start();
+        }
+
         Scheduler.getInstance().run();
     }
 
@@ -181,7 +194,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
-        System.out.println(oi.pilotController.getPOV() + " POV");
+        updateSensors();
     }
 
     /**
@@ -191,15 +204,26 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
 
+        SmartDashboard.putNumber("Velocity", driveControl.getVelocity());
+        SmartDashboard.putNumber("Speed output", driveControl.speedPIDOutput);
+        SmartDashboard.putNumber("Speed setpoint", driveControl.getSpeedSetpoint());
+        SmartDashboard.putNumber("Speed error", driveControl.getSpeedError());
+
         SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
         SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
         SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
 
-        SmartDashboard.putBoolean("Ratchet Enabled", elevator.getRatchetEnabled());
-        SmartDashboard.putBoolean("Grabber Enabled", manipulator.getGrabberEnabled());
+        SmartDashboard.putBoolean("Ratchet enabled", elevator.getRatchetEnabled());
+        SmartDashboard.putBoolean("Grabber enabled", manipulator.getGrabberEnabled());
 
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Elevator output", RobotMap.elevatorTalonMaster.getMotorOutputPercent());
+        SmartDashboard.putNumber("Elevator setpoint", elevator.getSetpoint());
+        SmartDashboard.putNumber("Elevator error", elevator.getError());
 
-        SmartDashboard.putNumber("Speed", driveControl.getVelocity());
+        SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Arm output", RobotMap.armTalon.getMotorOutputPercent());
+        SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
+        SmartDashboard.putNumber("Arm error", arm.getError());
     }
 }

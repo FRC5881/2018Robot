@@ -1,7 +1,8 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import openrio.powerup.MatchData;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.LeftStartingProfiles;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.MiddleStartingProfiles;

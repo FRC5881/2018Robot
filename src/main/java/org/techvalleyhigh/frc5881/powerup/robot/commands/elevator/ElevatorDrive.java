@@ -11,7 +11,6 @@ public class ElevatorDrive extends Command {
     @Override
     protected void initialize() {
         System.out.println("Initializing elevator command");
-        Robot.elevator.initPID();
     }
 
     @Override

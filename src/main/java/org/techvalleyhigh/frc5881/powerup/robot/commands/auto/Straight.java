@@ -1,22 +1,23 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-/**
- * Implements tankDrive feature
- */
-public class TankDrive extends Command {
-    public TankDrive() {
+// TODO: Work in progress
+public class Straight extends Command {
+    private double distance;
+
+    public Straight(double distance) {
         requires(Robot.driveControl);
+        this.distance = distance;
     }
 
     /**
      * Called just before this Command runs the first time
      */
-
     @Override
     protected void initialize() {
+        System.out.println("Driving " + distance + " feet");
     }
 
     /**
@@ -25,16 +26,17 @@ public class TankDrive extends Command {
 
     @Override
     protected void execute() {
-        Robot.driveControl.tankJoystickInputs();
+        double turn = Robot.driveControl.gyroPIDOutput * Robot.driveControl.getAutoTurnSpeed();
+        Robot.driveControl.rawArcadeDrive(Robot.driveControl.speedPIDOutput, turn);
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * Since this is a drive command we never want it to end
+     * End command once we are within tolerance
      */
     @Override
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     /**
@@ -54,4 +56,3 @@ public class TankDrive extends Command {
         end();
     }
 }
-

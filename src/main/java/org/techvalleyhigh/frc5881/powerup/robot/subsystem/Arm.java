@@ -9,6 +9,9 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.armTalon;
 
+/**
+ * Controls robot's arm motors
+ */
 public class Arm extends Subsystem {
     /**
      * Dead zone for controllers
@@ -20,6 +23,9 @@ public class Arm extends Subsystem {
      */
     private static final double armSpeed = 0.5;
 
+    /**
+     * The number of ticks the arm can travel down
+     */
     private static final int extendedTicks = 2880;
 
     public Arm() {
@@ -41,6 +47,8 @@ public class Arm extends Subsystem {
         SmartDashboard.putNumber("Arm kI", 0);
         SmartDashboard.putNumber("Arm kD", 20);
         SmartDashboard.putNumber("Arm kF", 0.076);
+
+        initPID();
     }
 
     public void initPID() {
@@ -68,7 +76,9 @@ public class Arm extends Subsystem {
 
     // ---- Setters for PID ---- //
     public void setSetpoint(double setpoint) {
-        armTalon.pidWrite(setpoint);
+        if (setpoint < 0) setpoint = 0;
+        if (setpoint > extendedTicks) setpoint = extendedTicks;
+        armTalon.set(ControlMode.Position, setpoint);
     }
 
     public void setSoftLimitThresholds(int forwardLimit, int reverseLimit) {
@@ -100,5 +110,9 @@ public class Arm extends Subsystem {
 
     public double getSetpoint() {
         return armTalon.getClosedLoopTarget(0);
+    }
+
+    public double getError() {
+        return armTalon.getClosedLoopError(0);
     }
 }

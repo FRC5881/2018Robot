@@ -6,8 +6,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
-import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.ElevatorEnableRatchet;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.EnableRatchet;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.leftElevatorPancakeDoubleSolenoid;
@@ -18,26 +17,26 @@ import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.rightElevatorPan
  */
 public class Elevator extends Subsystem {
     /**
-     * Minimum amount of safe rotations
+     * Minimum amount of safe ticks
      */
-    private static final double minSafeRotations = 0;
+    private static final int minTicks = 0;
 
     /**
-     * Maximum amount of safe rotations
+     * Maximum amount of safe ticks
      */
-    private static final double maxSafeRotations = 10.0;
+    private static final int maxTicks = 12 * 1440;
 
     //TODO: Find how many rotations it takes to get to switch
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final double switchTicks = 2 * 1440;
+    private static final int switchTicks = 2 * 1440;
 
     //TODO: Find how many rotations it takes to get elevator to scale
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final double scaleTicks = 9 * 1440;
+    private static final int scaleTicks = 9 * 1440;
 
     private static final int baseSpeed = 1;
 
@@ -53,7 +52,7 @@ public class Elevator extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        new ElevatorEnableRatchet();
+        new EnableRatchet();
     }
 
     // ---- init ---- //
@@ -66,6 +65,11 @@ public class Elevator extends Subsystem {
         SmartDashboard.putNumber("Elevator kI", 0);
         SmartDashboard.putNumber("Elevator kD", 20);
         SmartDashboard.putNumber("Elevator kF", 0.076);
+
+        setSoftLimitThresholds(minTicks, maxTicks);
+        enableSoftLimits(true);
+
+        initPID();
     }
 
     public void initPID() {
@@ -81,13 +85,16 @@ public class Elevator extends Subsystem {
 
     // ---- Drive --- //
     public void driveControllerInput() {
+        // Get POV position from controller
         int pov = Robot.oi.pilotController.getPOV();
+
         int speed = 0;
         if (pov == 315 || pov == 0 || pov == 45) {
             speed = baseSpeed;
         } else if(pov == 225 || pov == 180 || pov == 135){
-            speed = baseSpeed;
+            speed = -baseSpeed;
         }
+
         speed *= (1 + Robot.oi.pilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
 
         addPosition(speed * 770);
@@ -99,7 +106,7 @@ public class Elevator extends Subsystem {
         elevatorTalonMaster.stopMotor();
     }
 
-    // ---- Auto targets ---- //
+    // ---- Auto reach targets ---- //
     public void setScale() {
         setSetpoint(scaleTicks);
     }
@@ -113,7 +120,7 @@ public class Elevator extends Subsystem {
         setSetpoint(setpoint);
     }
 
-    // ---- ratchet ---- //
+    // ---- Ratchet ---- //
     public void enableRatchet(){
         leftElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
         rightElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
@@ -130,10 +137,10 @@ public class Elevator extends Subsystem {
 
     // ---- Setters for PID ---- //
     public void setSetpoint(double setpoint) {
-        elevatorTalonMaster.pidWrite(setpoint);
+        elevatorTalonMaster.set(ControlMode.Position, setpoint);
     }
 
-    public void setSoftLimitThresholds(int forwardLimit, int reverseLimit) {
+    public void setSoftLimitThresholds(int reverseLimit, int forwardLimit) {
         elevatorTalonMaster.configForwardSoftLimitThreshold(forwardLimit, 10);
         elevatorTalonMaster.configReverseSoftLimitThreshold(reverseLimit, 10);
     }
@@ -164,7 +171,7 @@ public class Elevator extends Subsystem {
         return elevatorTalonMaster.getClosedLoopTarget(0);
     }
 
-    public double getHeight() {
-        return elevatorTalonMaster.getSelectedSensorPosition(0);
+    public double getError() {
+        return elevatorTalonMaster.getClosedLoopError(0);
     }
 }

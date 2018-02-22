@@ -1,9 +1,8 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-// WORK IN PROGRESS
 /**
  * Takes in relative degrees to turn during autonomous and will do just that, turn
  */
@@ -24,7 +23,7 @@ public class Turn extends Command {
         System.out.println("Turning " + this.absoluteBearing);
         this.absoluteBearing = this.relativeBearing + Robot.driveControl.getGyroAngle();
         Robot.driveControl.initPID();
-        Robot.driveControl.writeGyroPid(absoluteBearing);
+        Robot.driveControl.setGyroPid(absoluteBearing);
     }
 
     /**
@@ -33,7 +32,8 @@ public class Turn extends Command {
 
     @Override
     protected void execute() {
-        Robot.driveControl.rawArcadeDrive(0, Robot.driveControl.gyroPIDOutput * 0.75);
+        double turn = Robot.driveControl.gyroPIDOutput * Robot.driveControl.getAutoTurnSpeed();
+        Robot.driveControl.rawArcadeDrive(0, turn);
     }
 
     /**

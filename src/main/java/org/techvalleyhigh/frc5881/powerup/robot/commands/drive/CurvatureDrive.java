@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 /**
- * Runs Differential.curvatureDrive for testing
+ * Implements curvatureDrive feature
  */
 public class CurvatureDrive extends Command {
     public CurvatureDrive() {

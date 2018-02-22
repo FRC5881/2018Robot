@@ -15,8 +15,8 @@ public class Autonomous {
 
     /**
      * Stores a path, config and ending target to private variables
-     * @param path array of waypoints describing a motion profile
-     * @param config Trajectory.Config configs to be used while creating motion profile
+     * @param path array of waypoints describing a auto profile
+     * @param config Trajectory.Config configs to be used while creating auto profile
      * @param feature Feature autonomous profile targets
      * @param side
      */

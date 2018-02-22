@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.ElevatorDisableRatchet;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.ElevatorEnableRatchet;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.DisableRatchet;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.EnableRatchet;
 
 /**
  * Controls operator interfaces, such as controllers
@@ -111,7 +111,7 @@ public class OI {
         coPilotLeftTrigger.whenPressed(new ManipulatorOpen());
         coPilotTrigger.whenPressed(new ManipulatorClose());
 
-        coPilotBottomLeftBack.whenPressed(new ElevatorEnableRatchet());
-        coPilotBottomRightBack.whenPressed(new ElevatorDisableRatchet());
+        coPilotBottomLeftBack.whenPressed(new EnableRatchet());
+        coPilotBottomRightBack.whenPressed(new DisableRatchet());
     }
 }
