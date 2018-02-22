@@ -8,7 +8,8 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
  * Allows robot velocity to be used as a PIDSource
  */
 public class SpeedPID implements PIDSource {
-    public PIDSourceType type;
+    public PIDSourceType type = PIDSourceType.kRate;
+
     /**
      * Set which parameter of the device you are using as a process control variable.
      *

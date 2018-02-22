@@ -1,7 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
@@ -13,21 +12,15 @@ import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.armTalon;
  * Controls robot's arm motors
  */
 public class Arm extends Subsystem {
-    /**
-     * Dead zone for controllers
-     */
-    private static final double deadZone = 1 / 5;
+    // Joystick dead zone
+    private static final double deadZone = 0.1;
 
     /**
-     * Percentage to run arm motors
-     */
-    private static final double armSpeed = 0.5;
-
-    /**
-     * The number of ticks the arm can travel down
+     * The number of ticks the arm can travel downwards
      */
     private static final int extendedTicks = 2880;
 
+    // ---- Subsystem control ---- //
     public Arm() {
         super();
         init();
@@ -65,9 +58,14 @@ public class Arm extends Subsystem {
         armTalon.pidWrite(0);
     }
 
+    // ---- Drive ---- //
     public void driveControllerInput() {
-        double y = (1 + Robot.oi.pilotController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS)) / 2;
-        setSetpoint(y);
+        // We want to map 1 -> -1 range on joystick inputs to 0 -> extendTicks for pid control
+        // Make forward positive and can range 0 -> 1
+        double y = (1 - Robot.oi.pilotController.getRawAxis(OI.PILOT_Y_AXIS)) / 2;
+
+        // Scale by extend ticks and set setpoint
+        setSetpoint(y * extendedTicks);
     }
 
     public void stop() {
@@ -92,6 +90,14 @@ public class Arm extends Subsystem {
     }
 
     // ----- Getters for PID ----- //
+    public double getSetpoint() {
+        return armTalon.getClosedLoopTarget(0);
+    }
+
+    public double getError() {
+        return armTalon.getClosedLoopError(0);
+    }
+
     public double getArm_kP() {
         return SmartDashboard.getNumber("Arm kP", 2);
     }
@@ -106,13 +112,5 @@ public class Arm extends Subsystem {
 
     public double getArm_kF() {
         return SmartDashboard.getNumber("Arm kF", 0.076);
-    }
-
-    public double getSetpoint() {
-        return armTalon.getClosedLoopTarget(0);
-    }
-
-    public double getError() {
-        return armTalon.getClosedLoopError(0);
     }
 }
