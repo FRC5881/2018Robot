@@ -22,12 +22,6 @@ public class MotionProfile extends Command {
     private MotionProfileExample leftProfile;
     private Autonomous auto;
 
-    /**
-     * gyrpPID outputs a value that needs to be applied to the power of drive motors to adjust heading
-     * -1 * output to left and output to right
-     */
-    private PIDController gyroPID;
-
     public MotionProfile(Autonomous auto) {
         System.out.println("MotionProfile Constructed");
         requires(Robot.driveControl);
@@ -43,7 +37,6 @@ public class MotionProfile extends Command {
         leftMotor = RobotMap.driveFrontLeft;
         rightMotor = RobotMap.driveFrontRight;
 
-        // ---- Create Trajectories ---- //
         // Generate trajectory
         System.out.println("Generating Path...");
         long startTime = System.currentTimeMillis();
@@ -62,8 +55,9 @@ public class MotionProfile extends Command {
         double[][] leftPoints = JaciToTalon.makeProfile(leftTrajectory);
         double[][] rightPoints = JaciToTalon.makeProfile(rightTrajectory);
 
+        // Prints seconds rounded to 2 decimal places
         long endTime = System.currentTimeMillis();
-        System.out.println("It took " + (startTime - endTime) + " Milliseconds");
+        System.out.println("It took " + Math.round((endTime - startTime) * 100) / 100000 + " Seconds");
 
         // Init profiles
         leftProfile = new MotionProfileExample(leftMotor, leftPoints, true);
@@ -78,7 +72,7 @@ public class MotionProfile extends Command {
 
         /*
          * status 10 provides the trajectory target for auto profile AND
-         * auto magic
+         * motion magic
          */
         rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
         leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
@@ -89,7 +83,7 @@ public class MotionProfile extends Command {
 
     @Override
     protected void execute() {
-        //call this periodically, and catch the output.
+        // Call this periodically
         leftProfile.control();
         rightProfile.control();
 

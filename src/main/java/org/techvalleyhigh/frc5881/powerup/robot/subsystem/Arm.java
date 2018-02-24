@@ -60,7 +60,7 @@ public class Arm extends Subsystem {
 
     // ---- Drive ---- //
     public void driveControllerInput() {
-        // We want to map 1 -> -1 range on joystick inputs to 0 -> extendTicks for pid control
+        // We want to map -1 -> 1 range on joystick inputs to 0 -> extendTicks for pid control
         // Make forward positive and can range 0 -> 1
         double y = (1 - Robot.oi.pilotController.getRawAxis(OI.PILOT_Y_AXIS)) / 2;
 
