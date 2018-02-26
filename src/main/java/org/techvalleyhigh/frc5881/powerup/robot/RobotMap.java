@@ -11,51 +11,23 @@ public class RobotMap {
     // Gyro
     public static ADXRS450_Gyro digitalGyro;
 
-    // Talons
-    public static WPI_TalonSRX driveFrontLeft;
-    public static WPI_TalonSRX driveFrontRight;
-    public static WPI_TalonSRX driveBackLeft;
-    public static WPI_TalonSRX driveBackRight;
-
-    public static WPI_TalonSRX elevatorTalonMaster;
-    public static WPI_TalonSRX elevatorTalonFollower;
-
     // Talon for the arm
     public static WPI_TalonSRX armTalon;
 
+    // Talons for the Elevator
+    public static WPI_TalonSRX elevatorTalonMaster;
+    public static WPI_TalonSRX elevatorTalonFollower;
+
     // Pneumatic Solenoids for the and the grabber
-    public static DoubleSolenoid leftGrabDoubleSolenoid;
-    public static DoubleSolenoid rightGrabDoubleSolenoid;
+    public static DoubleSolenoid grabDoubleSolenoid;
 
     // Pneumatic Solenoids for the elevator
-    public static DoubleSolenoid leftElevatorPancakeDoubleSolenoid;
-    public static DoubleSolenoid rightElevatorPancakeDoubleSolenoid;
+    public static DoubleSolenoid elevatorPancakeDoubleSolenoid;
 
     // Pneumatic Compressor for giving everything air
     public static Compressor compressor;
 
     public static void init() {
-        //Talons
-        driveFrontLeft = new WPI_TalonSRX(1);
-        driveFrontLeft.setName("Drive", "Front Left Motor");
-        driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-        driveFrontLeft.setSensorPhase(true);
-        LiveWindow.add(driveFrontLeft);
-
-        driveBackLeft = new WPI_TalonSRX(2);
-        driveBackLeft.setName("Drive", "Back Left Motor");
-        driveBackLeft.set(ControlMode.Follower, 1);
-        LiveWindow.add(driveBackLeft);
-
-        driveFrontRight = new WPI_TalonSRX(3);
-        driveFrontRight.setName("Drive", "Front Right Motor");
-        //driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
-        LiveWindow.add(driveFrontRight);
-
-        driveBackRight = new WPI_TalonSRX(4);
-        driveBackRight.setName("Drive", "Back Right Motor");
-        driveBackRight.set(ControlMode.Follower, 3);
-        LiveWindow.add(driveBackRight);
 
         // Gyro
         digitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
@@ -91,22 +63,14 @@ public class RobotMap {
         compressor.setName("Compressor", "Compressor");
         LiveWindow.add(compressor);
 
-        // Pneumatic Solenoids for the grabber
-        rightGrabDoubleSolenoid = new DoubleSolenoid(20,1, 0);
-        rightGrabDoubleSolenoid.setName("Grabber", "Right Solenoid");
-        LiveWindow.add(rightGrabDoubleSolenoid);
-
-        leftGrabDoubleSolenoid = new DoubleSolenoid(20,3, 2);
-        leftGrabDoubleSolenoid.setName("Grabber", "Left Solenoid");
-        LiveWindow.add(leftGrabDoubleSolenoid);
+        // Pneumatic Solenoid for the grabber
+        grabDoubleSolenoid = new DoubleSolenoid(20,3, 2);
+        grabDoubleSolenoid.setName("Grabber", "Left Solenoid");
+        LiveWindow.add(grabDoubleSolenoid);
 
         // Pneumatic Solenoid for elevator
-        leftElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 7, 6);
-        leftElevatorPancakeDoubleSolenoid.setName("Elevator", "Left Ratchet");
-        LiveWindow.add(leftElevatorPancakeDoubleSolenoid);
-
-        rightElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 4, 5);
-        rightElevatorPancakeDoubleSolenoid.setName("Elevator", "Right Ratchet");
-        LiveWindow.add(rightElevatorPancakeDoubleSolenoid);
+        elevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 7, 6);
+        elevatorPancakeDoubleSolenoid.setName("Elevator", "Left Ratchet");
+        LiveWindow.add(elevatorPancakeDoubleSolenoid);
     }
 }
