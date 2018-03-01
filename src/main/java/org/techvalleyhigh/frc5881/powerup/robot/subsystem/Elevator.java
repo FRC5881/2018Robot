@@ -9,8 +9,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.EnableRatchet;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
-import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.leftElevatorPancakeDoubleSolenoid;
-import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.rightElevatorPancakeDoubleSolenoid;
+import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorSolenoid;
 
 /**
  * Runs elevator either up to next level(switch or scale), down to next level or in which ever direction you move the thumb stick (Y-axis)
@@ -122,17 +121,15 @@ public class Elevator extends Subsystem {
 
     // ---- Ratchet ---- //
     public void enableRatchet(){
-        leftElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
-        rightElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
+        elevatorSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
     public void disableRatchet(){
-        leftElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
-        rightElevatorPancakeDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+        elevatorSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     public boolean getRatchetEnabled() {
-        return leftElevatorPancakeDoubleSolenoid.get() == DoubleSolenoid.Value.kForward;
+        return elevatorSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
 
     // ---- Setters for PID ---- //

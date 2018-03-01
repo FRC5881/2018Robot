@@ -24,12 +24,10 @@ public class RobotMap {
     public static WPI_TalonSRX armTalon;
 
     // Pneumatic Solenoids for the and the grabber
-    public static DoubleSolenoid leftGrabDoubleSolenoid;
-    public static DoubleSolenoid rightGrabDoubleSolenoid;
+    public static DoubleSolenoid grabSolenoid;
 
     // Pneumatic Solenoids for the elevator
-    public static DoubleSolenoid leftElevatorPancakeDoubleSolenoid;
-    public static DoubleSolenoid rightElevatorPancakeDoubleSolenoid;
+    public static DoubleSolenoid elevatorSolenoid;
 
     // Pneumatic Compressor for giving everything air
     public static Compressor compressor;
@@ -96,21 +94,13 @@ public class RobotMap {
         LiveWindow.add(compressor);
 
         // Pneumatic Solenoids for the grabber
-        rightGrabDoubleSolenoid = new DoubleSolenoid(20,1, 0);
-        rightGrabDoubleSolenoid.setName("Grabber", "Right Solenoid");
-        LiveWindow.add(rightGrabDoubleSolenoid);
-
-        leftGrabDoubleSolenoid = new DoubleSolenoid(20,3, 2);
-        leftGrabDoubleSolenoid.setName("Grabber", "Left Solenoid");
-        LiveWindow.add(leftGrabDoubleSolenoid);
+        grabSolenoid = new DoubleSolenoid(20,1, 0);
+        grabSolenoid.setName("Grabber", "Solenoid");
+        LiveWindow.add(grabSolenoid);
 
         // Pneumatic Solenoid for elevator
-        leftElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 7, 6);
-        leftElevatorPancakeDoubleSolenoid.setName("Elevator", "Left Ratchet");
-        LiveWindow.add(leftElevatorPancakeDoubleSolenoid);
-
-        rightElevatorPancakeDoubleSolenoid = new DoubleSolenoid(20, 4, 5);
-        rightElevatorPancakeDoubleSolenoid.setName("Elevator", "Right Ratchet");
-        LiveWindow.add(rightElevatorPancakeDoubleSolenoid);
+        elevatorSolenoid = new DoubleSolenoid(20, 4, 5);
+        elevatorSolenoid.setName("Elevator", "Ratchet");
+        LiveWindow.add(elevatorSolenoid);
     }
 }
