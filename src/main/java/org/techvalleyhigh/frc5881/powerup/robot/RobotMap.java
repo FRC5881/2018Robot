@@ -68,6 +68,8 @@ public class RobotMap {
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         elevatorTalonMaster.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        elevatorTalonMaster.configPeakCurrentLimit(32, 10);
+        elevatorTalonMaster.configPeakCurrentDuration(4000, 10);
         elevatorTalonMaster.setNeutralMode(NeutralMode.Coast);
         elevatorTalonMaster.setSensorPhase(false);
         elevatorTalonMaster.setInverted(true);
@@ -84,6 +86,8 @@ public class RobotMap {
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+        armTalon.configPeakCurrentLimit(32, 10);
+        armTalon.configPeakCurrentDuration(3000, 10);
         LiveWindow.add(armTalon);
 
         // Pneumatic Compressor

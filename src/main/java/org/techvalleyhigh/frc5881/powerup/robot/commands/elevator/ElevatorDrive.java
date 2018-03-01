@@ -2,10 +2,27 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
+import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 
 public class ElevatorDrive extends Command {
+
+    // Timeouts in milliseconds
+    private static final int timeoutKill = 20 * 1000;
+
+    // last measured time
+    private long time;
+
+    // Last setpoint
+    private double lastpoint;
+
+
+
     public ElevatorDrive() {
         requires(Robot.elevator);
+
+        // Init lastpoint
+        lastpoint = 0;
+        resetTimeouts();
     }
 
     @Override
@@ -21,6 +38,17 @@ public class ElevatorDrive extends Command {
             Robot.elevator.setSwitch();
         } else if (Robot.oi.coPilotTopBackRight.get()) {
             Robot.elevator.setScale();
+        }
+
+        double newpoint = Robot.elevator.getSetpoint();
+        if (lastpoint != newpoint) {
+            resetTimeouts();
+        } else {
+            long current = System.currentTimeMillis();
+            if (current - time > timeoutKill) {
+                // Kill
+                RobotMap.elevatorTalonMaster.disable();
+            }
         }
     }
 
@@ -38,6 +66,10 @@ public class ElevatorDrive extends Command {
     @Override
     protected void interrupted() {
         end();
+    }
+
+    private void resetTimeouts() {
+        time = System.currentTimeMillis();
     }
 }
 
