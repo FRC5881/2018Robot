@@ -92,7 +92,7 @@ public class RightStartingProfiles {
         autos.put(13, auto_13);
         autos.put(14, auto_14);
         autos.put(15, auto_15);
-        autos.put(16, auto_16);
+        //autos.put(16, auto_16);
     }
 
     /**

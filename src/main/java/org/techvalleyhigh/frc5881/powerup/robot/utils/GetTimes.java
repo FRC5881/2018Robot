@@ -15,7 +15,7 @@ import java.util.HashMap;
  * Loops through each of our autonomous and prints how long they take
  */
 public class GetTimes {
-    public static void main(String[] args) {
+    public static void printTimes() {
         HashMap<Integer, Autonomous> autos = new HashMap<>();
 
         autos.putAll(LeftStartingProfiles.getAutos());
