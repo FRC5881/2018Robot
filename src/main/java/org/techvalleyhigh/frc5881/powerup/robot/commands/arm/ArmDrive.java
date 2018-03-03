@@ -2,10 +2,19 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
+import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 
 public class ArmDrive extends Command {
+    private static final int timeoutKill = 20 * 1000;
+    private double lastpoint;
+    private double time;
+
     public ArmDrive() {
         requires(Robot.arm);
+
+        // Init lastpoint
+        lastpoint = 0;
+        resetTimeouts();
     }
 
     @Override
@@ -17,6 +26,19 @@ public class ArmDrive extends Command {
     @Override
     protected void execute() {
         Robot.arm.driveControllerInput();
+
+        double newpoint = Robot.arm.getSetpoint();
+
+        if (lastpoint != newpoint) {
+            resetTimeouts();
+        } else {
+            long current = System.currentTimeMillis();
+            if (current - time > timeoutKill && Math.abs(Robot.arm.getError()) > 1440) {
+                // Kill
+                RobotMap.armTalon.disable();
+            }
+        }
+        lastpoint = newpoint;
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -36,5 +58,10 @@ public class ArmDrive extends Command {
     @Override
     protected void interrupted() {
         end();
+    }
+
+
+    private void resetTimeouts() {
+        time = System.currentTimeMillis();
     }
 }
