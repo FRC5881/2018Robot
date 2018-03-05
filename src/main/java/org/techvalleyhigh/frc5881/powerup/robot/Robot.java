@@ -8,22 +8,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
     public static OI oi;
-    public static DriveControl driveControl;
     public static Manipulator manipulator;
     public static Arm arm;
     public static Elevator elevator;
@@ -45,7 +37,6 @@ public class Robot extends TimedRobot {
         RobotMap.init();
 
         // Define Subsystems
-        driveControl = new DriveControl();
         manipulator = new Manipulator();
         arm = new Arm();
         elevator = new Elevator();
@@ -69,9 +60,6 @@ public class Robot extends TimedRobot {
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
-        driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
-        driveChooser.addObject("Tank Drive", new TankDrive());
-        driveChooser.addObject("Curvature Drive", new CurvatureDrive());
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
         SmartDashboard.putNumber("Turn", 0);
@@ -92,33 +80,12 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         updateSensors();
 
-        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
         Scheduler.getInstance().run();
-
-        SmartDashboard.putBoolean("Paths Are Valid", AutonomousDecoder.isValidIntRangeInput(autoOptions));
     }
 
     @Override
     public void autonomousInit() {
-        String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
 
-        // Clear trajectories and PID set point
-        RobotMap.driveFrontRight.clearMotionProfileTrajectories();
-        RobotMap.driveFrontLeft.clearMotionProfileTrajectories();
-
-        RobotMap.driveFrontRight.pidWrite(0);
-        RobotMap.driveFrontLeft.pidWrite(0);
-
-        //autonomousCommand = new Turn(SmartDashboard.getNumber("Turn", 0));
-        //autonomousCommand.start();
-
-        // Start Autonomous Command
-        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
-            AutonomousCommand autonomousCommand = new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions));
-            autonomousCommand.start();
-        } else {
-            System.err.println("YOU DIDN'T CHOOSE AN AUTO!!!!!");
-        }
     }
 
     /**
@@ -128,7 +95,6 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         updateSensors();
         MotionProfileStatus status = new MotionProfileStatus();
-        RobotMap.driveFrontLeft.getMotionProfileStatus(status);
         SmartDashboard.putNumber("Btm Buffer Count", status.btmBufferCnt);
         SmartDashboard.putNumber("Top Buffer Count", status.topBufferCnt);
 
@@ -188,18 +154,11 @@ public class Robot extends TimedRobot {
      * Update the current sensors to the SmartDashboard
      */
     public void updateSensors() {
-        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
-
-        SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
-        SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
-        SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
 
         SmartDashboard.putBoolean("Ratchet Enabled", elevator.getRatchetEnabled());
         SmartDashboard.putBoolean("Grabber Enabled", manipulator.getGrabberEnabled());
 
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
 
-        SmartDashboard.putNumber("Speed", driveControl.getVelocity());
     }
 }

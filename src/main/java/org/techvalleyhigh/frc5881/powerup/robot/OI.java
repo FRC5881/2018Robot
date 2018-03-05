@@ -7,7 +7,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.Manipul
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.ElevatorDisableRatchet;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.ElevatorEnableRatchet;
-
 /**
  * Controls operator interfaces, such as controllers
  */
