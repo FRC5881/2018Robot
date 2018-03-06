@@ -6,13 +6,12 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
+//import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.TankDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Arm;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
@@ -24,12 +23,12 @@ public class Robot extends TimedRobot {
     public static OI oi;
     public static DriveControl driveControl;
     public static Manipulator manipulator;
-    public static Arm arm;
+    //public static Arm arm;
     public static Elevator elevator;
 
     // Define drive commands
     public static ElevatorDrive elevatorCommand;
-    public static ArmDrive armCommand;
+//    public static ArmDrive armCommand;
     public static Command driveCommand;
     public static SendableChooser<Command> driveChooser;
 
@@ -46,12 +45,12 @@ public class Robot extends TimedRobot {
         // Define Subsystems
         driveControl = new DriveControl();
         manipulator = new Manipulator();
-        arm = new Arm();
+        //arm = new Arm();
         elevator = new Elevator();
 
         // Define drive and elevator command to during tele - op
         elevatorCommand = new ElevatorDrive();
-        armCommand = new ArmDrive();
+        //armCommand = new ArmDrive();
 
         // OI must be constructed after subsystems. If the OI creates Commands
         //(which it very likely will), subsystems are not guaranteed to be
@@ -154,12 +153,14 @@ public class Robot extends TimedRobot {
             System.err.println("teleopInit() failed to start elevator command due to null");
         }
 
+        /*
         // Start arm command
         if (armCommand != null) {
             armCommand.start();
         } else {
             System.err.println("teleopInit() failed to start arm command due to null");
         }
+        */
 
         // Starts drive command
         if (driveChooser.getSelected() != null) {
@@ -182,9 +183,11 @@ public class Robot extends TimedRobot {
             elevatorCommand.start();
         }
 
+        /*
         if (!armCommand.isRunning()) {
             armCommand.start();
         }
+        */
 
         Scheduler.getInstance().run();
     }
@@ -197,10 +200,16 @@ public class Robot extends TimedRobot {
         updateSensors();
     }
 
+    @Override
+    public void testInit() {
+    }
+
     /**
      * Update the current sensors to the SmartDashboard
      */
     public void updateSensors() {
+        RobotMap.compressor.setClosedLoopControl(true);
+
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
 
@@ -217,13 +226,13 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Grabber enabled", manipulator.getGrabberEnabled());
 
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Elevator output", RobotMap.elevatorTalonMaster.getMotorOutputPercent());
+        SmartDashboard.putNumber("Elevator target", RobotMap.elevatorTalonMaster.getClosedLoopTarget(0));
         SmartDashboard.putNumber("Elevator setpoint", elevator.getSetpoint());
         SmartDashboard.putNumber("Elevator error", elevator.getError());
 
-        SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Arm output", RobotMap.armTalon.getMotorOutputPercent());
-        SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
-        SmartDashboard.putNumber("Arm error", arm.getError());
+        //SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
+        //SmartDashboard.putNumber("Arm output", RobotMap.armTalon.getMotorOutputPercent());
+        //SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
+        //SmartDashboard.putNumber("Arm error", arm.getError());
     }
 }

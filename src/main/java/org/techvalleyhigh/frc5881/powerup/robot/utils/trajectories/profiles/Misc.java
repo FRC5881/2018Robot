@@ -20,7 +20,7 @@ public class Misc {
 
     public static Waypoint[] path_straightline = new Waypoint[] {
             new Waypoint(0, 0, 0),
-            new Waypoint(0, 25, 0)
+            new Waypoint(25, 0, 0)
     };
     public static Autonomous straightline = new Autonomous(path_straightline, defaultConfig, null, null);
 

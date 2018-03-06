@@ -73,7 +73,7 @@ public class LeftStartingProfiles {
     private static final Autonomous auto_5 = new Autonomous(path_5, defaultConfig, SCALE, RIGHT);
     
     // Right Front Scale
-    private static final Waypoint[] path_6 = new Waypoint[]{
+    public static final Waypoint[] path_6 = new Waypoint[]{
             TrajectoryUtil.startLeft,
             new Waypoint(14.5, 23, 0),
             new Waypoint(19.25, 20.5, Math.toRadians(-68)),

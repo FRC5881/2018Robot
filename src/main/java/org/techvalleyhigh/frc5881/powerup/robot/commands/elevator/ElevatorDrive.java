@@ -19,6 +19,7 @@ public class ElevatorDrive extends Command {
 
     public ElevatorDrive() {
         requires(Robot.elevator);
+        Robot.elevator.initPID();
 
         // Init lastpoint
         lastpoint = 0;

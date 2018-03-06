@@ -61,6 +61,7 @@ public class RobotMap {
         LiveWindow.add(digitalGyro);
 
         // Talons for the Elevator
+        // Master is left
         elevatorTalonMaster = new WPI_TalonSRX(5);
         elevatorTalonMaster.setName("Elevator", "Master Motor");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -69,7 +70,7 @@ public class RobotMap {
         elevatorTalonMaster.configPeakCurrentLimit(32, 10);
         elevatorTalonMaster.configPeakCurrentDuration(4000, 10);
         elevatorTalonMaster.setNeutralMode(NeutralMode.Coast);
-        elevatorTalonMaster.setSensorPhase(false);
+        elevatorTalonMaster.setSensorPhase(true);
         elevatorTalonMaster.setInverted(true);
         LiveWindow.add(elevatorTalonMaster);
 
@@ -79,6 +80,7 @@ public class RobotMap {
         LiveWindow.add(elevatorTalonFollower);
 
         // Talon for the arm
+        /*
         armTalon = new WPI_TalonSRX(7);
         armTalon.setName("Arm", "Master Motor");
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -87,6 +89,7 @@ public class RobotMap {
         armTalon.configPeakCurrentLimit(32, 10);
         armTalon.configPeakCurrentDuration(3000, 10);
         LiveWindow.add(armTalon);
+        */
 
         // Pneumatic Compressor
         compressor = new Compressor(20);
@@ -94,12 +97,12 @@ public class RobotMap {
         LiveWindow.add(compressor);
 
         // Pneumatic Solenoids for the grabber
-        grabSolenoid = new DoubleSolenoid(20,1, 0);
+        grabSolenoid = new DoubleSolenoid(20,4, 5);
         grabSolenoid.setName("Grabber", "Solenoid");
         LiveWindow.add(grabSolenoid);
 
         // Pneumatic Solenoid for elevator
-        elevatorSolenoid = new DoubleSolenoid(20, 4, 5);
+        elevatorSolenoid = new DoubleSolenoid(20, 7, 6);
         elevatorSolenoid.setName("Elevator", "Ratchet");
         LiveWindow.add(elevatorSolenoid);
     }

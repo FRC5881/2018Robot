@@ -111,7 +111,7 @@ public class OI {
         coPilotLeftTrigger.whenPressed(new ManipulatorOpen());
         coPilotTrigger.whenPressed(new ManipulatorClose());
 
-        coPilotBottomLeftBack.whenPressed(new EnableRatchet());
-        coPilotBottomRightBack.whenPressed(new DisableRatchet());
+        coPilotBottomLeftForward.whenPressed(new EnableRatchet());
+        coPilotBottomRightForward.whenPressed(new DisableRatchet());
     }
 }

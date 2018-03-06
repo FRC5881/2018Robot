@@ -23,7 +23,7 @@ public class Elevator extends Subsystem {
     /**
      * Maximum amount of safe ticks
      */
-    private static final int maxTicks = 12 * 1440;
+    private static final double maxTicks = 22.5d * 1440;
 
     //TODO: Find how many rotations it takes to get to switch
     /**
@@ -35,7 +35,7 @@ public class Elevator extends Subsystem {
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final int scaleTicks = 9 * 1440;
+    private static final int scaleTicks = 22 * 1440;
 
     private static final int baseSpeed = 1;
 
@@ -65,7 +65,7 @@ public class Elevator extends Subsystem {
         SmartDashboard.putNumber("Elevator kD", 20);
         SmartDashboard.putNumber("Elevator kF", 0.076);
 
-        setSoftLimitThresholds(minTicks, maxTicks);
+        setSoftLimitThresholds(minTicks, (int)maxTicks);
         enableSoftLimits(true);
 
         initPID();
@@ -86,6 +86,7 @@ public class Elevator extends Subsystem {
     public void driveControllerInput() {
         // Get POV position from controller
         int pov = Robot.oi.pilotController.getPOV();
+        System.out.print(pov);
 
         int speed = 0;
         if (pov == 315 || pov == 0 || pov == 45) {
@@ -95,6 +96,7 @@ public class Elevator extends Subsystem {
         }
 
         speed *= (1 + Robot.oi.pilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
+        System.out.println("\nSpeed " + speed);
 
         addPosition(speed * 770);
         //elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
@@ -116,7 +118,9 @@ public class Elevator extends Subsystem {
 
     private void addPosition(double ticks) {
         double setpoint = getSetpoint() + ticks;
-        setSetpoint(setpoint);
+        if (setpoint > 0 && setpoint < maxTicks) {
+            setSetpoint(setpoint);
+        }
     }
 
     // ---- Ratchet ---- //
