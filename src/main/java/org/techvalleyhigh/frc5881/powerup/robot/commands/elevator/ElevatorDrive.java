@@ -46,11 +46,12 @@ public class ElevatorDrive extends Command {
             resetTimeouts();
         } else {
             long current = System.currentTimeMillis();
-            if (current - time > timeoutKill) {
+            if (current - time > timeoutKill && Math.abs(Robot.elevator.getError()) > 1440) {
                 // Kill
                 RobotMap.elevatorTalonMaster.disable();
             }
         }
+        lastpoint = newpoint;
     }
 
     @Override

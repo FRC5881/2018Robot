@@ -26,7 +26,7 @@ public class Misc {
 
     static {
         autos.put(100, baseline);
-        autos.put(101, straightline);
+        //autos.put(101, straightline);
     }
 
     /**
