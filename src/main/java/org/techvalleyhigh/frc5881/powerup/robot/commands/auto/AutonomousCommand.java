@@ -23,31 +23,43 @@ public class AutonomousCommand extends CommandGroup {
      * @param chosen array list of integers
      */
     public AutonomousCommand(ArrayList<Integer> chosen) {
+        // Add all the autonomous paths into one big HashMap
         HashMap<Integer, Autonomous> autos = new HashMap<>();
         autos.putAll(LeftStartingProfiles.getAutos());
         autos.putAll(MiddleStartingProfiles.getAutos());
         autos.putAll(RightStartingProfiles.getAutos());
         autos.putAll(Misc.getAutos());
 
+        // Keep track if we find an auto routine so if we don't we'll default to crossing the auto line
+        boolean found = false;
+
         // Filter
         for (Integer i: chosen) {
             Autonomous auto = autos.get(i);
-            /*
-            If statement checks to see it the MatchData's "owned side"
-            is the same as the Autonomous command's version of "owned side"
-             */
+            /* If statement checks to see it the MatchData's "owned side"
+            is the same as the Autonomous command's version of "owned side" */
+
+            // Set feature to null to tell the bot to overwrite normal checks and run that specific auto
             if (auto.getFeature() == null) {
                 System.out.println("Overwriting auto choosing");
                 System.out.println("Added Auto " + i);
                 addSequential(new MotionProfile(auto));
+                found = true;
                 break;
             }
 
             if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
                 System.out.println("Added Auto " + i);
                 addSequential(new MotionProfile(auto));
+                found = true;
                 break;
             }
+        }
+
+        // If we don't find a routine
+        if (!found) {
+            // Add path 100 (auto line)
+            addSequential(new MotionProfile(autos.get(100)));
         }
     }
 }

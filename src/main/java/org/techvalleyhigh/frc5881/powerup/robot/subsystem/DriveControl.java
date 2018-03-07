@@ -76,6 +76,14 @@ public class DriveControl extends Subsystem {
     }
 
     /**
+     * Starts a command on init of subsystem, defining commands in robot and OI is preferred
+     */
+    @Override
+    public void initDefaultCommand() {
+
+    }
+
+    /**
      * Initialize SmartDashboard and other local variables
      */
     public void init() {
@@ -196,11 +204,6 @@ public class DriveControl extends Subsystem {
         RobotMap.driveBackLeft.setSafetyEnabled(enable);
     }
 
-    @Override
-    public void initDefaultCommand() {
-
-    }
-
     // ----------------------- GYRO ----------------------- //
 
     /**
@@ -300,20 +303,35 @@ public class DriveControl extends Subsystem {
     }
 
     // --- Scale methods for joystick inputs --- //
-    // Scale joysticks by a constant
+    /**
+     * Scale X axis inputs by sensitivity
+     * @param x double value to scale
+     * @return scaled double value
+     */
     private double scaleXAxis(double x) {
         return x * getXAxisSensitivity();
     }
+
+    /**
+     * Scale Y axis inputs by sensitivity
+     * @param y double value to scale
+     * @return scaled double value
+     */
     private double scaleYAxis(double y) {
         return y * getYAxisSensitivity();
     }
 
     // --- Joystick drive methods --- //
+
+    /**
+     * Implements arcade drive with joystick inputs
+     */
     public void arcadeJoystickInputs() {
         // Checks if driver controller is not being operated and if so give slight control to pilot z rotation
         double turn;
-        if (Math.abs(Robot.oi.driverController.getRawAxis(Robot.oi.XBOX_LEFT_Y_AXIS)) < deadZone && Math.abs(Robot.oi.driverController.getRawAxis(Robot.oi.XBOX_RIGHT_X_AXIS)) < deadZone) {
-            turn = Robot.oi.pilotController.getRawAxis(Robot.oi.PILOT_Z_ROTATION) / 2;
+
+        if (Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) < deadZone && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone) {
+            turn = Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION) / 2;
         } else {
             turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
         }
@@ -322,6 +340,9 @@ public class DriveControl extends Subsystem {
         robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), true);
     }
 
+    /**
+     * Implements Curvature drive with joystick inputs
+     */
     public void curvatureJoystickInputs(boolean isQuickTurn) {
         double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
         double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
@@ -329,6 +350,9 @@ public class DriveControl extends Subsystem {
         robotDrive.curvatureDrive(scaleXAxis(turn), scaleYAxis(speed), !isQuickTurn);
     }
 
+    /**
+     * Implements tank drive with joystick inputs
+     */
     public void tankJoystickInputs() {
         double right = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS);
         double left = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
@@ -337,18 +361,35 @@ public class DriveControl extends Subsystem {
     }
 
     // --- Raw drive methods to be used during autonomous --- //
+
+    /**
+     * Pass raw values to arcade drive, shouldn't be used with joystick inputs
+     * @param move Drive speed -1 backwards -> 1 forward
+     * @param turn Turn rate -1 left -> 1 right
+     */
     public void rawArcadeDrive(double move, double turn) {
         updateDashboard();
 
         robotDrive.arcadeDrive(turn, move, true);
     }
 
+    /**
+     * Pass raw values to curvature drive, shouldn't be used with joystick inputs
+     * @param speed Drive speed -1 backwards -> 1 forward
+     * @param rotation Turn rate -1 left -> 1 right
+     * @param isQuickTurn boolean for isQuickTurn function
+     */
     public void rawCurvatureDrive(double speed, double rotation, boolean isQuickTurn) {
         updateDashboard();
 
         robotDrive.curvatureDrive(speed, rotation, isQuickTurn);
     }
 
+    /**
+     * Pass raw values to tank drive, shouldn't be used with joystick inputs
+     * @param right Speed to command right motors, -1 backwards -> 1 forward
+     * @param left Speed to command left motors, -1 backwards -> 1 forward
+     */
     public void rawTankDrive(double right, double left) {
         updateDashboard();
 
@@ -414,7 +455,9 @@ public class DriveControl extends Subsystem {
      * @return average of the right speed and left speed in ticks per 100 ms
      */
     public double getVelocity() {
+        //noinspection UnnecessaryLocalVariable
         double v1 = RobotMap.driveFrontRight.getSelectedSensorVelocity(0);
+        // TODO: Get a second encoder!
         //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
         //return v1 + v2 / 2
         return v1;
@@ -424,7 +467,7 @@ public class DriveControl extends Subsystem {
         speedPID.setSetpoint(setpoint);
     }
 
-    // Getters
+    // ---- Getters for PID ---- //
     public double getSpeedSetpoint() {
         return speedPID.getSetpoint();
     }
@@ -465,6 +508,9 @@ public class DriveControl extends Subsystem {
         RobotMap.driveFrontLeft.stopMotor();
     }
 
+    /**
+     * Reset drive encoders
+     */
     public void zeroEncoders() {
         RobotMap.driveFrontRight.setSelectedSensorPosition(0, 0, 10);
         RobotMap.driveFrontLeft.setSelectedSensorPosition(0, 0,10);

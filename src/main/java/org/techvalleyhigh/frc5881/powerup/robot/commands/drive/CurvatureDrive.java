@@ -4,7 +4,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 /**
- * Implements curvatureDrive feature
+ * Implements curvatureDrive feature we're not so sure what it does
+
  */
 public class CurvatureDrive extends Command {
     public CurvatureDrive() {
@@ -41,6 +42,7 @@ public class CurvatureDrive extends Command {
      */
     @Override
     protected void end() {
+        System.out.println("Curvature Drive command ended... That shouldn't happen");
         Robot.driveControl.stopDrive();
     }
 

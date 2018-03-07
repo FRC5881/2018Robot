@@ -219,7 +219,7 @@ public class MotionProfileExample {
                         _talon.clearMotionProfileTrajectories();
 
                         /* set the base trajectory period to zero, use the individual trajectory period below */
-                        _talon.configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
+                        _talon.configMotionProfileTrajectoryPeriod(MotionConstants.kBaseTrajPeriodMs, MotionConstants.kTimeoutMs);
                     }
                     break;
                 case 1:
@@ -229,9 +229,9 @@ public class MotionProfileExample {
                         _setValue = SetValueMotionProfile.Enable;
                     }
 
-                    if (_status.btmBufferCnt + _status.topBufferCnt < Constants.maxTrajectories) {
+                    if (_status.btmBufferCnt + _status.topBufferCnt < MotionConstants.maxTrajectories) {
                         _loopTimeout = kNumLoopsTimeout;
-                        fill(currentPoint, Constants.maxTrajectories - (_status.btmBufferCnt + _status.topBufferCnt));
+                        fill(currentPoint, MotionConstants.maxTrajectories - (_status.btmBufferCnt + _status.topBufferCnt));
                     }
                     /*
                      * wait for MP to stream to Talon, really just the first few
@@ -299,7 +299,7 @@ public class MotionProfileExample {
     /** Start filling the MPs to all of the involved Talons. */
     private void startFilling() {
         /* since this example only has one talon, just update that one */
-        fill(currentPoint, Constants.maxTrajectories);
+        fill(currentPoint, MotionConstants.maxTrajectories);
     }
 
     private void fill(int start, int cnt) {
@@ -335,19 +335,15 @@ public class MotionProfileExample {
             double positionRot =_points[i][0] + d;
 
             /* for each point, fill our structure and pass it to API */
-            point.position = positionRot * Constants.kSensorUnitsPerRotation; //Convert Revolutions to Units
-            point.velocity = velocityRPM * Constants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
+            point.position = positionRot * MotionConstants.kSensorUnitsPerRotation; //Convert Revolutions to Units
+            point.velocity = velocityRPM * MotionConstants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
             point.headingDeg = 0; /* future feature - not used in this example*/
             point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
             point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
             point.timeDur = GetTrajectoryDuration((int)_points[i][2]);
-            point.zeroPos = false;
-            if (i == 0)
-                point.zeroPos = true; /* set this to true on the first point */
+            point.zeroPos = i == 0;
 
-            point.isLastPoint = false;
-            if ((i + 1) == _points.length)
-                point.isLastPoint = true; /* set this to true on the last point  */
+            point.isLastPoint = (i + 1) == _points.length;
 
             _talon.pushMotionProfileTrajectory(point);
             currentPoint++;

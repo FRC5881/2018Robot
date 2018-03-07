@@ -12,7 +12,9 @@ import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.armTalon;
  * Controls robot's arm motors
  */
 public class Arm extends Subsystem {
-    // Joystick dead zone
+    /**
+     * Joystick dead zone
+     */
     private static final double deadZone = 0.1;
 
     /**
@@ -31,6 +33,9 @@ public class Arm extends Subsystem {
         init();
     }
 
+    /**
+     * Starts a command on init of subsystem, defining commands in robot and OI is preferred
+     */
     @Override
     protected void initDefaultCommand() {
     }
@@ -62,7 +67,7 @@ public class Arm extends Subsystem {
     public void driveControllerInput() {
         // We want to map -1 -> 1 range on joystick inputs to 0 -> extendTicks for pid control
         // Make forward positive and can range 0 -> 1
-        double y = (1 - Robot.oi.pilotController.getRawAxis(OI.PILOT_Y_AXIS)) / 2;
+        double y = (1 - Robot.oi.coPilotController.getRawAxis(OI.PILOT_Y_AXIS)) / 2;
 
         // Scale by extend ticks and set setpoint
         setSetpoint(y * extendedTicks);

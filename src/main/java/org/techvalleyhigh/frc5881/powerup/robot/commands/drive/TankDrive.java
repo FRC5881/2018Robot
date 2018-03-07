@@ -14,7 +14,6 @@ public class TankDrive extends Command {
     /**
      * Called just before this Command runs the first time
      */
-
     @Override
     protected void initialize() {
     }
@@ -22,7 +21,6 @@ public class TankDrive extends Command {
     /**
      * Called repeatedly when this Command is scheduled to run
      */
-
     @Override
     protected void execute() {
         Robot.driveControl.tankJoystickInputs();
@@ -42,6 +40,7 @@ public class TankDrive extends Command {
      */
     @Override
     protected void end() {
+        System.out.println("Tank Drive command ended... That shouldn't happen");
         Robot.driveControl.stopDrive();
     }
 

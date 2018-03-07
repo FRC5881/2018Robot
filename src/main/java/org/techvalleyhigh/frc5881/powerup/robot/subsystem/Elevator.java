@@ -1,15 +1,12 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.EnableRatchet;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
-import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorSolenoid;
 
 /**
  * Runs elevator either up to next level(switch or scale), down to next level or in which ever direction you move the thumb stick (Y-axis)
@@ -18,7 +15,7 @@ public class Elevator extends Subsystem {
     /**
      * Minimum amount of safe ticks
      */
-    private static final int minTicks = 0;
+    private static final int minTicks = 50;
 
     /**
      * Maximum amount of safe ticks
@@ -39,25 +36,36 @@ public class Elevator extends Subsystem {
 
     private static final int baseSpeed = 1;
 
+    /**
+     * Initialize Elevator subsystem with default name
+     */
     public Elevator(){
         super();
         init();
     }
 
+    /**
+     * Initialize Elevator subsystem with chosen name
+     */
     public Elevator(String name){
         super(name);
         init();
     }
 
+    /**
+     * Starts a command on init of subsystem, defining commands in robot and OI is preferred
+     */
     @Override
     protected void initDefaultCommand() {
-        new EnableRatchet();
+
     }
 
     // ---- init ---- //
+    /**
+     * Initialize SmartDashboard and other local variables
+     */
     public void init() {
-        enableRatchet();
-        elevatorTalonMaster.setSelectedSensorPosition(0, 0, 20);
+        // Set the elevator to be in Position mode
         elevatorTalonMaster.set(ControlMode.Position.value);
 
         SmartDashboard.putNumber("Elevator kP", 2.0);
@@ -71,21 +79,28 @@ public class Elevator extends Subsystem {
         initPID();
     }
 
+    /**
+     * Puts values on Smart Dashboard
+     */
     public void initPID() {
         elevatorTalonMaster.config_kP(0, getElevator_kP(), 10);
         elevatorTalonMaster.config_kI(0, getElevator_kI(), 10);
         elevatorTalonMaster.config_kD(0, getElevator_kD(), 10);
         elevatorTalonMaster.config_kF(0, getElevator_kF(), 10);
 
+        // Reset PID control
         elevatorTalonMaster.set(ControlMode.Position.value);
         elevatorTalonMaster.setSelectedSensorPosition(0, 0, 10);
         elevatorTalonMaster.pidWrite(0);
     }
 
     // ---- Drive --- //
-    public void driveControllerInput() {
+    /**
+     * Drive the elevator with joystick input
+     */
+    public void driveJoystickInputs() {
         // Get POV position from controller
-        int pov = Robot.oi.pilotController.getPOV();
+        int pov = Robot.oi.coPilotController.getPOV();
         //System.out.println("\n" + pov);
 
         int speed = 0;
@@ -95,46 +110,44 @@ public class Elevator extends Subsystem {
             speed = -baseSpeed;
         }
         //System.out.println("Speed0 " + speed);
-        speed *= (1 + Robot.oi.pilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
+        speed *= (1 + Robot.oi.coPilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
         //System.out.println("Speed1 " + speed);
 
         addPosition(speed * 770);
         //elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
     }
 
-    // Stops motor
+    /**
+     * Stops elevator motors
+     */
     public void stop() {
         elevatorTalonMaster.stopMotor();
     }
 
     // ---- Auto reach targets ---- //
+
+    /**
+     * Set elevator setpoint to scale
+     */
     public void setScale() {
         setSetpoint(scaleTicks);
     }
 
+    /**
+     * Set elevator setpoint to switch
+     */
     public void setSwitch() {
         setSetpoint(switchTicks);
     }
 
     private void addPosition(double ticks) {
         double setpoint = getSetpoint() + ticks;
-        if (setpoint > 0 && setpoint < maxTicks) {
+        if (setpoint > minTicks && setpoint < maxTicks) {
             setSetpoint(setpoint);
         }
     }
 
-    // ---- Ratchet ---- //
-    public void enableRatchet(){
-        elevatorSolenoid.set(DoubleSolenoid.Value.kForward);
-    }
 
-    public void disableRatchet(){
-        elevatorSolenoid.set(DoubleSolenoid.Value.kReverse);
-    }
-
-    public boolean getRatchetEnabled() {
-        return elevatorSolenoid.get() == DoubleSolenoid.Value.kForward;
-    }
 
     // ---- Setters for PID ---- //
     public void setSetpoint(double setpoint) {

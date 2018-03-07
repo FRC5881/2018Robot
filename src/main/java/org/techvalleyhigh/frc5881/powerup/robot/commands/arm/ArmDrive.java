@@ -1,4 +1,5 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
+// TODO: Get an arm
 /*
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
@@ -24,7 +25,7 @@ public class ArmDrive extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.arm.driveControllerInput();
+        Robot.arm.driveJoystickInputs();
 
         double newpoint = Robot.arm.getSetpoint();
 

@@ -1,9 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import jaci.pathfinder.Trajectory;
-
-import java.util.ArrayList;
 
 public class JaciToTalon {
     /**

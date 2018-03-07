@@ -33,8 +33,7 @@ public class AutonomousDecoder {
                         "$             # Anchor to end of string.           ",
                 Pattern.COMMENTS);
         Matcher m = re_valid.matcher(text);
-        if (m.matches())    return true;
-        else                return false;
+        return m.matches();
     }
 
     /**

@@ -2,6 +2,7 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
@@ -12,31 +13,30 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.Enable
  * Controls operator interfaces, such as controllers
  */
 public class OI {
-    public GenericHID driverController;
+    public final GenericHID driverController;
+    public final GenericHID coPilotController;
 
-    public GenericHID pilotController;
+    public final JoystickButton driveControllerButtonA;
+    public final JoystickButton driveControllerButtonB;
+    public final JoystickButton driveControllerButtonX;
+    public final JoystickButton driveControllerButtonY;
+    public final JoystickButton driveControllerBackButton;
+    public final JoystickButton driveControllerStartButton;
+    public final JoystickButton driveControllerLeftBumper;
+    public final JoystickButton driveControllerRightBumper;
 
-    public JoystickButton driveControllerButtonA;
-    public JoystickButton driveControllerButtonB;
-    public JoystickButton driveControllerButtonX;
-    public JoystickButton driveControllerButtonY;
-    public JoystickButton driveControllerBackButton;
-    public JoystickButton driveControllerStartButton;
-    public JoystickButton driveControllerLeftBumper;
-    public JoystickButton driveControllerRightBumper;
-
-    public JoystickButton coPilotTrigger;
-    public JoystickButton coPilotLeftTrigger;
-    public JoystickButton coPilotTopBackLeft;
-    public JoystickButton coPilotTopBackRight;
-    public JoystickButton coPilotTopFrontLeft;
-    public JoystickButton coPilotTopFrontRight;
-    public JoystickButton coPilotBottomLeftForward;
-    public JoystickButton coPilotBottomRightForward;
-    public JoystickButton coPilotBottomLeftMiddle;
-    public JoystickButton coPilotBottomRightMiddle;
-    public JoystickButton coPilotBottomLeftBack;
-    public JoystickButton coPilotBottomRightBack;
+    public final JoystickButton coPilotTrigger;
+    public final JoystickButton coPilotLeftTrigger;
+    public final JoystickButton coPilotTopBackLeft;
+    public final JoystickButton coPilotTopBackRight;
+    public final JoystickButton coPilotTopFrontLeft;
+    public final JoystickButton coPilotTopFrontRight;
+    public final JoystickButton coPilotBottomLeftForward;
+    public final JoystickButton coPilotBottomRightForward;
+    public final JoystickButton coPilotBottomLeftMiddle;
+    public final JoystickButton coPilotBottomRightMiddle;
+    public final JoystickButton coPilotBottomLeftBack;
+    public final JoystickButton coPilotBottomRightBack;
 
     // Joysticks
     /**
@@ -77,7 +77,7 @@ public class OI {
     public OI() {
         // Define controllers as joysticks
         driverController = new Joystick(0);
-        pilotController = new Joystick(1);
+        coPilotController = new Joystick(1);
 
         // Assign EACH xBox controller button
         driveControllerButtonA = new JoystickButton(driverController, BUTTON_A);
@@ -90,21 +90,21 @@ public class OI {
         driveControllerStartButton = new JoystickButton(driverController, BUTTON_START);
 
         // Assign EACH coPilot button
-        coPilotTrigger = new JoystickButton(pilotController, BUTTON_TRIGGER);
-        coPilotLeftTrigger = new JoystickButton(pilotController, BUTTON_LEFT_TRIGGER);
-        coPilotTopBackLeft = new JoystickButton(pilotController, BUTTON_TOP_BACK_LEFT);
-        coPilotTopBackRight = new JoystickButton(pilotController, BUTTON_TOP_BACK_RIGHT);
-        coPilotTopFrontLeft = new JoystickButton(pilotController, BUTTON_TOP_FRONT_LEFT);
-        coPilotTopFrontRight = new JoystickButton(pilotController, BUTTON_TOP_FRONT_RIGHT);
-        coPilotBottomLeftForward = new JoystickButton(pilotController, BUTTON_BOTTOM_LEFT_FORWARD);
-        coPilotBottomRightForward = new JoystickButton(pilotController, BUTTON_BOTTOM_RIGHT_FORWARD);
-        coPilotBottomLeftMiddle = new JoystickButton(pilotController, BUTTON_BOTTOM_LEFT_MIDDLE);
-        coPilotBottomRightMiddle = new JoystickButton(pilotController, BUTTON_BOTTOM_RIGHT_MIDDLE);
-        coPilotBottomLeftBack = new JoystickButton(pilotController, BUTTON_BOTTOM_LEFT_BACK);
-        coPilotBottomRightBack = new JoystickButton(pilotController, BUTTON_BOTTOM_RIGHT_BACK);
+        coPilotTrigger = new JoystickButton(coPilotController, BUTTON_TRIGGER);
+        coPilotLeftTrigger = new JoystickButton(coPilotController, BUTTON_LEFT_TRIGGER);
+        coPilotTopBackLeft = new JoystickButton(coPilotController, BUTTON_TOP_BACK_LEFT);
+        coPilotTopBackRight = new JoystickButton(coPilotController, BUTTON_TOP_BACK_RIGHT);
+        coPilotTopFrontLeft = new JoystickButton(coPilotController, BUTTON_TOP_FRONT_LEFT);
+        coPilotTopFrontRight = new JoystickButton(coPilotController, BUTTON_TOP_FRONT_RIGHT);
+        coPilotBottomLeftForward = new JoystickButton(coPilotController, BUTTON_BOTTOM_LEFT_FORWARD);
+        coPilotBottomRightForward = new JoystickButton(coPilotController, BUTTON_BOTTOM_RIGHT_FORWARD);
+        coPilotBottomLeftMiddle = new JoystickButton(coPilotController, BUTTON_BOTTOM_LEFT_MIDDLE);
+        coPilotBottomRightMiddle = new JoystickButton(coPilotController, BUTTON_BOTTOM_RIGHT_MIDDLE);
+        coPilotBottomLeftBack = new JoystickButton(coPilotController, BUTTON_BOTTOM_LEFT_BACK);
+        coPilotBottomRightBack = new JoystickButton(coPilotController, BUTTON_BOTTOM_RIGHT_BACK);
 
         // Turns the rumble off
-        pilotController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+        driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
         // Add commands below

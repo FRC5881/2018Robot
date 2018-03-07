@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadedPID;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.ArcadeDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.CurvatureDrive;
@@ -16,6 +17,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.subsystem.DriveControl;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Manipulator;
+import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Ratchet;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
 
 public class Robot extends TimedRobot {
@@ -25,6 +27,7 @@ public class Robot extends TimedRobot {
     public static Manipulator manipulator;
     //public static Arm arm;
     public static Elevator elevator;
+    public static Ratchet ratchet;
 
     // Define drive commands
     public static ElevatorDrive elevatorCommand;
@@ -47,9 +50,12 @@ public class Robot extends TimedRobot {
         manipulator = new Manipulator();
         //arm = new Arm();
         elevator = new Elevator();
+        ratchet = new Ratchet();
+
 
         // Define drive and elevator command to during tele - op
         elevatorCommand = new ElevatorDrive();
+        // TODO: Get a arm
         //armCommand = new ArmDrive();
 
         // OI must be constructed after subsystems. If the OI creates Commands
@@ -70,7 +76,7 @@ public class Robot extends TimedRobot {
         driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
-        driveChooser.addObject("Arcaded PID drive", new ArcadeDrive());
+        driveChooser.addObject("Arcaded PID drive", new ArcadedPID());
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
         SmartDashboard.putNumber("Turn", 0);
@@ -225,7 +231,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
         SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
 
-        SmartDashboard.putBoolean("Ratchet enabled", elevator.getRatchetEnabled());
+        SmartDashboard.putBoolean("Ratchet enabled", ratchet.getRatchetEnabled());
         SmartDashboard.putBoolean("Grabber enabled", manipulator.getGrabberEnabled());
 
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));

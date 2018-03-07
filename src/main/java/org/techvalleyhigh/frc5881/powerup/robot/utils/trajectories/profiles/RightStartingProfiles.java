@@ -11,10 +11,10 @@ import static openrio.powerup.MatchData.OwnedSide.*;
 import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil.defaultConfig;
 
 /**
- * Static class storing autonomous routines starting in the left position
+ * Class full of static variables storing autonomous routines starting in the left position
  */
 public class RightStartingProfiles {
-    private static HashMap<Integer, Autonomous> autos = new HashMap<>();
+    private static final HashMap<Integer, Autonomous> autos = new HashMap<>();
 
     // Right Side Switch
     private static final Waypoint[] path_10 = new Waypoint[] {
@@ -85,7 +85,7 @@ public class RightStartingProfiles {
         autos.put(13, auto_13);
         autos.put(14, auto_14);
         autos.put(15, auto_15);
-        //autos.put(16, auto_16);
+        autos.put(16, auto_16);
     }
 
     /**

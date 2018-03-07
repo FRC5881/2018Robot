@@ -4,7 +4,6 @@ import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
@@ -28,6 +27,9 @@ public class MotionProfile extends Command {
         this.auto = auto;
     }
 
+    /**
+     * Called just before this Command runs the first time
+     */
     @Override
     protected void initialize() {
         // Get pid values
@@ -67,20 +69,23 @@ public class MotionProfile extends Command {
         int time = Double.valueOf(auto.getConfig().dt * 1000).intValue();
 
         // Set timing for profile
-        rightMotor.configMotionProfileTrajectoryPeriod(time, Constants.kTimeoutMs);
-        leftMotor.configMotionProfileTrajectoryPeriod(time, Constants.kTimeoutMs);
+        rightMotor.configMotionProfileTrajectoryPeriod(time, MotionConstants.kTimeoutMs);
+        leftMotor.configMotionProfileTrajectoryPeriod(time, MotionConstants.kTimeoutMs);
 
         /*
          * status 10 provides the trajectory target for auto profile AND
          * motion magic
          */
-        rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
-        leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
+        rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
+        leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
 
         leftProfile.startMotionProfile();
         rightProfile.startMotionProfile();
     }
 
+    /**
+     * Called repeatedly when this Command is scheduled to run
+     */
     @Override
     protected void execute() {
         // Call this periodically
@@ -108,16 +113,26 @@ public class MotionProfile extends Command {
         rightMotor.set(ControlMode.MotionProfile, rightSetOutput.value);
     }
 
+    /**
+     * Make this return true when this Command no longer needs to run execute()
+     */
     @Override
     protected boolean isFinished() {
         return false;
     }
 
+    /**
+     * Called once after isFinished returns true OR the command is interrupted
+     */
     @Override
     protected void end() {
         System.out.println("Motion profile ended that shouldn't happen...");
     }
 
+    /**
+     * Called when another command which requires one or more of the same
+     * subsystems is scheduled to run
+     */
     @Override
     protected void interrupted() {
         end();

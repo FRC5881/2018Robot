@@ -1,7 +1,7 @@
 package org.techvalleyhigh.frc5881.powerup.robot.test;
 
 import org.junit.Test;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.GetTimes;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.GetTimes;
 
 public class Times {
 

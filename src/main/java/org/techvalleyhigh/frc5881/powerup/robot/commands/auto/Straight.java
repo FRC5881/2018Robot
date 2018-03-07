@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.Constants;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionConstants;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfileExample;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
 
@@ -51,15 +51,15 @@ public class Straight extends Command {
         // Set timing for profile
         int time = Double.valueOf(dt * 1000).intValue();
 
-        rightMotor.configMotionProfileTrajectoryPeriod(time, Constants.kTimeoutMs);
-        leftMotor.configMotionProfileTrajectoryPeriod(time, Constants.kTimeoutMs);
+        rightMotor.configMotionProfileTrajectoryPeriod(time, MotionConstants.kTimeoutMs);
+        leftMotor.configMotionProfileTrajectoryPeriod(time, MotionConstants.kTimeoutMs);
 
         /*
          * status 10 provides the trajectory target for auto profile AND
          * motion magic
          */
-        rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
-        leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, Constants.kTimeoutMs);
+        rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
+        leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
 
         leftProfile.startMotionProfile();
         rightProfile.startMotionProfile();

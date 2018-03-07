@@ -2,38 +2,67 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class RobotMap {
-    // Gyro
+    /**
+     * Gyro
+      */
+
     public static ADXRS450_Gyro digitalGyro;
 
-    // Talons
+    /**
+     * Front left drive talon
+     */
     public static WPI_TalonSRX driveFrontLeft;
+
+    /**
+     * Front right drive talon
+     */
     public static WPI_TalonSRX driveFrontRight;
+
+    /**
+     * Back left drive talon
+     */
     public static WPI_TalonSRX driveBackLeft;
+
+    /**
+     * Back right drive talon
+     */
     public static WPI_TalonSRX driveBackRight;
 
+    /**
+     * Master elevator talon (left on the bot)
+     */
     public static WPI_TalonSRX elevatorTalonMaster;
+
+    /**
+     * Following elevator talon (right on the bot)
+     */
     public static WPI_TalonSRX elevatorTalonFollower;
 
-    // Talon for the arm
+    /**
+     * Arm talon
+     */
     public static WPI_TalonSRX armTalon;
 
-    // Pneumatic Solenoids for the and the grabber
+    /**
+      * Pneumatic Solenoid for the and the manipulator
+      */
     public static DoubleSolenoid grabSolenoid;
 
-    // Pneumatic Solenoids for the elevator
-    public static DoubleSolenoid elevatorSolenoid;
+    /**
+     * Pneumatic Solenoid for the and the ratchet
+     */    public static DoubleSolenoid ratchetSolenoid;
 
-    // Pneumatic Compressor for giving everything air
+    /**
+     * Pneumatic Compressor for giving everything air
+     */
     public static Compressor compressor;
 
     public static void init() {
-        //Talons
+        // Talons
         driveFrontLeft = new WPI_TalonSRX(1);
         driveFrontLeft.setName("Drive", "Front Left Motor");
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -46,6 +75,7 @@ public class RobotMap {
 
         driveFrontRight = new WPI_TalonSRX(3);
         driveFrontRight.setName("Drive", "Front Right Motor");
+        // TODO: Get drive encoders!
         //driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
         LiveWindow.add(driveFrontRight);
 
@@ -77,6 +107,7 @@ public class RobotMap {
         elevatorTalonFollower.set(ControlMode.Follower, 5);
         LiveWindow.add(elevatorTalonFollower);
 
+        // TODO: Get a arm
         // Talon for the arm
         /*
         armTalon = new WPI_TalonSRX(7);
@@ -100,9 +131,9 @@ public class RobotMap {
         LiveWindow.add(grabSolenoid);
 
         // Pneumatic Solenoid for elevator
-        elevatorSolenoid = new DoubleSolenoid(20, 7, 6);
-        elevatorSolenoid.setName("Elevator", "Ratchet");
-        LiveWindow.add(elevatorSolenoid);
+        ratchetSolenoid = new DoubleSolenoid(20, 7, 6);
+        ratchetSolenoid.setName("Elevator", "Ratchet");
+        LiveWindow.add(ratchetSolenoid);
 
         initMotorState();
     }

@@ -40,6 +40,7 @@ public class ArcadeDrive extends Command {
       */
     @Override
     protected void end() {
+        System.out.println("Arcade Drive command ended... That shouldn't happen");
         Robot.driveControl.stopDrive();
     }
 
