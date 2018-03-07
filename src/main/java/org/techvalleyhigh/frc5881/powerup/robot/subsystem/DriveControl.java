@@ -243,7 +243,7 @@ public class DriveControl extends Subsystem {
         gyroPID.setSetpoint(setPoint);
     }
 
-    // Getters for PID
+    // ---- Getters for PID ---- //
     /**
      * Get gyro pid setpoint
      * @return a double the current gyro setpoint
@@ -310,7 +310,13 @@ public class DriveControl extends Subsystem {
 
     // --- Joystick drive methods --- //
     public void arcadeJoystickInputs() {
-        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
+        // Checks if driver controller is not being operated and if so give slight control to pilot z rotation
+        double turn;
+        if (Math.abs(Robot.oi.driverController.getRawAxis(Robot.oi.XBOX_LEFT_Y_AXIS)) < deadZone && Math.abs(Robot.oi.driverController.getRawAxis(Robot.oi.XBOX_RIGHT_X_AXIS)) < deadZone) {
+            turn = Robot.oi.pilotController.getRawAxis(Robot.oi.PILOT_Z_ROTATION) / 2;
+        } else {
+            turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
+        }
         double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
         robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), true);

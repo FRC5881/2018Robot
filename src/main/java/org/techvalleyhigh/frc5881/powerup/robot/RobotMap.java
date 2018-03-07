@@ -42,7 +42,6 @@ public class RobotMap {
 
         driveBackLeft = new WPI_TalonSRX(2);
         driveBackLeft.setName("Drive", "Back Left Motor");
-        driveBackLeft.set(ControlMode.Follower, 1);
         LiveWindow.add(driveBackLeft);
 
         driveFrontRight = new WPI_TalonSRX(3);
@@ -52,7 +51,6 @@ public class RobotMap {
 
         driveBackRight = new WPI_TalonSRX(4);
         driveBackRight.setName("Drive", "Back Right Motor");
-        driveBackRight.set(ControlMode.Follower, 3);
         LiveWindow.add(driveBackRight);
 
         // Gyro
@@ -105,5 +103,14 @@ public class RobotMap {
         elevatorSolenoid = new DoubleSolenoid(20, 7, 6);
         elevatorSolenoid.setName("Elevator", "Ratchet");
         LiveWindow.add(elevatorSolenoid);
+
+        initMotorState();
+    }
+
+    public static void initMotorState() {
+        driveBackLeft.set(ControlMode.Follower, 1);
+        driveBackRight.set(ControlMode.Follower, 3);
+        driveFrontLeft.setNeutralMode(NeutralMode.Coast);
+        driveFrontRight.setNeutralMode(NeutralMode.Coast);
     }
 }

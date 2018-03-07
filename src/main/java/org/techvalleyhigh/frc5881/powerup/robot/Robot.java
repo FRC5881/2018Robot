@@ -99,6 +99,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        RobotMap.initMotorState();
         String autoOptions = SmartDashboard.getString("Possible Paths", "1-4,7-10,15-20,22,24");
 
         // Clear trajectories and PID set point
@@ -138,6 +139,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        RobotMap.initMotorState();
+
         Command test = new ManipulatorClose();
         test.start();
 

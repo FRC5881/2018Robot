@@ -86,7 +86,7 @@ public class Elevator extends Subsystem {
     public void driveControllerInput() {
         // Get POV position from controller
         int pov = Robot.oi.pilotController.getPOV();
-        System.out.print(pov);
+        //System.out.println("\n" + pov);
 
         int speed = 0;
         if (pov == 315 || pov == 0 || pov == 45) {
@@ -94,9 +94,9 @@ public class Elevator extends Subsystem {
         } else if(pov == 225 || pov == 180 || pov == 135){
             speed = -baseSpeed;
         }
-
+        //System.out.println("Speed0 " + speed);
         speed *= (1 + Robot.oi.pilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
-        System.out.println("\nSpeed " + speed);
+        //System.out.println("Speed1 " + speed);
 
         addPosition(speed * 770);
         //elevatorTalonMaster.set(ControlMode.PercentOutput, speed);

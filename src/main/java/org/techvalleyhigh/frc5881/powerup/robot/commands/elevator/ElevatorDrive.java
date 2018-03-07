@@ -32,15 +32,18 @@ public class ElevatorDrive extends Command {
     }
 
     @Override
-    protected void execute(){
+    protected void execute() {
+        // Try to drive with inputs first
         Robot.elevator.driveControllerInput();
 
+        // Override if we're targeting the switch or scale
         if (Robot.oi.coPilotTopBackLeft.get()) {
             Robot.elevator.setSwitch();
         } else if (Robot.oi.coPilotTopBackRight.get()) {
             Robot.elevator.setScale();
         }
 
+        // Make sure we're moving and not burning out the motors
         double newpoint = Robot.elevator.getSetpoint();
         if (lastpoint != newpoint) {
             resetTimeouts();
