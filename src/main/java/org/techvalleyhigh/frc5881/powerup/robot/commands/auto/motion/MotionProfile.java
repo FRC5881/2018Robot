@@ -14,6 +14,9 @@ import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
 
+/**
+ * Command to call to interact with CTRE Motion Profile Example
+ */
 public class MotionProfile extends Command {
     private WPI_TalonSRX rightMotor;
     private WPI_TalonSRX leftMotor;
