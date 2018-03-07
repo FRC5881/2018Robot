@@ -14,7 +14,7 @@ import static org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Trajec
  * Class full of static variables storing autonomous routines starting in the left position
  */
 public class LeftStartingProfiles {
-    private static HashMap<Integer, Autonomous> autos = new HashMap<>();
+    private static final HashMap<Integer, Autonomous> autos = new HashMap<>();
     
     // Left Side Switch
     private static final Waypoint[] path_0 = new Waypoint[] {
@@ -73,7 +73,7 @@ public class LeftStartingProfiles {
     private static final Autonomous auto_5 = new Autonomous(path_5, defaultConfig, SCALE, RIGHT);
     
     // Right Front Scale
-    private static final Waypoint[] path_6 = new Waypoint[]{
+    public static final Waypoint[] path_6 = new Waypoint[]{
             TrajectoryUtil.startLeft,
             new Waypoint(14.5, 23, 0),
             new Waypoint(19.25, 20.5, Math.toRadians(-68)),
@@ -92,10 +92,11 @@ public class LeftStartingProfiles {
         autos.put(5, auto_5);
         autos.put(6, auto_6);
     }
+
     /**
      * Getter for all autos stored in this class
      * @return HashMap of autos
-    */
+     */
     public static HashMap<Integer, Autonomous> getAutos() {
         return autos;
     }

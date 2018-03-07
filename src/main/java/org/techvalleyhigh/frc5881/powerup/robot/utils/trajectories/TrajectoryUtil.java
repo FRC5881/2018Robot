@@ -24,7 +24,7 @@ public class TrajectoryUtil {
 
     // Configs
     public static final Trajectory.Config defaultConfig = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-            Trajectory.Config.SAMPLES_HIGH, 0.05, 5, 4, 60);
+            Trajectory.Config.SAMPLES_HIGH, 0.05, 2.5, 4, 60);
 
     /**
      * Set of waypoints that together generate a figure eight for testing
@@ -64,8 +64,8 @@ public class TrajectoryUtil {
     /**
      * Takes in the only 2 parameters we'll likely ever change using Trajectory.Config velocity and acceleration
      * And returns Trajectory.Config with everything else defaults
-     * @param max_velocity
-     * @param max_acceleration
+     * @param max_velocity max velocity to generate trajectories can drive
+     * @param max_acceleration max acceleration the bot should never pass
      * @return {Trajectory.Config} our default trajectory with edited velocity and acceleration
      */
     public static Trajectory.Config ourConfig(double max_velocity, double max_acceleration) {
@@ -74,37 +74,12 @@ public class TrajectoryUtil {
     }
 
     /**
-     * Possible auto targets the bot can reach left/right is in respect of our drive team
+     * Returns array of waypoints that paths out a figure eight fits tightly inside a rectangle
+     * @param width width of the rectangle
+     * @param height height of the rectangle
+     * @return Waypoint[] of generated figure eight
      */
-    public enum AutoTarget {
-        /**
-         *Left side of the near switch
-         */
-        SWITCH_LEFT,
-        /**
-         * Right side of the near switch
-         */
-        SWITCH_RIGHT,
-        /**
-         * Left side of the scale
-         */
-        SCALE_LEFT,
-        /**
-         * Right side of the scale
-         */
-        SCALE_RIGHT,
-        /**
-         * Simply the autonomous line
-         */
-        AUTO_LINE
-    }
-
-    /**
-     * Creates a custom figure eight according to the given "height" and "width"
-     *@param width The max width of the figure eight
-     *@param height The max length of the figure eight
-     */
-    public Waypoint[] CustomFigureEight(double width, double height) {
+    public static Waypoint[] customFigureEight(double width, double height) {
         return new Waypoint[] {
                 new Waypoint(width / 2, 0, 0),
                 new Waypoint(width, height / 4, Math.PI / 4),

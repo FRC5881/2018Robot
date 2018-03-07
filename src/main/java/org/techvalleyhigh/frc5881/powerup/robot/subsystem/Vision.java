@@ -29,6 +29,7 @@ public class Vision extends Subsystem {
         this.camera = camera;
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void init() {
 
     }
@@ -37,6 +38,4 @@ public class Vision extends Subsystem {
     protected void initDefaultCommand() {
         // No commands, this is a read-only subsystem
     }
-
-
 }

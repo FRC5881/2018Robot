@@ -1,19 +1,11 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-// WORK IN PROGRESS
-/**
- * Takes in relative degrees to turn during autonomous and will do just that, turn
- */
-public class Turn extends Command {
-    private double relativeBearing;
-    private double absoluteBearing;
-
-    public Turn(double relativeBearing) {
-        this.relativeBearing = relativeBearing;
-        requires(Robot.driveControl);
+public class ManipulatorClose extends Command {
+    public ManipulatorClose() {
+        requires(Robot.manipulator);
     }
 
     /**
@@ -21,25 +13,23 @@ public class Turn extends Command {
      */
     @Override
     protected void initialize() {
-        this.absoluteBearing = this.relativeBearing + Robot.driveControl.getGyroAngle();
     }
 
     /**
      * Called repeatedly when this Command is scheduled to run
      */
-
     @Override
     protected void execute() {
-        Robot.driveControl.rawCurvatureDrive(0, relativeBearing, true);
+        Robot.manipulator.closeGrabbers();
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * End command once we are within gyro tolerance of our absolute bearing
+     * This is a pneumatic command so needs to end instantly
      */
     @Override
     protected boolean isFinished() {
-        return Math.abs(this.absoluteBearing - Robot.driveControl.getGyroAngle()) < Robot.driveControl.getAutoGyroTolerance();
+        return true;
     }
 
     /**
@@ -47,7 +37,7 @@ public class Turn extends Command {
      */
     @Override
     protected void end() {
-        Robot.driveControl.stopDrive();
+        //Robot.manipulator.stop();
     }
 
     /**
@@ -56,6 +46,7 @@ public class Turn extends Command {
      */
     @Override
     protected void interrupted() {
+        System.out.println("Manipulator Open command was interrupted... That shouldn't happen");
         end();
     }
 }

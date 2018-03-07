@@ -3,6 +3,9 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
+/**
+ * Implements arcadeDrive feature
+ */
 public class ArcadeDrive extends Command {
     public ArcadeDrive() {
         requires(Robot.driveControl);
@@ -13,13 +16,11 @@ public class ArcadeDrive extends Command {
      */
     @Override
     protected void initialize() {
-        Robot.driveControl.init();
     }
 
     /**
      * Called repeatedly when this Command is scheduled to run
       */
-
     @Override
     protected void execute() {
         Robot.driveControl.arcadeJoystickInputs();
@@ -39,6 +40,7 @@ public class ArcadeDrive extends Command {
       */
     @Override
     protected void end() {
+        System.out.println("Arcade Drive command ended... That shouldn't happen");
         Robot.driveControl.stopDrive();
     }
 

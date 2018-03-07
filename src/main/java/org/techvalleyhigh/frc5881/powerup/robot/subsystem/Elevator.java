@@ -2,6 +2,7 @@ package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
@@ -12,103 +13,179 @@ import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMas
  */
 public class Elevator extends Subsystem {
     /**
-     * Minimum amount of safe rotations
+     * Minimum amount of safe ticks
      */
-    private static final double minSafeRotations = 0;
-    // TODO: Find a real max height
+    private static final int minTicks = 50;
+
     /**
-     * Maximum amount of safe rotations
+     * Maximum amount of safe ticks
      */
-    private static final double maxSafeRotations = 10.0;
-    /**
-     * Dead zone
-     */
-    private static final double deadZone = 1/5;
+    private static final double maxTicks = 22.5d * 1440;
+
     //TODO: Find how many rotations it takes to get to switch
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final double switchRotations = 2;
+    private static final int switchTicks = 2 * 1440;
+
     //TODO: Find how many rotations it takes to get elevator to scale
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final double scaleRotations = 9;
-    /**
-     * Percent of power to run motors at.
-     */
-    private static final double raiseSpeed = 0.5;
+    private static final int scaleTicks = 22 * 1440;
 
+    private static final int baseSpeed = 1;
+
+    /**
+     * Initialize Elevator subsystem with default name
+     */
     public Elevator(){
         super();
         init();
     }
 
+    /**
+     * Initialize Elevator subsystem with chosen name
+     */
     public Elevator(String name){
         super(name);
         init();
     }
 
+    /**
+     * Starts a command on init of subsystem, defining commands in robot and OI is preferred
+     */
     @Override
     protected void initDefaultCommand() {
+
     }
 
+    // ---- init ---- //
+    /**
+     * Initialize SmartDashboard and other local variables
+     */
     public void init() {
-        elevatorTalonMaster.setSelectedSensorPosition(0, 0, 20);
+        // Set the elevator to be in Position mode
+        elevatorTalonMaster.set(ControlMode.Position.value);
+
+        SmartDashboard.putNumber("Elevator kP", 2.0);
+        SmartDashboard.putNumber("Elevator kI", 0);
+        SmartDashboard.putNumber("Elevator kD", 20);
+        SmartDashboard.putNumber("Elevator kF", 0.076);
+
+        setSoftLimitThresholds(minTicks, (int)maxTicks);
+        enableSoftLimits(true);
+
+        initPID();
     }
 
-    public void nextUpRise(){
-        //if elevator is at top floor don't do anything, else keep going to next level
-        /*
-         * Supposed to loop until it reaches the next level.
-         * But we will find out when we test it.
-         */
-        if(getHeight() >= maxSafeRotations) {
-            elevatorTalonMaster.stopMotor();
-        } else if( getHeight() < switchRotations ) {
-            elevatorTalonMaster.set(ControlMode.Position, switchRotations);
-        } else if(getHeight() < scaleRotations && getHeight() > switchRotations){
-            elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
-        }
-    }
-//Meant to descend elevator to next lower level
-    public void nextBelowDescend() {
-        if (getHeight() <= minSafeRotations) {
-            elevatorTalonMaster.stopMotor();
-        } else if (getHeight() >= scaleRotations) {
-            elevatorTalonMaster.set(ControlMode.Position, scaleRotations);
-        } else if (getHeight() >= switchRotations && getHeight() < scaleRotations) {
-            elevatorTalonMaster.set(ControlMode.Position, switchRotations);
-        }
+    /**
+     * Puts values on Smart Dashboard
+     */
+    public void initPID() {
+        elevatorTalonMaster.config_kP(0, getElevator_kP(), 10);
+        elevatorTalonMaster.config_kI(0, getElevator_kI(), 10);
+        elevatorTalonMaster.config_kD(0, getElevator_kD(), 10);
+        elevatorTalonMaster.config_kF(0, getElevator_kF(), 10);
+
+        // Reset PID control
+        elevatorTalonMaster.set(ControlMode.Position.value);
+        elevatorTalonMaster.setSelectedSensorPosition(0, 0, 10);
+        elevatorTalonMaster.pidWrite(0);
     }
 
-    public void driveJoystickInput(){
-        double y = Robot.oi.xboxController2.getRawAxis(OI.LeftYAxis);
-        if (Math.abs(y) > deadZone) {
-            drive(y * raiseSpeed);
+    // ---- Drive --- //
+    /**
+     * Drive the elevator with joystick input
+     */
+    public void driveJoystickInputs() {
+        // Get POV position from controller
+        int pov = Robot.oi.coPilotController.getPOV();
+        //System.out.println("\n" + pov);
+
+        int speed = 0;
+        if (pov == 315 || pov == 0 || pov == 45) {
+            speed = baseSpeed;
+        } else if(pov == 225 || pov == 180 || pov == 135){
+            speed = -baseSpeed;
         }
-    }
-    public void drive(double speed) {
-        System.out.println(speed);
-        System.out.println(getHeight());
-        // If we're trying to go up, and we haven't passed max height -> it's okay
-        if (speed > 0 && getHeight() < maxSafeRotations) {
-            elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
-            System.out.println("Up");
-            // If we're trying to go down, and haven't passed bottom -> it's okay
-        } else if(speed < 0 && getHeight() > 0) {
-            System.out.println("Down");
-            elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
-        } else {
-            elevatorTalonMaster.stopMotor();
-        }
+        //System.out.println("Speed0 " + speed);
+        speed *= (1 + Robot.oi.coPilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
+        //System.out.println("Speed1 " + speed);
+
+        addPosition(speed * 770);
+        //elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
     }
 
+    /**
+     * Stops elevator motors
+     */
     public void stop() {
         elevatorTalonMaster.stopMotor();
     }
 
-    public double getHeight() {
-        return elevatorTalonMaster.getSelectedSensorPosition(0);
+    // ---- Auto reach targets ---- //
+
+    /**
+     * Set elevator setpoint to scale
+     */
+    public void setScale() {
+        setSetpoint(scaleTicks);
+    }
+
+    /**
+     * Set elevator setpoint to switch
+     */
+    public void setSwitch() {
+        setSetpoint(switchTicks);
+    }
+
+    private void addPosition(double ticks) {
+        double setpoint = getSetpoint() + ticks;
+        if (setpoint > minTicks && setpoint < maxTicks) {
+            setSetpoint(setpoint);
+        }
+    }
+
+
+
+    // ---- Setters for PID ---- //
+    public void setSetpoint(double setpoint) {
+        elevatorTalonMaster.set(ControlMode.Position, setpoint);
+    }
+
+    public void setSoftLimitThresholds(int reverseLimit, int forwardLimit) {
+        elevatorTalonMaster.configForwardSoftLimitThreshold(forwardLimit, 10);
+        elevatorTalonMaster.configReverseSoftLimitThreshold(reverseLimit, 10);
+    }
+
+    public void enableSoftLimits(boolean enable) {
+        elevatorTalonMaster.configForwardSoftLimitEnable(enable, 10);
+        elevatorTalonMaster.configReverseSoftLimitEnable(enable, 10);
+    }
+
+    // ---- Getters for PID ---- //
+    public double getElevator_kP() {
+        return SmartDashboard.getNumber("Elevator kP", 2.0);
+    }
+
+    public double getElevator_kI() {
+        return SmartDashboard.getNumber("Elevator kI", 0);
+    }
+
+    public double getElevator_kD(){
+        return SmartDashboard.getNumber("Elevator kD", 20);
+    }
+
+    public double getElevator_kF() {
+        return SmartDashboard.getNumber("Elevator kF", 0.076);
+    }
+
+    public double getSetpoint() {
+        return elevatorTalonMaster.getClosedLoopTarget(0);
+    }
+
+    public double getError() {
+        return elevatorTalonMaster.getClosedLoopError(0);
     }
 }

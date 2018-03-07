@@ -1,14 +1,17 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 /**
- * Implements curvatureDrive feature we're not so sure what it does
-
+ * Takes in relative degrees to turn during autonomous and will do just that, turn
  */
-public class CurvatureDrive extends Command {
-    public CurvatureDrive() {
+public class Turn extends Command {
+    private double relativeBearing;
+    private double absoluteBearing;
+
+    public Turn(double relativeBearing) {
+        this.relativeBearing = relativeBearing;
         requires(Robot.driveControl);
     }
 
@@ -17,24 +20,30 @@ public class CurvatureDrive extends Command {
      */
     @Override
     protected void initialize() {
+        System.out.println("Turning " + this.absoluteBearing);
+        this.absoluteBearing = this.relativeBearing + Robot.driveControl.getGyroAngle();
+        Robot.driveControl.initPID();
+        Robot.driveControl.setGyroPid(absoluteBearing);
     }
 
     /**
      * Called repeatedly when this Command is scheduled to run
      */
+
     @Override
     protected void execute() {
-        boolean isQuickTurn = Robot.oi.driveControllerButtonA.get();
-        Robot.driveControl.curvatureJoystickInputs(isQuickTurn);
+        double turn = Robot.driveControl.gyroPIDOutput * Robot.driveControl.getAutoTurnSpeed();
+        Robot.driveControl.rawArcadeDrive(0, turn);
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * Since this is a drive command we never want it to end
+     * End command once we are within gyro tolerance of our absolute bearing
      */
     @Override
     protected boolean isFinished() {
-        return false;
+        System.out.println("Turn finished");
+        return Robot.driveControl.getGyroOnTarget();
     }
 
     /**
@@ -42,7 +51,6 @@ public class CurvatureDrive extends Command {
      */
     @Override
     protected void end() {
-        System.out.println("Curvature Drive command ended... That shouldn't happen");
         Robot.driveControl.stopDrive();
     }
 

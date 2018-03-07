@@ -3,6 +3,9 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
+/**
+ * Implements tankDrive feature
+ */
 public class TankDrive extends Command {
     public TankDrive() {
         requires(Robot.driveControl);
@@ -11,7 +14,6 @@ public class TankDrive extends Command {
     /**
      * Called just before this Command runs the first time
      */
-
     @Override
     protected void initialize() {
     }
@@ -19,7 +21,6 @@ public class TankDrive extends Command {
     /**
      * Called repeatedly when this Command is scheduled to run
      */
-
     @Override
     protected void execute() {
         Robot.driveControl.tankJoystickInputs();
@@ -39,6 +40,7 @@ public class TankDrive extends Command {
      */
     @Override
     protected void end() {
+        System.out.println("Tank Drive command ended... That shouldn't happen");
         Robot.driveControl.stopDrive();
     }
 
