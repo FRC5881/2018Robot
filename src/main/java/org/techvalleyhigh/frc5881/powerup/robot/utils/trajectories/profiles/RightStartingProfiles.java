@@ -23,14 +23,14 @@ public class RightStartingProfiles {
             new Waypoint(8, 2, 0),
             TrajectoryUtil.rightSideSwitch
     };
-    private static final Autonomous auto_10 = new Autonomous(path_10, defaultConfig, SWITCH_NEAR, RIGHT);
+    private static final Autonomous auto_10 = new Autonomous(10, path_10, defaultConfig, SWITCH_NEAR, RIGHT);
 
     // Right Front Switch
     private static final Waypoint[] path_11 = new Waypoint[] {
             TrajectoryUtil.startRight,
             TrajectoryUtil.rightFrontSwitch
     };
-    private static final Autonomous auto_11 = new Autonomous(path_11, defaultConfig, SWITCH_NEAR, RIGHT);
+    private static final Autonomous auto_11 = new Autonomous(11, path_11, defaultConfig, SWITCH_NEAR, RIGHT);
 
     // Left Side Switch
     private static final Waypoint[] path_12 = new Waypoint[] {
@@ -44,7 +44,7 @@ public class RightStartingProfiles {
             new Waypoint(16.5, 23.75, Math.toRadians(200)),
             TrajectoryUtil.leftSideSwitch
     };
-    private static final Autonomous auto_12 = new Autonomous(path_12, defaultConfig, SWITCH_NEAR, LEFT);
+    private static final Autonomous auto_12 = new Autonomous(12, path_12, defaultConfig, SWITCH_NEAR, LEFT);
     
     // Right Side Scale
     private static final Waypoint[] path_13 = new Waypoint[] {
@@ -52,7 +52,7 @@ public class RightStartingProfiles {
             new Waypoint(23.75, TrajectoryUtil.startRight.y, 0),
             TrajectoryUtil.rightSideScale
     };
-    private static final Autonomous auto_13 = new Autonomous(path_13, defaultConfig, SCALE, RIGHT);
+    private static final Autonomous auto_13 = new Autonomous(13, path_13, defaultConfig, SCALE, RIGHT);
 
     // Right Front Scale
     private static final Waypoint[] path_14 = new Waypoint[] {
@@ -60,7 +60,7 @@ public class RightStartingProfiles {
             new Waypoint(14, TrajectoryUtil.startRight.y, 0),
             TrajectoryUtil.rightFrontScale
     };
-    private static final Autonomous auto_14 = new Autonomous(path_14, defaultConfig, SCALE, RIGHT);
+    private static final Autonomous auto_14 = new Autonomous(14, path_14, defaultConfig, SCALE, RIGHT);
 
     // Left Side Scale
     private static final Waypoint[] path_15 = new Waypoint[] {
@@ -72,11 +72,11 @@ public class RightStartingProfiles {
             new Waypoint(23, 24, 0),
             TrajectoryUtil.leftSideScale
     };
-    private static final Autonomous auto_15 = new Autonomous(path_15, defaultConfig, SCALE, LEFT);
+    private static final Autonomous auto_15 = new Autonomous(15, path_15, defaultConfig, SCALE, LEFT);
 
     // Left Front Scale - Wasn't working as is so mirror off left side profile
     private static final Waypoint[] path_16 = TrajectoryUtil.mirror(LeftStartingProfiles.path_6);
-    private static final Autonomous auto_16 = new Autonomous(path_16, defaultConfig, SCALE, LEFT);
+    private static final Autonomous auto_16 = new Autonomous(16, path_16, defaultConfig, SCALE, LEFT);
 
     static {
         autos.put(10, auto_10);

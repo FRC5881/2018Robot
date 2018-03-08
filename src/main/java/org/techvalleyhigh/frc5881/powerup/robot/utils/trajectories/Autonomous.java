@@ -8,6 +8,7 @@ import openrio.powerup.MatchData;
  * Read only class stores all the useful data when it comes to storing an autonomous profile
  */
 public class Autonomous {
+    private final int autoNumber;
     private final Waypoint[] path;
     private final Trajectory.Config config;
     private final MatchData.GameFeature feature;
@@ -15,16 +16,22 @@ public class Autonomous {
 
     /**
      * Stores a path, config and ending target to private variables
+     * @param autoNumber the integer ID of the autonomous routine
      * @param path array of waypoints describing a auto profile
      * @param config Trajectory.Config configs to be used while creating auto profile
      * @param feature Feature autonomous profile targets
      * @param side Side of feature we'd be scoring on
      */
-    public Autonomous(Waypoint[] path, Trajectory.Config config, MatchData.GameFeature feature, MatchData.OwnedSide side) {
+    public Autonomous(int autoNumber, Waypoint[] path, Trajectory.Config config, MatchData.GameFeature feature, MatchData.OwnedSide side) {
+        this.autoNumber = autoNumber;
         this.path = path;
         this.config = config;
         this.feature = feature;
         this.side = side;
+    }
+
+    public int getAutoNumber() {
+        return autoNumber;
     }
 
     public Waypoint[] getPath() {

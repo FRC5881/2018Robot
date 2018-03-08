@@ -13,6 +13,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
 /**
  * Command to call to interact with CTRE Motion Profile Example
@@ -42,11 +43,20 @@ public class MotionProfile extends Command {
         leftMotor = RobotMap.driveFrontLeft;
         rightMotor = RobotMap.driveFrontRight;
 
-        // Generate trajectory
-        System.out.println("Generating Path...");
+        // Log the start time of the process....
         long startTime = System.currentTimeMillis();
 
-        Trajectory trajectory = Pathfinder.generate(auto.getPath(), auto.getConfig());
+        // Lets see if we can load a stored trajectory....
+        Trajectory trajectory = TrajectoryUtil.loadTrajectoryFromFile(auto.getAutoNumber());
+
+        // If we were unable to load the trajectory then it'll be null.
+        if (trajectory == null) {
+            // Generate trajectory
+            System.err.println("Unable to load Auto " + auto.getAutoNumber() + " Generating Path...");
+            trajectory = Pathfinder.generate(auto.getPath(), auto.getConfig());
+        } else {
+            System.out.println("Loaded stored path...");
+        }
 
         // Change trajectory into a tank drive
         // Wheelbase Width = 2.3226166667 feet

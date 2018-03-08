@@ -2,6 +2,18 @@ package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories;
 
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.LeftStartingProfiles;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.MiddleStartingProfiles;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.Misc;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.RightStartingProfiles;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Util class holding all kinds of useful data to streamline working with autonomous profiles
@@ -90,5 +102,123 @@ public class TrajectoryUtil {
                 new Waypoint(width / 2, height / 2, Math.toRadians(-135)),
                 new Waypoint(0, height / 4, -Math.PI / 4)
         };
+    }
+
+    /**
+     * Gets a Map of all current stored Autonomous routines by their Integer Id.
+     * @return Key-Value map of Integers and Autonomous routines.
+     */
+    public static Map<Integer, Autonomous> getAutos() {
+        // Get HashMap of all the autos
+        HashMap<Integer, Autonomous> autos = new HashMap<>();
+
+        autos.putAll(LeftStartingProfiles.getAutos());
+        autos.putAll(MiddleStartingProfiles.getAutos());
+        autos.putAll(RightStartingProfiles.getAutos());
+        autos.putAll(Misc.getAutos());
+
+        return autos;
+    }
+
+    /**
+     * Loads a stored pre-computed Autonomous trajectory for the given Autonomous Id.
+     * @param autoNumber Autonomous Id number to load
+     * @return The stored Trajectory or Null if an error occurred
+     */
+    public static Trajectory loadTrajectoryFromFile(int autoNumber) {
+        try {
+            //InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("auto_" + autoNumber + ".txt");
+            InputStream in = TrajectoryUtil.class.getResourceAsStream("/auto_" + autoNumber + ".csv");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+            // Load Config
+            String configLine = reader.readLine();
+            Trajectory.Config config = getconfigFromLine(configLine);
+
+            // Load WayPoints
+            ArrayList<Waypoint> waypoints = new ArrayList<>();
+
+            ArrayList<Trajectory.Segment> segments = new ArrayList<>();
+
+            boolean waypointsDone = false;
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!waypointsDone) {
+                    if (line.equals("---")) {
+                        waypointsDone = true;
+                    } else {
+                        waypoints.add(getWaypointFromLine(line));
+                    }
+                } else {
+                    segments.add(getSegmentFromLine(line));
+                }
+            }
+
+            return isStoredTrajectoryValid(autoNumber, config, waypoints.toArray(new Waypoint[waypoints.size()]))
+                    ? new Trajectory(segments.toArray(new Trajectory.Segment[segments.size()])) : null;
+        } catch (IOException e) {
+            System.err.println("IO Exception Loading Stored Auto " + autoNumber);
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private static Trajectory.Config getconfigFromLine(String line) {
+        String[] fields = line.split(",");
+        return new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+                Double.parseDouble(fields[0]), Double.parseDouble(fields[1]), Double.parseDouble(fields[2]),
+                Double.parseDouble(fields[3]));
+    }
+
+    private static Waypoint getWaypointFromLine(String line) {
+        String[] fields = line.split(",");
+        return new Waypoint(Double.parseDouble(fields[0]), Double.parseDouble(fields[1]),
+                Double.parseDouble(fields[2]));
+    }
+
+    private static Trajectory.Segment getSegmentFromLine(String line) {
+        String[] fields = line.split(",");
+        return new Trajectory.Segment(Double.parseDouble(fields[0]), Double.parseDouble(fields[1]),
+                Double.parseDouble(fields[2]), Double.parseDouble(fields[3]), Double.parseDouble(fields[4])
+                , Double.parseDouble(fields[5]), Double.parseDouble(fields[6]), Double.parseDouble(fields[7]));
+    }
+
+    private static boolean isStoredTrajectoryValid(int autoNumber, Trajectory.Config config, Waypoint[] waypoints) {
+        Map<Integer, Autonomous> autos = getAutos();
+
+        Autonomous auto = autos.get(autoNumber);
+
+        if (auto == null) {
+            System.err.println("Stored autonomous " + autoNumber + " not found in code.");
+            return false;
+        }
+
+        if (Double.compare(auto.getConfig().dt, config.dt) != 0
+                || Double.compare(auto.getConfig().max_acceleration, config.max_acceleration) != 0
+                || Double.compare(auto.getConfig().max_jerk, config.max_jerk) != 0
+                || Double.compare(auto.getConfig().max_velocity, config.max_velocity) != 0) {
+            System.err.println("Stored autonomous " + autoNumber + " has a different configuration than in code.");
+            return false;
+        }
+
+        if (auto.getPath().length != waypoints.length) {
+            System.err.println("Stored autonomous " + autoNumber
+                    + " has a different number of waypoints than in code.");
+            return false;
+        }
+
+        for (int i = 0; i < waypoints.length; i++) {
+            if (Double.compare(auto.getPath()[i].x, waypoints[i].x) != 0
+                    || Double.compare(auto.getPath()[i].y, waypoints[i].y) != 0
+                    || Double.compare(auto.getPath()[i].angle, waypoints[i].angle) != 0) {
+                System.err.println("Stored autonomous " + autoNumber
+                        + " has a different set of waypoints than in code.");
+                return false;
+            }
+        }
+
+        return true;
     }
 }

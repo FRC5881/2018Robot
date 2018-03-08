@@ -17,13 +17,13 @@ public class Misc {
             new Waypoint(0, 0, 0),
             new Waypoint(10, 0 ,0)
     };
-    public static final Autonomous baseline = new Autonomous(path_baseline, defaultConfig, null, null);
+    public static final Autonomous baseline = new Autonomous(100, path_baseline, defaultConfig, null, null);
 
     public static final Waypoint[] path_straightline = new Waypoint[] {
             new Waypoint(0, 0, 0),
             new Waypoint(25, 0, 0)
     };
-    public static final Autonomous straightline = new Autonomous(path_straightline, defaultConfig, null, null);
+    public static final Autonomous straightline = new Autonomous(101, path_straightline, defaultConfig, null, null);
 
     static {
         autos.put(100, baseline);
