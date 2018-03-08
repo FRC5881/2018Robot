@@ -4,13 +4,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.LeftStartingProfiles;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.MiddleStartingProfiles;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.Misc;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.profiles.RightStartingProfiles;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 public class AutonomousCommand extends CommandGroup {
     @Override
@@ -24,11 +21,7 @@ public class AutonomousCommand extends CommandGroup {
      */
     public AutonomousCommand(ArrayList<Integer> chosen) {
         // Add all the autonomous paths into one big HashMap
-        HashMap<Integer, Autonomous> autos = new HashMap<>();
-        autos.putAll(LeftStartingProfiles.getAutos());
-        autos.putAll(MiddleStartingProfiles.getAutos());
-        autos.putAll(RightStartingProfiles.getAutos());
-        autos.putAll(Misc.getAutos());
+        Map<Integer, Autonomous> autos = TrajectoryUtil.getAutos();
 
         // Keep track if we find an auto routine so if we don't we'll default to crossing the auto line
         boolean found = false;
