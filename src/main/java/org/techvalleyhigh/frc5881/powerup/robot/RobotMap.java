@@ -3,6 +3,7 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class RobotMap {
@@ -54,15 +55,20 @@ public class RobotMap {
 
     /**
      * Pneumatic Solenoid for the and the ratchet
-     */    public static DoubleSolenoid ratchetSolenoid;
+     */
+    public static DoubleSolenoid ratchetSolenoid;
 
     /**
      * Pneumatic Compressor for giving everything air
      */
     public static Compressor compressor;
 
+    /**
+     * Initialize all our countless hardware components on the bot
+     */
     public static void init() {
-        // Talons
+        // Drive Talons Back talons follow the ones in front of them
+        // TODO: Figure out phases
         driveFrontLeft = new WPI_TalonSRX(1);
         driveFrontLeft.setName("Drive", "Front Left Motor");
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -88,8 +94,7 @@ public class RobotMap {
         digitalGyro.setName("Drive", "Gyro");
         LiveWindow.add(digitalGyro);
 
-        // Talons for the Elevator
-        // Master is left
+        // Talons for the Elevator - Master is left on the bot
         elevatorTalonMaster = new WPI_TalonSRX(5);
         elevatorTalonMaster.setName("Elevator", "Master Motor");
         elevatorTalonMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -104,7 +109,6 @@ public class RobotMap {
 
         elevatorTalonFollower = new WPI_TalonSRX(6);
         elevatorTalonFollower.setName("Elevator", "Follow Motor");
-        elevatorTalonFollower.set(ControlMode.Follower, 5);
         LiveWindow.add(elevatorTalonFollower);
 
         // TODO: Get a arm
@@ -138,10 +142,21 @@ public class RobotMap {
         initMotorState();
     }
 
+    /**
+     * Set up the motor states in their own function so we could call it repeatably if things we're getting interesting
+     * (Talons decide to stop following)
+     */
     public static void initMotorState() {
         driveBackLeft.set(ControlMode.Follower, 1);
         driveBackRight.set(ControlMode.Follower, 3);
         driveFrontLeft.setNeutralMode(NeutralMode.Coast);
         driveFrontRight.setNeutralMode(NeutralMode.Coast);
+
+        // "Acceleration Control" helps prevent tipping on accelerating
+        // TODO: Figure out how to stop
+        driveFrontLeft.configClosedloopRamp(1, 10);
+        driveFrontRight.configClosedloopRamp(1, 10);
+
+        elevatorTalonFollower.set(ControlMode.Follower, 5);
     }
 }

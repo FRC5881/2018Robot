@@ -9,32 +9,30 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.elevatorTalonMaster;
 
 /**
- * Runs elevator either up to next level(switch or scale), down to next level or in which ever direction you move the thumb stick (Y-axis)
+ * Controls the elevators position with in which ever direction you move the POV controls on the copilot controller
+ * Also holds commonly used positions (scale & switch)
  */
 public class Elevator extends Subsystem {
     /**
-     * Minimum amount of safe ticks
+     * Minimum amount of safe ticks the bot is really bad at reaching zero so keep it a bit above
      */
     private static final int minTicks = 50;
 
     /**
      * Maximum amount of safe ticks
      */
-    private static final double maxTicks = 22.5d * 1440;
+    private static final int maxTicks = 32800;
 
-    //TODO: Find how many rotations it takes to get to switch
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final int switchTicks = 2 * 1440;
+    private static final int switchTicks = 10000;
 
-    //TODO: Find how many rotations it takes to get elevator to scale
     /**
      * Amount of rotations to get to height of switch with a cube
      */
     private static final int scaleTicks = 22 * 1440;
 
-    private static final int baseSpeed = 1;
 
     /**
      * Initialize Elevator subsystem with default name
@@ -73,8 +71,10 @@ public class Elevator extends Subsystem {
         SmartDashboard.putNumber("Elevator kD", 20);
         SmartDashboard.putNumber("Elevator kF", 0.076);
 
-        setSoftLimitThresholds(minTicks, (int)maxTicks);
-        enableSoftLimits(true);
+        SmartDashboard.putNumber("Elevator Speed", 300);
+
+        setSoftLimitThresholds(minTicks, maxTicks);
+        enableSoftLimits(false);
 
         initPID();
     }
@@ -83,14 +83,20 @@ public class Elevator extends Subsystem {
      * Puts values on Smart Dashboard
      */
     public void initPID() {
+        // Reset the PID controls
         elevatorTalonMaster.config_kP(0, getElevator_kP(), 10);
         elevatorTalonMaster.config_kI(0, getElevator_kI(), 10);
         elevatorTalonMaster.config_kD(0, getElevator_kD(), 10);
         elevatorTalonMaster.config_kF(0, getElevator_kF(), 10);
 
         // Reset PID control
+        // Set the elevator to be in position mode again to be safe
         elevatorTalonMaster.set(ControlMode.Position.value);
+
+        // Reset encoder
         elevatorTalonMaster.setSelectedSensorPosition(0, 0, 10);
+
+        // Tell the pid control to stay where it is
         elevatorTalonMaster.pidWrite(0);
     }
 
@@ -101,20 +107,20 @@ public class Elevator extends Subsystem {
     public void driveJoystickInputs() {
         // Get POV position from controller
         int pov = Robot.oi.coPilotController.getPOV();
-        //System.out.println("\n" + pov);
 
-        int speed = 0;
+        double speed = 0;
+        // Check POV is any of the up angles
         if (pov == 315 || pov == 0 || pov == 45) {
-            speed = baseSpeed;
+            speed = 1;
+        // Check if POV is any of the bottom angles
         } else if(pov == 225 || pov == 180 || pov == 135){
-            speed = -baseSpeed;
+            speed = -1;
         }
-        //System.out.println("Speed0 " + speed);
-        speed *= (1 + Robot.oi.coPilotController.getRawAxis(OI.PILOT_SLIDER)) / 2;
-        //System.out.println("Speed1 " + speed);
+        // Scale the speed by co pilot slider
+        speed *= (1.0 - Robot.oi.coPilotController.getRawAxis(OI.PILOT_SLIDER)) / 2.0;
 
-        addPosition(speed * 770);
-        //elevatorTalonMaster.set(ControlMode.PercentOutput, speed);
+        // Finally add the change to the current setpoint
+        addPosition((int)(speed * getMaxSpeed()));
     }
 
     /**
@@ -140,20 +146,25 @@ public class Elevator extends Subsystem {
         setSetpoint(switchTicks);
     }
 
+    /**
+     * Adds ticks to the current setpoint
+     * @param ticks encoder ticks to add
+     */
     private void addPosition(double ticks) {
         double setpoint = getSetpoint() + ticks;
+
+        // "Soft limit" make sure the elevator isn't getting to excited
         if (setpoint > minTicks && setpoint < maxTicks) {
             setSetpoint(setpoint);
         }
     }
-
-
 
     // ---- Setters for PID ---- //
     public void setSetpoint(double setpoint) {
         elevatorTalonMaster.set(ControlMode.Position, setpoint);
     }
 
+    // Soft limits don't work well with current elevator drive
     public void setSoftLimitThresholds(int reverseLimit, int forwardLimit) {
         elevatorTalonMaster.configForwardSoftLimitThreshold(forwardLimit, 10);
         elevatorTalonMaster.configReverseSoftLimitThreshold(reverseLimit, 10);
@@ -187,5 +198,9 @@ public class Elevator extends Subsystem {
 
     public double getError() {
         return elevatorTalonMaster.getClosedLoopError(0);
+    }
+
+    public double getMaxSpeed() {
+        return SmartDashboard.getNumber("Elevator Speed", 300);
     }
 }

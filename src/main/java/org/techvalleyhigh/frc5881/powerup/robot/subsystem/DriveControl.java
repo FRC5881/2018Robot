@@ -10,7 +10,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.SpeedPID;
 
-
 public class DriveControl extends Subsystem {
     // SmartDashboard key for Gyro Tolerance
     private static final String GYRO_TOLERANCE = "Gyro Tolerance %";
@@ -44,6 +43,7 @@ public class DriveControl extends Subsystem {
     // PID outputs
     public double gyroPIDOutput;
     public double speedPIDOutput;
+
 
     /**
      * Used for converting feet to ticks.
@@ -191,6 +191,8 @@ public class DriveControl extends Subsystem {
         // Just keep the PIDs running
         gyroPID.enable();
         speedPID.enable();
+
+
     }
 
     /**
@@ -444,9 +446,12 @@ public class DriveControl extends Subsystem {
         if (getSpeedOnTarget()) speedPID.reset();
         if (getGyroOnTarget()) gyroPID.reset();
 
+        // Set the setpoints
+        // TODO: Need to change gyro pid relatively
         setGyroPid(turn);
         setSpeedPID(speed);
 
+        // Just pass to arcade drive
         rawArcadeDrive(speedPIDOutput, gyroPIDOutput);
     }
 
@@ -456,7 +461,7 @@ public class DriveControl extends Subsystem {
      */
     public double getVelocity() {
         //noinspection UnnecessaryLocalVariable
-        double v1 = RobotMap.driveFrontRight.getSelectedSensorVelocity(0);
+        double v1 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
         // TODO: Get a second encoder!
         //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
         //return v1 + v2 / 2
