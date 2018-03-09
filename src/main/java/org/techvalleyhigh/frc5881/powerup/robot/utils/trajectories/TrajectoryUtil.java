@@ -60,17 +60,18 @@ public class TrajectoryUtil {
      * @return
      */
     public static Waypoint[] mirror(Waypoint[] input) {
-        Waypoint[] ret = input.clone();
+        Waypoint[] clone = input.clone();
+        Waypoint[] ret = new Waypoint[input.length];
 
-        for (int i = 0; i < input.length; i++) {
+        for (int i = 0; i < ret.length; i++) {
             // Reflect over y = 13.5
-            ret[i].y = 27d - input[i].y;
+            ret[i].y = 27d - clone[i].y;
 
             // Negate the angle
-            ret[i].angle = -input[i].angle;
+            ret[i].angle = -clone[i].angle;
         }
 
-        return ret;
+        return ret.clone();
     }
 
     /**
