@@ -109,7 +109,7 @@ public class Arm extends Subsystem {
         double speed = -Robot.oi.coPilotController.getRawAxis(OI.PILOT_X_AXIS);
 
         // The deadzone we apply on the controller input
-        speed = OI.applyDeadband(speed, deadzone);
+        speed = OI.applyDeadzone(speed, deadzone);
 
         // Scale by extend ticks and set setpoint
         addPosition(speed * getMaxSpeed());

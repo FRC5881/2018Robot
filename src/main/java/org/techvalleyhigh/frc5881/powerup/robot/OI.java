@@ -113,18 +113,20 @@ public class OI {
         coPilotBottomRightForward.whenPressed(new DisableRatchet());
     }
 
-    public static double applyDeadband(double input, double deadband) {
+    /**
+     * Applies deadzone to input
+     * @param input the input to apply a deadzone to
+     * @param deadZone the deadzone to apply
+     * @return 0 if absolute value of the input is less than dead zone or the signed input squared if otherwise
+     */
+    public static double applyDeadzone(double input, double deadZone) {
         double output;
 
-        if (Math.abs(input) < deadband) {
+        if (Math.abs(input) < deadZone) {
             output = 0;
         } else {
             // If we're above the joystick deadzone sqaure the inputs but keep the sign
-            if (input > 0) {
-                output = input * input;
-            } else {
-                output = -input * input;
-            }
+            output = Math.copySign(input * input, input);
         }
 
         return output;

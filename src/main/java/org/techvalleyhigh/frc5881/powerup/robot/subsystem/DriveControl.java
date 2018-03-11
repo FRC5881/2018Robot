@@ -321,7 +321,7 @@ public class DriveControl extends Subsystem {
      * @return scaled double value
      */
     private double scaleXAxis(double x) {
-        return OI.applyDeadband(x, deadZone) * getXAxisSensitivity();
+        return OI.applyDeadzone(x, deadZone) * getXAxisSensitivity();
     }
 
     /**
@@ -330,7 +330,7 @@ public class DriveControl extends Subsystem {
      * @return scaled double value
      */
     private double scaleYAxis(double y) {
-        return OI.applyDeadband(y, deadZone) * getYAxisSensitivity();
+        return OI.applyDeadzone(y, deadZone) * getYAxisSensitivity();
     }
 
     // --- Joystick drive methods --- //
