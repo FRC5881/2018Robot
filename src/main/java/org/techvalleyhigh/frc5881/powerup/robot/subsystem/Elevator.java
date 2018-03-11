@@ -16,23 +16,32 @@ public class Elevator extends Subsystem {
     /**
      * Minimum amount of safe ticks the bot is really bad at reaching zero so keep it a bit above
      */
-    private static final int minTicks = 50;
+    public static final int minTicks = 50;
 
     /**
      * Maximum amount of safe ticks
      */
-    private static final int maxTicks = 32800;
+    public static final int maxTicks = 32800;
 
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final int switchTicks = 10000;
+    public static final int switchTicks = 10000;
 
     /**
      * Amount of rotations to get to height of switch with a cube
      */
-    private static final int scaleTicks = 22 * 1440;
+    public static final int scaleTicks = 22 * 1440;
 
+    /**
+     * Time (milliseconds) to reach scale from bottom position
+     */
+    public static final long scaleTime = 5000;
+
+    /**
+     * Time (milliseconds) to reach switch from bottom position
+     */
+    public static final long switchTime = 1000;
 
     /**
      * Initialize Elevator subsystem with default name
@@ -73,14 +82,16 @@ public class Elevator extends Subsystem {
 
         SmartDashboard.putNumber("Elevator Speed", 300);
 
+        // CTRE soft limits, don't work well with current controls
         setSoftLimitThresholds(minTicks, maxTicks);
+        // Keep false
         enableSoftLimits(false);
 
         initPID();
     }
 
     /**
-     * Puts values on Smart Dashboard
+     * Initialize PID values to be ready for action
      */
     public void initPID() {
         // Reset the PID controls
@@ -102,9 +113,9 @@ public class Elevator extends Subsystem {
 
     // ---- Drive --- //
     /**
-     * Drive the elevator with joystick input
+     * Drive the elevator with controller input
      */
-    public void driveJoystickInputs() {
+    public void driveControllerInputs() {
         // Get POV position from controller
         int pov = Robot.oi.coPilotController.getPOV();
 
@@ -116,7 +127,7 @@ public class Elevator extends Subsystem {
         } else if(pov == 225 || pov == 180 || pov == 135){
             speed = -1;
         }
-        // Scale the speed by co pilot slider
+        // Scale the speed by co pilot slider (down 0% - up 100%)
         speed *= (1.0 - Robot.oi.coPilotController.getRawAxis(OI.PILOT_SLIDER)) / 2.0;
 
         // Finally add the change to the current setpoint
@@ -147,20 +158,26 @@ public class Elevator extends Subsystem {
     }
 
     /**
+     * Set elevator setpoint to min
+     */
+    public void setFloor() {
+        setSetpoint(minTicks);
+    }
+
+    /**
      * Adds ticks to the current setpoint
      * @param ticks encoder ticks to add
      */
     private void addPosition(double ticks) {
         double setpoint = getSetpoint() + ticks;
-
-        // "Soft limit" make sure the elevator isn't getting to excited
-        if (setpoint > minTicks && setpoint < maxTicks) {
-            setSetpoint(setpoint);
-        }
+        setSetpoint(setpoint);
     }
 
     // ---- Setters for PID ---- //
     public void setSetpoint(double setpoint) {
+        // Soft limit control
+        if (setpoint < minTicks) setpoint = minTicks;
+        if (setpoint > maxTicks) setpoint = maxTicks;
         elevatorTalonMaster.set(ControlMode.Position, setpoint);
     }
 

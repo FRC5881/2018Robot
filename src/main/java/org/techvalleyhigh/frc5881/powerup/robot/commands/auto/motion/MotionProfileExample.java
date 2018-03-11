@@ -287,11 +287,6 @@ public class MotionProfileExample {
         /* convert duration to supported type */
         retval = retval.valueOf(durationMs);
 
-        /* check that it is valid */
-        //if (retval.value != durationMs) {
-        //  DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);
-        //}
-
         /* pass to caller */
         return retval;
     }

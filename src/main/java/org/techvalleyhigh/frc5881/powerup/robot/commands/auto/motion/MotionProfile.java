@@ -128,10 +128,12 @@ public class MotionProfile extends Command {
 
     /**
      * Make this return true when this Command no longer needs to run execute()
+     * The command is finished when the profile set values are Hold
      */
     @Override
     protected boolean isFinished() {
-        return false;
+        return leftProfile.getSetValue() == SetValueMotionProfile.Hold
+                && rightProfile.getSetValue() == SetValueMotionProfile.Hold;
     }
 
     /**

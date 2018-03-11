@@ -9,7 +9,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
  */
 public class ElevatorDrive extends Command {
     /**
-     * Timeouts in milliseconds
+     * Timeout in milliseconds
      */
     private static final int timeoutKill = 20 * 1000;
 
@@ -49,13 +49,15 @@ public class ElevatorDrive extends Command {
     @Override
     protected void execute() {
         // Try to drive with inputs first
-        Robot.elevator.driveJoystickInputs();
+        Robot.elevator.driveControllerInputs();
 
-        // Override if we're targeting the switch or scale
+        // Override if we're targeting the switch or scale or floor
         if (Robot.oi.coPilotTopBackLeft.get()) {
             Robot.elevator.setSwitch();
         } else if (Robot.oi.coPilotTopBackRight.get()) {
             Robot.elevator.setScale();
+        } else if(Robot.oi.coPilotLeftTrigger.get()) {
+            Robot.elevator.setFloor();
         }
 
         // Make sure we're moving and not burning out the motors

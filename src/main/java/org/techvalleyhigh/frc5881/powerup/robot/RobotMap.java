@@ -79,6 +79,7 @@ public class RobotMap {
         driveBackLeft.setName("Drive", "Back Left Motor");
         LiveWindow.add(driveBackLeft);
 
+        // 631.2 per rotation
         driveFrontRight = new WPI_TalonSRX(3);
         driveFrontRight.setName("Drive", "Front Right Motor");
         // TODO: Get drive encoders!
@@ -111,18 +112,15 @@ public class RobotMap {
         elevatorTalonFollower.setName("Elevator", "Follow Motor");
         LiveWindow.add(elevatorTalonFollower);
 
-        // TODO: Get a arm
         // Talon for the arm
-        /*
         armTalon = new WPI_TalonSRX(7);
         armTalon.setName("Arm", "Master Motor");
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
         armTalon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-        armTalon.configPeakCurrentLimit(32, 10);
+        armTalon.configPeakCurrentLimit(24, 10);
         armTalon.configPeakCurrentDuration(3000, 10);
         LiveWindow.add(armTalon);
-        */
 
         // Pneumatic Compressor
         compressor = new Compressor(20);

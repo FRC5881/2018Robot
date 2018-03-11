@@ -10,6 +10,9 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.SpeedPID;
 
+/**
+ * Subsystem to control everything that has to do with drive (except motion profiling)
+ */
 public class DriveControl extends Subsystem {
     // SmartDashboard key for Gyro Tolerance
     private static final String GYRO_TOLERANCE = "Gyro Tolerance %";
@@ -27,7 +30,7 @@ public class DriveControl extends Subsystem {
     private static final String Y_AXIS_SENSITIVITY = "Y Axis sensitivity";
 
     // Joystick dead zone
-    private static final double deadZone = 0.1;
+    private static final double deadZone = 0.15;
 
     // Max speeds ticks / 100 ms
     private static final double maxForward = 1500;
@@ -43,6 +46,10 @@ public class DriveControl extends Subsystem {
     // PID outputs
     public double gyroPIDOutput;
     public double speedPIDOutput;
+
+    // Current values for ramping
+    public double currentSpeed;
+    public double currentTurn;
 
 
     /**
@@ -148,12 +155,14 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Gyro kI", 0.000000001);
         SmartDashboard.putNumber("Gyro kD", 0.14);
         SmartDashboard.putNumber("Gyro kF", 0.0);
+        SmartDashboard.putNumber("Gyro Ramp", 0.1);
 
         // Speed
         SmartDashboard.putNumber("Speed kP", 2.0);
         SmartDashboard.putNumber("Speed kI", 0.0);
         SmartDashboard.putNumber("Speed kD", 20.0);
         SmartDashboard.putNumber("Speed kF", 0.076);
+        SmartDashboard.putNumber("Speed Ramp", 0.1);
     }
 
     /**
@@ -191,8 +200,6 @@ public class DriveControl extends Subsystem {
         // Just keep the PIDs running
         gyroPID.enable();
         speedPID.enable();
-
-
     }
 
     /**
@@ -289,6 +296,9 @@ public class DriveControl extends Subsystem {
         return SmartDashboard.getNumber("Gyro kF", 0.0);
     }
 
+    public double getGyroRamp() {
+        return SmartDashboard.getNumber("Gyro Ramp", 0.1);
+    }
 
     // ----------------------- DRIVE HANDLING ----------------------- //
     // ---- Getters for SmartDashboard drive values ---- //
@@ -311,7 +321,7 @@ public class DriveControl extends Subsystem {
      * @return scaled double value
      */
     private double scaleXAxis(double x) {
-        return x * getXAxisSensitivity();
+        return OI.applyDeadband(x, deadZone) * getXAxisSensitivity();
     }
 
     /**
@@ -320,7 +330,7 @@ public class DriveControl extends Subsystem {
      * @return scaled double value
      */
     private double scaleYAxis(double y) {
-        return y * getYAxisSensitivity();
+        return OI.applyDeadband(y, deadZone) * getYAxisSensitivity();
     }
 
     // --- Joystick drive methods --- //
@@ -329,9 +339,9 @@ public class DriveControl extends Subsystem {
      * Implements arcade drive with joystick inputs
      */
     public void arcadeJoystickInputs() {
-        // Checks if driver controller is not being operated and if so give slight control to pilot z rotation
         double turn;
 
+        // Checks if driver controller is not being operated and if so give slight control to copilot z rotation
         if (Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) < deadZone && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone) {
             turn = Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION) / 2;
         } else {
@@ -442,10 +452,6 @@ public class DriveControl extends Subsystem {
         double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
 
-        // If speed or gyro PID is on target reset it to clear integral error
-        if (getSpeedOnTarget()) speedPID.reset();
-        if (getGyroOnTarget()) gyroPID.reset();
-
         // Set the setpoints
         // TODO: Need to change gyro pid relatively
         setGyroPid(turn);
@@ -453,6 +459,35 @@ public class DriveControl extends Subsystem {
 
         // Just pass to arcade drive
         rawArcadeDrive(speedPIDOutput, gyroPIDOutput);
+    }
+
+    /**
+     * Ramps turn and speed inputs for arcade drive
+     */
+    public void rampedArcade() {
+        double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
+        double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
+
+        double dt = Math.signum(turn - currentTurn);
+        double ds = Math.signum(speed - currentSpeed);
+
+        currentTurn = currentTurn + dt * getSpeedRamp();
+        currentSpeed = currentSpeed + ds * getGyroRamp();
+
+        // Keep current values between -1 and 1
+        if (currentSpeed > 1) {
+            currentSpeed = 1;
+        } else if (currentSpeed < 1) {
+            currentSpeed = -1;
+        }
+
+        if (currentTurn > 1) {
+            currentTurn = 1;
+        } else if (currentTurn < 1) {
+            currentTurn = -1;
+        }
+
+        rawArcadeDrive(currentSpeed, currentTurn);
     }
 
     /**
@@ -505,6 +540,9 @@ public class DriveControl extends Subsystem {
         return SmartDashboard.getNumber("Speed kF", 0.076);
     }
 
+    public double getSpeedRamp() {
+        return SmartDashboard.getNumber("Speed Ramp", 0.1);
+    }
     /**
      * Stops all drive motors
      */

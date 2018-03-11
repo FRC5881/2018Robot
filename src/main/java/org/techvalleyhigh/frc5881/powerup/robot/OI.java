@@ -5,12 +5,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorFlip;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.DisableRatchet;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.EnableRatchet;
 
 /**
- * Controls operator interfaces, such as controllers
+ * Controls operator interfaces, such as controllers (and a few buttons)
  */
 public class OI {
     public final GenericHID driverController;
@@ -39,9 +40,6 @@ public class OI {
     public final JoystickButton coPilotBottomRightBack;
 
     // Joysticks
-    /**
-     * Controls Left joystick, forward/backward for Arcade Drive
-     */
     public static final int XBOX_LEFT_Y_AXIS = 1;
     public static final int XBOX_LEFT_X_AXIS = 2;
     public static final int XBOX_RIGHT_Y_AXIS = 3;
@@ -107,11 +105,28 @@ public class OI {
         driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
-        // Add commands below
-        coPilotLeftTrigger.whenPressed(new ManipulatorOpen());
-        coPilotTrigger.whenPressed(new ManipulatorClose());
+        // Add commands below but DON'T put elevator and arm autonomous commands down here since
+        // they interfere with operator controls
+        coPilotTrigger.whenPressed(new ManipulatorFlip());
 
         coPilotBottomLeftForward.whenPressed(new EnableRatchet());
         coPilotBottomRightForward.whenPressed(new DisableRatchet());
+    }
+
+    public static double applyDeadband(double input, double deadband) {
+        double output;
+
+        if (Math.abs(input) < deadband) {
+            output = 0;
+        } else {
+            // If we're above the joystick deadzone sqaure the inputs but keep the sign
+            if (input > 0) {
+                output = input * input;
+            } else {
+                output = -input * input;
+            }
+        }
+
+        return output;
     }
 }

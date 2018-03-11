@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control;
 
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
