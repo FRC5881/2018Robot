@@ -152,8 +152,8 @@ public class RobotMap {
 
         // "Acceleration Control" helps prevent tipping on accelerating
         // TODO: Figure out how to stop
-        driveFrontLeft.configClosedloopRamp(1, 10);
-        driveFrontRight.configClosedloopRamp(1, 10);
+        driveFrontLeft.configOpenloopRamp(0, 10);
+        driveFrontRight.configOpenloopRamp(0, 10);
 
         elevatorTalonFollower.set(ControlMode.Follower, 5);
     }

@@ -74,9 +74,11 @@ public class MotionProfile extends Command {
         long endTime = System.currentTimeMillis();
         System.out.println("It took " + Math.round((endTime - startTime) * 100) / 100000 + " Seconds");
 
+        double startAngle = Robot.driveControl.getGyroAngle();
+
         // Init profiles
-        leftProfile = new MotionProfileExample(leftMotor, leftPoints, true);
-        rightProfile = new MotionProfileExample(rightMotor, rightPoints, false);
+        leftProfile = new MotionProfileExample(leftMotor, leftPoints, true, startAngle);
+        rightProfile = new MotionProfileExample(rightMotor, rightPoints, false, startAngle);
 
         // Convert seconds to milliseconds
         int time = Double.valueOf(auto.getConfig().dt * 1000).intValue();

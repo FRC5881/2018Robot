@@ -30,7 +30,7 @@ public class DriveControl extends Subsystem {
     private static final String Y_AXIS_SENSITIVITY = "Y Axis sensitivity";
 
     // Joystick dead zone
-    private static final double deadZone = 0.15;
+    private static final double deadZone = 0.2;
 
     // Max speeds ticks / 100 ms
     private static final double maxForward = 1500;
@@ -50,7 +50,6 @@ public class DriveControl extends Subsystem {
     // Current values for ramping
     public double currentSpeed;
     public double currentTurn;
-
 
     /**
      * Used for converting feet to ticks.
@@ -134,20 +133,20 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.75);
 
         // Joystick sensitivities
-        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 1);
+        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 0.80);
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
 
         // --- Pid controls --- //
         // Left Motors
-        SmartDashboard.putNumber("Left kP", 2.0);
+        SmartDashboard.putNumber("Left kP", 0.5);
         SmartDashboard.putNumber("Left kI", 0.0);
-        SmartDashboard.putNumber("Left kD", 20.0);
+        SmartDashboard.putNumber("Left kD", 5.0);
         SmartDashboard.putNumber("Left kF", 0.076);
 
         // Right Motors
-        SmartDashboard.putNumber("Right kP", 2.0);
+        SmartDashboard.putNumber("Right kP", 0.5);
         SmartDashboard.putNumber("Right kI", 0.0);
-        SmartDashboard.putNumber("Right kD", 20.0);
+        SmartDashboard.putNumber("Right kD", 5);
         SmartDashboard.putNumber("Right kF", 0.076);
 
         // Gyro
@@ -155,14 +154,14 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Gyro kI", 0.000000001);
         SmartDashboard.putNumber("Gyro kD", 0.14);
         SmartDashboard.putNumber("Gyro kF", 0.0);
-        SmartDashboard.putNumber("Gyro Ramp", 0.1);
+        SmartDashboard.putNumber("Gyro Ramp", 0.35);
 
         // Speed
-        SmartDashboard.putNumber("Speed kP", 2.0);
+        SmartDashboard.putNumber("Speed kP", 0.5);
         SmartDashboard.putNumber("Speed kI", 0.0);
-        SmartDashboard.putNumber("Speed kD", 20.0);
+        SmartDashboard.putNumber("Speed kD", 5);
         SmartDashboard.putNumber("Speed kF", 0.076);
-        SmartDashboard.putNumber("Speed Ramp", 0.1);
+        SmartDashboard.putNumber("Speed Ramp", 0.05);
     }
 
     /**
@@ -297,7 +296,7 @@ public class DriveControl extends Subsystem {
     }
 
     public double getGyroRamp() {
-        return SmartDashboard.getNumber("Gyro Ramp", 0.1);
+        return SmartDashboard.getNumber("Gyro Ramp", 0.35);
     }
 
     // ----------------------- DRIVE HANDLING ----------------------- //
@@ -471,21 +470,11 @@ public class DriveControl extends Subsystem {
         double dt = Math.signum(turn - currentTurn);
         double ds = Math.signum(speed - currentSpeed);
 
-        currentTurn = currentTurn + dt * getSpeedRamp();
-        currentSpeed = currentSpeed + ds * getGyroRamp();
+        currentTurn = currentTurn + dt * getGyroRamp();
+        currentSpeed = currentSpeed + ds * getSpeedRamp();
 
-        // Keep current values between -1 and 1
-        if (currentSpeed > 1) {
-            currentSpeed = 1;
-        } else if (currentSpeed < 1) {
-            currentSpeed = -1;
-        }
-
-        if (currentTurn > 1) {
-            currentTurn = 1;
-        } else if (currentTurn < 1) {
-            currentTurn = -1;
-        }
+        SmartDashboard.putNumber("Current Speed", currentSpeed);
+        SmartDashboard.putNumber("Current Turn", currentTurn);
 
         rawArcadeDrive(currentSpeed, currentTurn);
     }
@@ -540,8 +529,22 @@ public class DriveControl extends Subsystem {
         return SmartDashboard.getNumber("Speed kF", 0.076);
     }
 
+    /**
+     * Uses an exponential regression to get speed ramp at different elevator heights
+     * @return Speed ramp to send to drive motors
+     */
     public double getSpeedRamp() {
-        return SmartDashboard.getNumber("Speed Ramp", 0.1);
+        // Elevator Down 0.35, 0.05
+        // Elevator Switch 0.35 0.03
+        // Elevator Up 0.35, 0.005
+
+        // Speed ramp = A*B^x
+        // A = 0.05439865157
+        // B = 0.9999283587
+        double ramp = 0.05439865157 * Math.pow(0.9999283587, Robot.elevator.getHeight());
+        SmartDashboard.putNumber("Speed Ramp", ramp);
+
+        return ramp;
     }
     /**
      * Stops all drive motors

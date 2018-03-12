@@ -102,6 +102,11 @@ public class MotionProfileExample {
     private boolean isLeft;
 
     /**
+     * Starting angle we start auto at
+     */
+    private double startAngle;
+
+    /**
      * Lets create a periodic task to funnel our trajectory points into our talon.
      * It doesn't need to be very accurate, just needs to keep pace with the auto
      * profiler executer.  Now if you're trajectory points are slow, there is no need
@@ -122,11 +127,12 @@ public class MotionProfileExample {
      * @param talon
      *            reference to Talon object to fetch auto profile status from.
      */
-    public MotionProfileExample(TalonSRX talon, double [][] _points, boolean isLeft) {
+    public MotionProfileExample(TalonSRX talon, double [][] _points, boolean isLeft, double startAngle) {
         _talon = talon;
         this._points = _points;
         this.isLeft = isLeft;
         this.currentPoint = 0;
+        this.startAngle = startAngle;
 
         /*
          * since our MP is 10ms per point, set the control frame rate and the
@@ -313,8 +319,15 @@ public class MotionProfileExample {
 
         /* This is fast since it's just into our TOP buffer */
         for (int i = start; i < start + cnt && i < _points.length; ++i) {
+
+
             // Edit velocity to account for drift using gyro pid
-            Robot.driveControl.setGyroPid(_points[i][3] - Robot.driveControl.getGyroAngle());
+            double setpoint = _points[i][3] - startAngle;
+            if (setpoint > 360) {
+                setpoint = -1 * (setpoint - 360);
+            }
+
+            Robot.driveControl.setGyroPid(setpoint);
             double percentage = 1 + (Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1));
             double velocityRPM = _points[i][1] * percentage;
 
@@ -330,8 +343,10 @@ public class MotionProfileExample {
             double positionRot =_points[i][0] + d;
 
             /* for each point, fill our structure and pass it to API */
-            point.position = positionRot * MotionConstants.kSensorUnitsPerRotation; //Convert Revolutions to Units
-            point.velocity = velocityRPM * MotionConstants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
+            //point.position = positionRot * MotionConstants.kSensorUnitsPerRotation; //Convert Revolutions to Units
+            //point.velocity = velocityRPM * MotionConstants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
+            point.position = _points[i][0] * MotionConstants.kSensorUnitsPerRotation;
+            point.velocity = _points[i][1] * MotionConstants.kSensorUnitsPerRotation / 600;
             point.headingDeg = 0; /* future feature - not used in this example*/
             point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
             point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */

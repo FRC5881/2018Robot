@@ -45,8 +45,10 @@ public class Straight extends Command {
 
         double[][] points = JaciToTalon.straightPath(distance, velocity, acceleration, dt);
 
-        leftProfile = new MotionProfileExample(leftMotor, points, true);
-        rightProfile = new MotionProfileExample(rightMotor, points, false);
+        double startAngle = Robot.driveControl.getGyroAngle();
+
+        leftProfile = new MotionProfileExample(leftMotor, points, true, startAngle);
+        rightProfile = new MotionProfileExample(rightMotor, points, false, startAngle);
 
         // Set timing for profile
         int time = Double.valueOf(dt * 1000).intValue();

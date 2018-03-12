@@ -71,11 +71,11 @@ public class Robot extends TimedRobot {
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
-        driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
+        driveChooser.addDefault("Ramped Arcade Drive", new RampedArcade());
+        driveChooser.addObject("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Curvature Drive", new CurvatureDrive());
         driveChooser.addObject("Arcaded PID drive", new ArcadedPID());
-        driveChooser.addObject("Ramped Arcade Drive", new RampedArcade());
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
         SmartDashboard.putNumber("Turn", 0);
@@ -250,12 +250,12 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Grabber enabled", manipulator.getGrabberEnabled());
 
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Elevator setpoint", elevator.getSetpoint());
+        //SmartDashboard.putNumber("Elevator setpoint", elevator.getSetpoint());
         SmartDashboard.putNumber("Elevator error", elevator.getError());
 
         SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Arm output", RobotMap.armTalon.getMotorOutputPercent());
-        SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
+        //SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
         SmartDashboard.putNumber("Arm error", arm.getError());
         SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
 

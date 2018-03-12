@@ -49,7 +49,9 @@ public class AutonomousCommand extends CommandGroup {
         long start = System.currentTimeMillis();
 
         // Wait for match data or until time passed
-        while (!hasData() && System.currentTimeMillis() - start > matchDataTime) {}
+        while (!hasData() && System.currentTimeMillis() - start > matchDataTime) {
+            //System.out.println(hasData() + " " + (System.currentTimeMillis() - start));
+        }
 
         if (hasData()) {
             // Tell the drive team how long it took to get match data
@@ -64,9 +66,6 @@ public class AutonomousCommand extends CommandGroup {
         // Tell the drive team how long the robot waited to start (they should already have this information)
         System.out.format("It took %d milliseconds to start autonomous\n", System.currentTimeMillis() - start);
 
-        addSequential(new SetElevator(Elevator.switchTicks, 3000));
-        /*
-
         // If we have the data continue as normal
         if (hasData()) {
             // Let the Smart dashboard know that we got match data in time
@@ -75,6 +74,8 @@ public class AutonomousCommand extends CommandGroup {
             // Filter and choose auto
             for (Integer i : chosen) {
                 Autonomous auto = autos.get(i);
+                System.out.println("Check auto: " + i);
+
                 // If statement checks to see it the MatchData's "owned side"
                 // is the same as the Autonomous command's copy of "owned side"
 
@@ -88,11 +89,14 @@ public class AutonomousCommand extends CommandGroup {
                 }
 
                 // Check that the feature's owned side is the same as auto
+                System.out.println("Auto feature " + MatchData.getOwnedSide(auto.getFeature()));
                 if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
                     System.out.println("Added Auto " + i);
 
+                    addSequential(new MotionProfile(auto));
+
                     // Score a cube with chosen auto
-                    score(auto);
+                    //score(auto);
 
                     // Let the record that we found an autonomous routine and don't default to the outline
                     found = true;
@@ -103,7 +107,7 @@ public class AutonomousCommand extends CommandGroup {
             // If we don't find a routine default to crossing the auto line
             if (!found) {
                 // Add auto 100 (auto line)
-                autoline();
+                //autoline();
             }
 
         // If we don't get the data in time flip out and just run the auto line
@@ -114,7 +118,6 @@ public class AutonomousCommand extends CommandGroup {
             // Default to auto line
             autoline();
         }
-        */
     }
 
     /**
@@ -142,18 +145,17 @@ public class AutonomousCommand extends CommandGroup {
     /**
      * Just cross the auto line
      */
-    /*
     private void autoline() {
         addSequential(new MotionProfile(autos.get(100)));
     }
-    */
+
 
     /**
      * Returns whether or not we've gotten the match data
      * @return boolean true we have data - false we don't
      */
     private boolean hasData() {
-        return MatchData.getOwnedSide(MatchData.GameFeature.SCALE) == MatchData.OwnedSide.UNKNOWN;
+        return MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != MatchData.OwnedSide.UNKNOWN;
     }
 
 }

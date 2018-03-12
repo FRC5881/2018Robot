@@ -220,4 +220,8 @@ public class Elevator extends Subsystem {
     public double getMaxSpeed() {
         return SmartDashboard.getNumber("Elevator Speed", 300);
     }
+
+    public double getHeight() {
+        return elevatorTalonMaster.getSelectedSensorPosition(0);
+    }
 }
