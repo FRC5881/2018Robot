@@ -60,6 +60,7 @@ public class ArmDrive extends Command {
             if (current - time > timeoutKill && Math.abs(Robot.arm.getError()) > 1440) {
                 // Kill
                 RobotMap.armTalon.disable();
+                System.out.println("Killing arm for safety");
             }
         }
         lastpoint = newpoint;

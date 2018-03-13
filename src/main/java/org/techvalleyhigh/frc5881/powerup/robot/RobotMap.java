@@ -151,9 +151,12 @@ public class RobotMap {
         driveFrontRight.setNeutralMode(NeutralMode.Coast);
 
         // "Acceleration Control" helps prevent tipping on accelerating
-        // TODO: Figure out how to stop
+        // RampedArcade is a better solution keep these 0
         driveFrontLeft.configOpenloopRamp(0, 10);
         driveFrontRight.configOpenloopRamp(0, 10);
+
+        driveFrontLeft.configClosedloopRamp(0, 10);
+        driveFrontRight.configClosedloopRamp(0, 10);
 
         elevatorTalonFollower.set(ControlMode.Follower, 5);
     }

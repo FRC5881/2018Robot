@@ -29,6 +29,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.Notifier;
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class MotionProfileExample {
@@ -303,12 +304,16 @@ public class MotionProfileExample {
         fill(currentPoint, MotionConstants.maxTrajectories);
     }
 
+    /**
+     * Pushes a number of points into motion profile buffer
+     * @param start Where in generated profile to start pushing values from
+     * @param cnt How many points to push
+     */
     private void fill(int start, int cnt) {
-
-        /* create an empty point */
+        // create an empty point
         TrajectoryPoint point = new TrajectoryPoint();
 
-        /* did we get an under run condition since last time we checked ? */
+        // did we get an under run condition since last time we checked?
         if (_status.hasUnderrun) {
             /*
              * clear the error. This flag does not auto clear, this way
@@ -317,7 +322,7 @@ public class MotionProfileExample {
             _talon.clearMotionProfileHasUnderrun(0);
         }
 
-        /* This is fast since it's just into our TOP buffer */
+        // This is fast since it's just into our TOP buffer
         for (int i = start; i < start + cnt && i < _points.length; ++i) {
 
 
@@ -329,30 +334,32 @@ public class MotionProfileExample {
 
             Robot.driveControl.setGyroPid(setpoint);
             double percentage = 1 + (Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1));
-            double velocityRPM = _points[i][1] * percentage;
+            double velocity = _points[i][1] * percentage;
+            SmartDashboard.putNumber("Change in velocity", velocity - _points[i][1]);
 
-            // Edit the position to account for drift using calculus
+            // Edit the position to account for drift using physics
             // Change in position = integral of the change in velocity (assume constant acceleration)
             // d = v0 * t + 0.5 * a * t^2
             // d = v0 * dt + 0.5(v1 - v0)dt^2
             double d = 0;
+            // As long as there is a next point to get an acceleration from
             if (i + 1 < _points.length) {
                 double dt = _points[i][2] / 1000;
-                d = velocityRPM * (dt) + 0.5 * percentage * (_points[i + 1][1] - _points[i][1]) * (dt * dt);
+                d = velocity * (dt) + 0.5 * percentage * (_points[i + 1][1] - _points[i][1]) * (dt * dt);
             }
-            double positionRot =_points[i][0] + d;
+            double position =_points[i][0] + d;
+            SmartDashboard.putNumber("Change in position", position - _points[i][0]);
 
-            /* for each point, fill our structure and pass it to API */
-            //point.position = positionRot * MotionConstants.kSensorUnitsPerRotation; //Convert Revolutions to Units
-            //point.velocity = velocityRPM * MotionConstants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
+            // for each point, fill our structure and pass it to API
+            //point.position = position * MotionConstants.kSensorUnitsPerRotation; // Convert Revolutions to Units
+            //point.velocity = velocity * MotionConstants.kSensorUnitsPerRotation / 600.0; // Convert RPM to Units/100ms
             point.position = _points[i][0] * MotionConstants.kSensorUnitsPerRotation;
             point.velocity = _points[i][1] * MotionConstants.kSensorUnitsPerRotation / 600;
-            point.headingDeg = 0; /* future feature - not used in this example*/
-            point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
-            point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
+            point.headingDeg = 0; // future feature - not used in this example
+            point.profileSlotSelect0 = 0; // which set of gains would you like to use [0,3]?
+            point.profileSlotSelect1 = 0; // future feature  - not used in this example - cascaded PID [0,1], leave zero
             point.timeDur = GetTrajectoryDuration((int)_points[i][2]);
             point.zeroPos = i == 0;
-
             point.isLastPoint = (i + 1) == _points.length;
 
             _talon.pushMotionProfileTrajectory(point);

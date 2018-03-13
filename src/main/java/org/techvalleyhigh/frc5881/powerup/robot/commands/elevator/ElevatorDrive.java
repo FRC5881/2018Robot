@@ -54,8 +54,10 @@ public class ElevatorDrive extends Command {
         // Override if we're targeting the switch or scale or floor
         if (Robot.oi.coPilotTopBackLeft.get()) {
             Robot.elevator.setSwitch();
+
         } else if (Robot.oi.coPilotTopBackRight.get()) {
             Robot.elevator.setScale();
+
         } else if(Robot.oi.coPilotLeftTrigger.get()) {
             Robot.elevator.setFloor();
         }
@@ -69,6 +71,7 @@ public class ElevatorDrive extends Command {
             if (current - time > timeoutKill && Math.abs(Robot.elevator.getError()) > 1440) {
                 // Kill
                 RobotMap.elevatorTalonMaster.disable();
+                System.out.println("Killing elevator for safety");
             }
         }
         lastpoint = newpoint;

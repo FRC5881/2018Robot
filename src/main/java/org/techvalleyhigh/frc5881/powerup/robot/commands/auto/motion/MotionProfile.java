@@ -11,6 +11,7 @@ import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.modifiers.TankModifier;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Turn;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
@@ -143,7 +144,11 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void end() {
-        System.out.println("Motion profile ended that shouldn't happen...");
+        // Get final heading
+        double finalTurn = Robot.driveControl.getGyroAngle() - leftProfile._heading;
+
+        // Add turn command to finish off the profile
+        new Turn(finalTurn);
     }
 
     /**
@@ -152,6 +157,7 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void interrupted() {
+        System.out.println("Motion profile interrupted that shouldn't happen...");
         end();
     }
 }
