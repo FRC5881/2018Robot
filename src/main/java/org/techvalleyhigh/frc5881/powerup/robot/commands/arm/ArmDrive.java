@@ -35,9 +35,6 @@ public class ArmDrive extends Command {
     protected void initialize() {
         System.out.println("Initializing arm command");
 
-        // Init PID control for the arm
-        Robot.arm.initPID();
-
         // Init lastpoint
         lastpoint = 0;
         resetTimeouts();

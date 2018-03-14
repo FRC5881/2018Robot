@@ -35,8 +35,7 @@ public class ElevatorDrive extends Command {
     protected void initialize() {
         System.out.println("Initializing elevator command");
 
-        // Init PID control for the elevator
-        Robot.elevator.initPID();
+        Robot.elevator.setFloor();
 
         // Init lastpoint
         lastpoint = 0;

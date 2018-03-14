@@ -10,11 +10,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
+
+import java.util.Set;
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
@@ -114,8 +117,8 @@ public class Robot extends TimedRobot {
         // Make sure the motors are in the correct states
         RobotMap.initMotorState();
 
-        // Grab our starting cube
-        new ManipulatorClose().start();
+        SetArm move = new SetArm(800, 0);
+        move.start();
 
         // Get autonomous selection data
         String autoOptions = SmartDashboard.getString("Possible Paths", "None");
@@ -252,6 +255,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
         //SmartDashboard.putNumber("Elevator setpoint", elevator.getSetpoint());
         SmartDashboard.putNumber("Elevator error", elevator.getError());
+        SmartDashboard.putNumber("Elevator voltage", RobotMap.elevatorTalonMaster.getMotorOutputVoltage());
 
         SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Arm output", RobotMap.armTalon.getMotorOutputPercent());

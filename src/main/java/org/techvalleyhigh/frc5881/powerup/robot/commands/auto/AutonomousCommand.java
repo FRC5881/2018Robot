@@ -3,11 +3,11 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import openrio.powerup.MatchData;
-import org.opencv.core.Mat;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetElevator;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Straight;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
@@ -28,17 +28,17 @@ public class AutonomousCommand extends CommandGroup {
      */
     private Map<Integer, Autonomous> autos;
 
-    @Override
-    protected boolean isFinished() {
-        return false;
-    }
-
     /**
      * Logic for choosing and running an autonomous command
      * @param chosen array list of integers
      * @param timeToWait milliseconds to wait before running the commands
      */
     public AutonomousCommand(ArrayList<Integer> chosen, long timeToWait) {
+        currentMode = mode.NONE;
+
+        startCommands = new ArrayList<>();
+        endCommands = new ArrayList<>();
+
         // Add all the autonomous paths into one big Map
         this.autos = TrajectoryUtil.getAutos();
 
@@ -49,9 +49,7 @@ public class AutonomousCommand extends CommandGroup {
         long start = System.currentTimeMillis();
 
         // Wait for match data or until time passed
-        while (!hasData() && System.currentTimeMillis() - start > matchDataTime) {
-            //System.out.println(hasData() + " " + (System.currentTimeMillis() - start));
-        }
+        while (!hasData() && System.currentTimeMillis() - start > matchDataTime) { }
 
         if (hasData()) {
             // Tell the drive team how long it took to get match data
@@ -61,7 +59,7 @@ public class AutonomousCommand extends CommandGroup {
         }
 
         // Wait for our time to wait has expired
-        //while(System.currentTimeMillis() - start < timeToWait) {}
+        while(System.currentTimeMillis() - start < timeToWait) {}
 
         // Tell the drive team how long the robot waited to start (they should already have this information)
         System.out.format("It took %d milliseconds to start autonomous\n", System.currentTimeMillis() - start);
@@ -93,10 +91,10 @@ public class AutonomousCommand extends CommandGroup {
                 if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
                     System.out.println("Added Auto " + i);
 
-                    addSequential(new MotionProfile(auto));
+                    //addSequential(new MotionProfile(auto));
 
                     // Score a cube with chosen auto
-                    //score(auto);
+                    score(auto);
 
                     // Let the record that we found an autonomous routine and don't default to the outline
                     found = true;
@@ -120,26 +118,135 @@ public class AutonomousCommand extends CommandGroup {
         }
     }
 
+    private enum commands {
+        CLOSE_GRABBER,
+        OPEN_GRABBER,
+        SWITCH,
+        SCALE,
+        MOVE_ARM
+    }
+
+    private enum mode {
+        INIT,
+        RUNNING,
+        END,
+        NONE
+    }
+
+    private mode currentMode;
+
+    private Autonomous auto;
+
     /**
-     * Logic for sending arm and elevator commands if we want to score a cube
+     * Logic for sending moveArm and elevator commands if we want to score a cube
      */
-    private void score(Autonomous auto) {
-        /*
+    private void score(Autonomous autoToRun) {
+        this.auto = autoToRun;
         // Start with just sending the motion profile
-        //MotionProfile profile = new MotionProfile(auto);
-        //addParallel(profile);
+        profile = new MotionProfile(autoToRun);
+        addParallel(profile);
 
-        // Tip the arm forward just to be out of the elevator
-        //addParallel(new SetArm(228, 0));
+        startCommands.add(commands.CLOSE_GRABBER);
+        startCommands.add(commands.MOVE_ARM);
 
-        // Set the arm to correct height to score in owned structure and tell the manipulator to score slightly after
-        if (auto.getFeature() == MatchData.GameFeature.SWITCH_NEAR) {
-            addParallel(new SetElevator(Elevator.switchTicks, auto.getTimeToWait()));
+        // Tip the moveArm forward just to be out of the elevator
+        //addParallel(new SetArm(800, 0));
 
-        } else if (auto.getFeature() == MatchData.GameFeature.SCALE) {
-            addParallel(new SetElevator(Elevator.scaleTicks, auto.getTimeToWait()));
+        // Set the moveArm to correct height to score in owned structure and tell the manipulator to score slightly after
+        if (autoToRun.getFeature() == MatchData.GameFeature.SWITCH_NEAR) {
+            startCommands.add(commands.SWITCH);
+            //addParallel(new SetElevator(Elevator.switchTicks, autoToRun.getTimeToWait()));
+
+        } else if (autoToRun.getFeature() == MatchData.GameFeature.SCALE) {
+            startCommands.add(commands.SCALE);
+            //addParallel(new SetElevator(Elevator.scaleTicks, autoToRun.getTimeToWait()));
         }
-        */
+
+        endCommands.add(commands.OPEN_GRABBER);
+        //addSequential(new ManipulatorOpen());
+
+        currentMode = mode.INIT;
+    }
+
+    private ArrayList<commands> startCommands;
+    private ArrayList<commands> endCommands;
+
+    private ManipulatorClose close;
+    private SetArm moveArm;
+    private SetElevator elevator;
+    private MotionProfile profile;
+    private ManipulatorOpen open;
+
+    @Override
+    protected void execute() {
+        //System.out.println(currentMode);
+
+        if (currentMode == mode.NONE) {
+            //System.out.println(currentMode);
+            // Do nothing
+
+        } else if (currentMode == mode.INIT) {
+            startCommands(startCommands);
+
+            // Change mode
+            currentMode = mode.RUNNING;
+            System.out.println(currentMode);
+
+        } else if (currentMode == mode.RUNNING) {
+            if (profile.isCompleted()) {
+                currentMode = mode.END;
+                System.out.println(currentMode);
+            }
+
+        } else if (currentMode == mode.END) {
+            startCommands(endCommands);
+            currentMode = mode.NONE;
+            System.out.println(currentMode);
+        }
+    }
+
+    private void startCommands(ArrayList<commands> list) {
+        for (commands c: list) {
+                /*
+                private enum commands {
+                    CLOSE_GRABBER,
+                    OPEN_GRABBER,
+                    SWITCH,
+                    SCALE,
+                    MOVE_ARM
+                }
+                 */
+            if (c.equals(commands.CLOSE_GRABBER)) {
+                System.out.println("Close Grabber");
+                close = new ManipulatorClose();
+                close.start();
+
+            } else if (c.equals(commands.OPEN_GRABBER)) {
+                System.out.println("Open Grabber");
+                open = new ManipulatorOpen();
+                open.start();
+
+            } else if (c.equals(commands.SWITCH)) {
+                System.out.println("Switch");
+                elevator = new SetElevator(Elevator.switchTicks, auto.getTimeToWait());
+                elevator.start();
+
+            } else if (c.equals(commands.SCALE)) {
+                System.out.println("Scale");
+                elevator = new SetElevator(Elevator.scaleTicks, auto.getTimeToWait());
+                elevator.start();
+
+            } else if (c.equals(commands.MOVE_ARM)) {
+                System.out.println("Arm");
+                moveArm = new SetArm(800, 0);
+                moveArm.start();
+            }
+        }
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return false;
     }
 
     /**

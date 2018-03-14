@@ -120,6 +120,8 @@ public class RobotMap {
         armTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         armTalon.configPeakCurrentLimit(24, 10);
         armTalon.configPeakCurrentDuration(3000, 10);
+        armTalon.setSensorPhase(false);
+        armTalon.setInverted(true);
         LiveWindow.add(armTalon);
 
         // Pneumatic Compressor

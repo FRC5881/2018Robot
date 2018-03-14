@@ -114,7 +114,7 @@ public class OI {
     }
 
     /**
-     * Applies deadzone to input
+     * Applies deadzone to input and scales output
      * @param input the input to apply a deadzone to
      * @param deadZone the deadzone to apply
      * @return 0 if absolute value of the input is less than dead zone or the signed input squared if otherwise
@@ -126,7 +126,7 @@ public class OI {
             output = 0;
         } else {
             // If we're above the joystick deadzone sqaure the inputs but keep the sign
-            output = Math.copySign(input * input, input);
+            output = input < 0 ? (input - deadZone) / (1 - deadZone) : (input + deadZone) / (1 - deadZone);
         }
 
         return output;

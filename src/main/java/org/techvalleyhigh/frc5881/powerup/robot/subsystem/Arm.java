@@ -15,12 +15,12 @@ public class Arm extends Subsystem {
     /**
      * The number of ticks the arm can travel downwards ~95 degrees from vertical
      */
-    private static final int maxTicks = 1800 + 360;
+    private static final int maxTicks = 1400;
 
     /**
      * The return ticks (how close the arm can get to the elevator)
      */
-    private static final int minTicks = 0 - 360;
+    private static final int minTicks = 0;
 
     /**
      * The deadzone on the joystick inputs
@@ -112,6 +112,7 @@ public class Arm extends Subsystem {
         speed = OI.applyDeadzone(speed, deadzone);
 
         // Scale by extend ticks and set setpoint
+        System.out.println(speed);
         addPosition(speed * getMaxSpeed());
     }
 

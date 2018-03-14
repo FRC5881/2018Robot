@@ -470,8 +470,9 @@ public class DriveControl extends Subsystem {
                 && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone
                 // If co pilot is obviously trying to turn
                 && Math.abs(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) > 0.75) {
+            turn = Math.signum(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) / 2;
+            System.out.println();
 
-            turn = 0.5;
         } else {
             turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
         }
