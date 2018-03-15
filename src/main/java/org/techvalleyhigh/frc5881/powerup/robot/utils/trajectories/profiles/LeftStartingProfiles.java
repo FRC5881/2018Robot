@@ -70,7 +70,7 @@ public class LeftStartingProfiles {
             new Waypoint(20.25, 19, Math.toRadians(-90)),
             new Waypoint(20.25, 8, Math.toRadians(-90)),
             new Waypoint(20.25, 4, Math.toRadians(-45)),
-            new Waypoint(22.25, 3.25, 0),
+            new Waypoint(23.25, 3.25, 0),
             TrajectoryUtil.rightSideScale
     };
     private static final Autonomous auto_5 = new Autonomous(5, path_5, defaultConfig, SCALE, RIGHT);
@@ -81,7 +81,7 @@ public class LeftStartingProfiles {
             new Waypoint(14.5, 23, 0),
             new Waypoint(19.25, 20.5, Math.toRadians(-68)),
             new Waypoint(19.5, 10, Math.toRadians(-90)),
-            new Waypoint(22.25, 6.5, 0),
+            new Waypoint(22.25, 7.3, Math.toRadians(-29)),
             TrajectoryUtil.rightFrontScale
     };
     private static final Autonomous auto_6 = new Autonomous(6, path_6, TrajectoryUtil.ourConfig(4.25, 4), SCALE, RIGHT);
