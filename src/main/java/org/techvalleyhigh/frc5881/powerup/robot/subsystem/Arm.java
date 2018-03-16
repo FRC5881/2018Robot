@@ -15,7 +15,7 @@ public class Arm extends Subsystem {
     /**
      * The number of ticks the arm can travel downwards ~95 degrees from vertical
      */
-    private static final int maxTicks = 1400;
+    private static final int maxTicks = 2100;
 
     /**
      * The return ticks (how close the arm can get to the elevator)

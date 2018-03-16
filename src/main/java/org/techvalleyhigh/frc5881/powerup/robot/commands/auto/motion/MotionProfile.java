@@ -137,9 +137,9 @@ public class MotionProfile extends Command {
      */
     @Override
     protected boolean isFinished() {
-    //    return leftProfile.getSetValue() == SetValueMotionProfile.Disable
-    //            && rightProfile.getSetValue() == SetValueMotionProfile.Disable;
-    return false;
+        return leftProfile.getSetValue() == SetValueMotionProfile.Hold
+                && rightProfile.getSetValue() == SetValueMotionProfile.Hold;
+    //return false;
     }
 
     /**
@@ -147,11 +147,7 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void end() {
-        // Get final heading
-        //double finalTurn = Robot.driveControl.getGyroAngle() - leftProfile._heading;
 
-        // Add turn command to finish off the profile
-        //new Turn(finalTurn);
     }
 
     /**

@@ -270,7 +270,7 @@ public class MotionProfileExample {
                          * get here when the MP is done
                          */
                         System.out.println("Setting Disabled - end of MP");
-                        _setValue = SetValueMotionProfile.Disable;
+                        _setValue = SetValueMotionProfile.Hold;
                         _state = 0;
                         _loopTimeout = -1;
                     }

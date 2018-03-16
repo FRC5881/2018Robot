@@ -135,7 +135,7 @@ public class RobotMap {
         LiveWindow.add(grabSolenoid);
 
         // Pneumatic Solenoid for elevator
-        ratchetSolenoid = new DoubleSolenoid(20, 7, 6);
+        ratchetSolenoid = new DoubleSolenoid(20, 0, 1);
         ratchetSolenoid.setName("Elevator", "Ratchet");
         LiveWindow.add(ratchetSolenoid);
 

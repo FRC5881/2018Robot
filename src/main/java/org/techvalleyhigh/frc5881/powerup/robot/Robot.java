@@ -242,6 +242,8 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Right Error", RobotMap.driveFrontRight.getClosedLoopError(0));
+        SmartDashboard.putNumber("Left Error", RobotMap.driveFrontLeft.getClosedLoopError(0));
 
         SmartDashboard.putNumber("Velocity", driveControl.getVelocity());
         SmartDashboard.putNumber("Speed output", driveControl.speedPIDOutput);
