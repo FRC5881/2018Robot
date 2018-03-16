@@ -269,7 +269,8 @@ public class MotionProfileExample {
                          * because we set the last point's isLast to true, we will
                          * get here when the MP is done
                          */
-                        _setValue = SetValueMotionProfile.Hold;
+                        System.out.println("Setting Disabled - end of MP");
+                        _setValue = SetValueMotionProfile.Disable;
                         _state = 0;
                         _loopTimeout = -1;
                     }

@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control;
 
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -6,30 +6,34 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.modifiers.TankModifier;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Turn;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionConstants;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfileExample;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
-/**
- * Command to call to interact with CTRE Motion Profile Example
- */
-public class MotionProfile extends Command {
+// TODO: Work in progress
+public class StraightProfile extends Command {
     private WPI_TalonSRX rightMotor;
     private WPI_TalonSRX leftMotor;
+
     private MotionProfileExample rightProfile;
     private MotionProfileExample leftProfile;
-    private Autonomous auto;
 
-    public MotionProfile(Autonomous auto) {
-        System.out.println("MotionProfile Constructed");
+    private double distance;
+    private double velocity;
+    private double acceleration;
+    private double dt;
+
+    public StraightProfile(double distance, double velocity, double acceleration, double dt) {
         requires(Robot.driveControl);
-        this.auto = auto;
+        this.distance = distance;
+        this.velocity = velocity;
+        this.acceleration = acceleration;
+        this.dt = dt;
+
+         rightMotor = RobotMap.driveFrontRight;
+         leftMotor = RobotMap.driveFrontLeft;
     }
 
     /**
@@ -37,54 +41,18 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void initialize() {
-        // Get pid values
-        Robot.driveControl.initPID();
+        System.out.println("Driving " + distance + " feet");
 
-        // Define leading motor controllers
-        leftMotor = RobotMap.driveFrontLeft;
-        rightMotor = RobotMap.driveFrontRight;
-
-        // Log the start time of the process....
-        long startTime = System.currentTimeMillis();
-
-        // Lets see if we can load a stored trajectory....
-        Trajectory trajectory = TrajectoryUtil.loadTrajectoryFromFile(auto.getAutoNumber());
-
-        // If we were unable to load the trajectory then it'll be null.
-        if (trajectory == null) {
-            // Generate trajectory
-            System.err.println("Unable to load Auto " + auto.getAutoNumber() + " Generating Path...");
-            trajectory = Pathfinder.generate(auto.getPath(), auto.getConfig());
-        } else {
-            System.out.println("Loaded stored path...");
-        }
-
-        // Change trajectory into a tank drive
-        // Wheelbase Width = 2.3226166667 feet
-        TankModifier modifier = new TankModifier(trajectory).modify(2.3226166667);
-
-        // Separate trajectories for left and right
-        Trajectory leftTrajectory = modifier.getLeftTrajectory();
-        Trajectory rightTrajectory = modifier.getRightTrajectory();
-
-        // Convert to points
-        double[][] leftPoints = JaciToTalon.makeProfile(leftTrajectory);
-        double[][] rightPoints = JaciToTalon.makeProfile(rightTrajectory);
-
-        // Prints seconds rounded to 2 decimal places
-        long endTime = System.currentTimeMillis();
-        System.out.println("It took " + Math.round((endTime - startTime) * 100) / 100000 + " Seconds");
+        double[][] points = JaciToTalon.straightPath(distance, velocity, acceleration, dt);
 
         double startAngle = Robot.driveControl.getGyroAngle();
 
-        // Init profiles
-        leftProfile = new MotionProfileExample(leftMotor, leftPoints, true, startAngle);
-        rightProfile = new MotionProfileExample(rightMotor, rightPoints, false, startAngle);
-
-        // Convert seconds to milliseconds
-        int time = Double.valueOf(auto.getConfig().dt * 1000).intValue();
+        leftProfile = new MotionProfileExample(leftMotor, points, true, startAngle);
+        rightProfile = new MotionProfileExample(rightMotor, points, false, startAngle);
 
         // Set timing for profile
+        int time = Double.valueOf(dt * 1000).intValue();
+
         rightMotor.configMotionProfileTrajectoryPeriod(time, MotionConstants.kTimeoutMs);
         leftMotor.configMotionProfileTrajectoryPeriod(time, MotionConstants.kTimeoutMs);
 
@@ -94,8 +62,6 @@ public class MotionProfile extends Command {
          */
         rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
         leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
-
-        System.out.println("Starting Profile....");
 
         leftProfile.startMotionProfile();
         rightProfile.startMotionProfile();
@@ -133,13 +99,11 @@ public class MotionProfile extends Command {
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * The command is finished when the profile set values are Hold
+     * End command once we are within tolerance
      */
     @Override
     protected boolean isFinished() {
-    //    return leftProfile.getSetValue() == SetValueMotionProfile.Disable
-    //            && rightProfile.getSetValue() == SetValueMotionProfile.Disable;
-    return false;
+        return false;
     }
 
     /**
@@ -147,11 +111,7 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void end() {
-        // Get final heading
-        //double finalTurn = Robot.driveControl.getGyroAngle() - leftProfile._heading;
-
-        // Add turn command to finish off the profile
-        //new Turn(finalTurn);
+        System.out.println("Motion profile ended that shouldn't happen...");
     }
 
     /**
@@ -160,7 +120,6 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void interrupted() {
-        System.out.println("Motion profile interrupted that shouldn't happen...");
         end();
     }
 }

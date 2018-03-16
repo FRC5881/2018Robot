@@ -133,21 +133,21 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.75);
 
         // Joystick sensitivities
-        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 0.80);
-        SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
+        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, -0.80);
+        SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1.0);
 
         // --- Pid controls --- //
         // Left Motors
-        SmartDashboard.putNumber("Left kP", 0.5);
+        SmartDashboard.putNumber("Left kP", 0.1);
         SmartDashboard.putNumber("Left kI", 0.0);
-        SmartDashboard.putNumber("Left kD", 5.0);
-        SmartDashboard.putNumber("Left kF", 0.076);
+        SmartDashboard.putNumber("Left kD", 0.0);
+        SmartDashboard.putNumber("Left kF", 0.0);
 
         // Right Motors
-        SmartDashboard.putNumber("Right kP", 0.5);
+        SmartDashboard.putNumber("Right kP", 0.1);
         SmartDashboard.putNumber("Right kI", 0.0);
-        SmartDashboard.putNumber("Right kD", 5);
-        SmartDashboard.putNumber("Right kF", 0.076);
+        SmartDashboard.putNumber("Right kD", 0.0);
+        SmartDashboard.putNumber("Right kF", 0.0);
 
         // Gyro
         SmartDashboard.putNumber("Gyro kP", 0.057);
@@ -347,7 +347,7 @@ public class DriveControl extends Subsystem {
         }
         double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
-        robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), true);
+        robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), false);
     }
 
     /**
@@ -471,7 +471,6 @@ public class DriveControl extends Subsystem {
                 // If co pilot is obviously trying to turn
                 && Math.abs(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) > 0.75) {
             turn = Math.signum(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) / 2;
-            System.out.println();
 
         } else {
             turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
@@ -484,23 +483,24 @@ public class DriveControl extends Subsystem {
         double ds;
 
         // If manual is selected we can use our test values off SmartDashboard otherwise use regression info
-        if (manual) {
+        //if (manual) {
             dt = Math.signum(turn - currentTurn) * getTurnRamp();
             ds = Math.signum(speed - currentSpeed) * getSpeedRamp();
-        } else {
+        /*} else {
             dt = Math.signum(turn - currentTurn) * getTurnRamp();
             ds = Math.signum(speed - currentSpeed) * getScaledSpeedRamp();
-        }
+        }*/
 
         // Prevent overshooting on turning
-        if (turn - currentTurn < dt) {
+
+        if (Math.abs(turn - currentTurn) < dt) {
             currentTurn = turn;
         } else {
             currentTurn += dt;
         }
 
         // Prevent overshooting on speed
-        if (speed - currentSpeed < ds) {
+        if (Math.abs(speed - currentSpeed) < ds) {
             currentSpeed = speed;
         } else {
             currentSpeed += ds;

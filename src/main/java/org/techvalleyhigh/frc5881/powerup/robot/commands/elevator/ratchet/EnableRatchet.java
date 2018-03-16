@@ -6,7 +6,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 public class EnableRatchet extends Command {
 
     public EnableRatchet() {
-        requires(Robot.elevator);
+        requires(Robot.ratchet);
     }
 
     /**

@@ -126,7 +126,7 @@ public class OI {
             output = 0;
         } else {
             // If we're above the joystick deadzone sqaure the inputs but keep the sign
-            output = input < 0 ? (input - deadZone) / (1 - deadZone) : (input + deadZone) / (1 - deadZone);
+            output = input < 0 ? -input * input : input * input;
         }
 
         return output;

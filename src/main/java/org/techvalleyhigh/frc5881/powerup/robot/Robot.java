@@ -11,6 +11,7 @@ import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Straight;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
@@ -117,8 +118,9 @@ public class Robot extends TimedRobot {
         // Make sure the motors are in the correct states
         RobotMap.initMotorState();
 
-        SetArm move = new SetArm(800, 0);
-        move.start();
+        arm.initPID();
+
+        //new Straight(12);
 
         // Get autonomous selection data
         String autoOptions = SmartDashboard.getString("Possible Paths", "None");
@@ -144,6 +146,7 @@ public class Robot extends TimedRobot {
         } else {
             System.err.println("YOU DIDN'T CHOOSE AN AUTO!!!!!");
         }
+
     }
 
     /**

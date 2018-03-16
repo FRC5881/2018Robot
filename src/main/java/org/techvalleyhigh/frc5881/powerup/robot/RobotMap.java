@@ -130,7 +130,7 @@ public class RobotMap {
         LiveWindow.add(compressor);
 
         // Pneumatic Solenoids for the grabber
-        grabSolenoid = new DoubleSolenoid(20,4, 5);
+        grabSolenoid = new DoubleSolenoid(20,5, 4);
         grabSolenoid.setName("Grabber", "Solenoid");
         LiveWindow.add(grabSolenoid);
 
