@@ -138,15 +138,15 @@ public class DriveControl extends Subsystem {
 
         // --- Pid controls --- //
         // Left Motors
-        SmartDashboard.putNumber("Left kP", 0.1);
+        SmartDashboard.putNumber("Left kP", 0.018);
         SmartDashboard.putNumber("Left kI", 0.0);
-        SmartDashboard.putNumber("Left kD", 0.0);
+        SmartDashboard.putNumber("Left kD", 0.012);
         SmartDashboard.putNumber("Left kF", 0.0);
 
         // Right Motors
-        SmartDashboard.putNumber("Right kP", 0.1);
+        SmartDashboard.putNumber("Right kP", 0.018);
         SmartDashboard.putNumber("Right kI", 0.0);
-        SmartDashboard.putNumber("Right kD", 0.0);
+        SmartDashboard.putNumber("Right kD", 0.012);
         SmartDashboard.putNumber("Right kF", 0.0);
 
         // Gyro
@@ -479,20 +479,13 @@ public class DriveControl extends Subsystem {
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
 
         // Initialize dt and ds
-        double dt;
-        double ds;
+        double dt = Math.signum(turn - currentTurn) * getTurnRamp();
+        double ds = Math.signum(speed - currentSpeed) * getSpeedRamp();
 
         // If manual is selected we can use our test values off SmartDashboard otherwise use regression info
-        //if (manual) {
-            dt = Math.signum(turn - currentTurn) * getTurnRamp();
-            ds = Math.signum(speed - currentSpeed) * getSpeedRamp();
-        /*} else {
-            dt = Math.signum(turn - currentTurn) * getTurnRamp();
-            ds = Math.signum(speed - currentSpeed) * getScaledSpeedRamp();
-        }*/
-
         // Prevent overshooting on turning
 
+        /*
         if (Math.abs(turn - currentTurn) < dt) {
             currentTurn = turn;
         } else {
@@ -505,6 +498,9 @@ public class DriveControl extends Subsystem {
         } else {
             currentSpeed += ds;
         }
+        */
+        currentSpeed += ds;
+        currentTurn = turn;
 
         // Some SmartDashboard debugging
         SmartDashboard.putNumber("Current Speed", currentSpeed);

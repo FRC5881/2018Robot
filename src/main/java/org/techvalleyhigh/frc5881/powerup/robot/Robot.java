@@ -1,6 +1,7 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -28,6 +29,9 @@ public class Robot extends TimedRobot {
     public static Arm arm;
     public static Elevator elevator;
     public static Ratchet ratchet;
+
+    public static final String ADDRESS = "10.58.81.11";
+    public static final int port = 8080;
 
     // Define drive commands
     public static ElevatorDrive elevatorCommand;
@@ -83,6 +87,11 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
         SmartDashboard.putNumber("Turn", 0);
+
+        // Camera Server
+        NetworkTableInstance.getDefault()
+                .getEntry("/CameraPublisher/NVIDIACAMERA/streams")
+                .setStringArray(new String[]{"mjpeg:http://" + ADDRESS + ":" + port + "/cam.mjpg"});
 
         SmartDashboard.putData(Scheduler.getInstance());
     }

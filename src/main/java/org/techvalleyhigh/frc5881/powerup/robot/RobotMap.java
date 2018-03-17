@@ -72,6 +72,7 @@ public class RobotMap {
         driveFrontLeft = new WPI_TalonSRX(1);
         driveFrontLeft.setName("Drive", "Front Left Motor");
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+        driveFrontLeft.configAllowableClosedloopError(0, 50, 10);
         driveFrontLeft.setSensorPhase(true);
         LiveWindow.add(driveFrontLeft);
 
@@ -81,9 +82,10 @@ public class RobotMap {
 
         // 631.2 per rotation
         driveFrontRight = new WPI_TalonSRX(3);
+        driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
+        driveFrontLeft.configAllowableClosedloopError(0, 50, 10);
         driveFrontRight.setName("Drive", "Front Right Motor");
         // TODO: Get drive encoders!
-        //driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
         LiveWindow.add(driveFrontRight);
 
         driveBackRight = new WPI_TalonSRX(4);
