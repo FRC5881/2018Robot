@@ -9,6 +9,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetElevator;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Straight;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfile;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.Profile;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
@@ -81,7 +82,7 @@ public class AutonomousCommand extends CommandGroup {
                 if (auto.getFeature() == null) {
                     System.out.println("Overwriting auto choosing");
                     System.out.println("Added Auto " + i);
-                    addSequential(new MotionProfile(auto));
+                    addSequential(new Profile(auto));
                     found = true;
                     break;
                 }
@@ -143,7 +144,7 @@ public class AutonomousCommand extends CommandGroup {
     private void score(Autonomous autoToRun) {
         this.auto = autoToRun;
         // Start with just sending the motion profile
-        profile = new MotionProfile(autoToRun);
+        profile = new Profile(autoToRun);
         addParallel(profile);
 
         startCommands.add(commands.CLOSE_GRABBER);
@@ -174,7 +175,7 @@ public class AutonomousCommand extends CommandGroup {
     private ManipulatorClose close;
     private SetArm moveArm;
     private SetElevator elevator;
-    private MotionProfile profile;
+    private Profile profile;
     private ManipulatorOpen open;
 
     @Override

@@ -138,17 +138,18 @@ public class DriveControl extends Subsystem {
 
         // --- Pid controls --- //
         // Left Motors
-        SmartDashboard.putNumber("Left kP", 0.018);
-        SmartDashboard.putNumber("Left kI", 0.0);
-        SmartDashboard.putNumber("Left kD", 0.012);
-        SmartDashboard.putNumber("Left kF", 0.0);
+        SmartDashboard.putNumber("L kP", 0.018);
+        SmartDashboard.putNumber("L kI", 0.0);
+        SmartDashboard.putNumber("L kD", 0.012);
+        SmartDashboard.putNumber("L kF", 0.0);
 
         // Right Motors
-        SmartDashboard.putNumber("Right kP", 0.018);
-        SmartDashboard.putNumber("Right kI", 0.0);
-        SmartDashboard.putNumber("Right kD", 0.012);
-        SmartDashboard.putNumber("Right kF", 0.0);
+        SmartDashboard.putNumber("R kP", 0.018);
+        SmartDashboard.putNumber("R kI", 0.0);
+        SmartDashboard.putNumber("R kD", 0.012);
+        SmartDashboard.putNumber("R kF", 0.0);
 
+        /*
         // Gyro
         SmartDashboard.putNumber("Gyro kP", 0.057);
         SmartDashboard.putNumber("Gyro kI", 0.000000001);
@@ -160,9 +161,11 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Speed kI", 0.0);
         SmartDashboard.putNumber("Speed kD", 5);
         SmartDashboard.putNumber("Speed kF", 0.076);
+
         SmartDashboard.putNumber("Speed Ramp", 0.05);
         SmartDashboard.putNumber("Turn Rate", 1);
         SmartDashboard.putNumber("Turn Ramp", 0.35);
+        */
     }
 
     /**
@@ -409,35 +412,35 @@ public class DriveControl extends Subsystem {
 
     // ---- Getters ---- //
     public double getLeft_kP() {
-        return SmartDashboard.getNumber("Left kP", 0.013);
+        return SmartDashboard.getNumber("L kP", 0.013);
     }
 
     public double getLeft_kI() {
-        return SmartDashboard.getNumber("Left kI", 0.001);
+        return SmartDashboard.getNumber("L kI", 0.001);
     }
 
     public double getLeft_kD() {
-        return SmartDashboard.getNumber("Left kD", 0.012);
+        return SmartDashboard.getNumber("L kD", 0.012);
     }
 
     public double getLeft_kF() {
-        return SmartDashboard.getNumber("Left kF", 0d);
+        return SmartDashboard.getNumber("L kF", 0d);
     }
 
     public double getRight_kP() {
-        return SmartDashboard.getNumber("Right kP", 0.013);
+        return SmartDashboard.getNumber("R kP", 0.013);
     }
 
     public double getRight_kI() {
-        return SmartDashboard.getNumber("Right kI", 0.001);
+        return SmartDashboard.getNumber("R kI", 0.001);
     }
 
     public double getRight_kD() {
-        return SmartDashboard.getNumber("Right kD", 0.012);
+        return SmartDashboard.getNumber("R kD", 0.012);
     }
 
     public double getRight_kF() {
-        return SmartDashboard.getNumber("Right kF", 0d);
+        return SmartDashboard.getNumber("R kF", 0d);
     }
 
     // ----------------------- Speed Control ----------------------- //

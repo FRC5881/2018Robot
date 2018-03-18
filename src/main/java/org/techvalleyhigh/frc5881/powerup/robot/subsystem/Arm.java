@@ -61,6 +61,7 @@ public class Arm extends Subsystem {
         // Set the arm to be in Position mode
         armTalon.set(ControlMode.Position.value);
 
+        /*
         SmartDashboard.putNumber("Arm kP", 2.0);
         SmartDashboard.putNumber("Arm kI", 0);
         SmartDashboard.putNumber("Arm kD", 20);
@@ -68,6 +69,7 @@ public class Arm extends Subsystem {
 
         SmartDashboard.putNumber("Arm Speed", 25);
         SmartDashboard.putNumber("Arm Allowed Error", 50);
+        */
 
         // CTRE soft limits, don't work well with current controls
         //setSoftLimitThresholds(0, maxTicks);

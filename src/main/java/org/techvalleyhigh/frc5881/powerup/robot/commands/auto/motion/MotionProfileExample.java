@@ -269,8 +269,9 @@ public class MotionProfileExample {
                          * because we set the last point's isLast to true, we will
                          * get here when the MP is done
                          */
-                        System.out.println("Setting Disabled - end of MP");
-                        _setValue = SetValueMotionProfile.Hold;
+                        System.out.println("Setting Hold - end of MP");
+                        System.out.println("Current: " + currentPoint + " length " + _points.length);
+                        _setValue = SetValueMotionProfile.Enable;
                         _state = 0;
                         _loopTimeout = -1;
                     }
@@ -352,10 +353,11 @@ public class MotionProfileExample {
             SmartDashboard.putNumber("Change in position", position - _points[i][0]);
 
             // for each point, fill our structure and pass it to API
-            //point.position = position * MotionConstants.kSensorUnitsPerRotation; // Convert Revolutions to Units
-            //point.velocity = velocity * MotionConstants.kSensorUnitsPerRotation / 600.0; // Convert RPM to Units/100ms
-            point.position = _points[i][0] * MotionConstants.kSensorUnitsPerRotation;
-            point.velocity = _points[i][1] * MotionConstants.kSensorUnitsPerRotation / 600;
+            point.position = position * MotionConstants.kSensorUnitsPerRotation; // Convert Revolutions to Units
+            point.velocity = velocity * MotionConstants.kSensorUnitsPerRotation; // Convert RPM to Units/100ms
+            System.out.println(point.velocity);
+            //point.position = _points[i][0] * MotionConstants.kSensorUnitsPerRotation;
+            //point.velocity = _points[i][1] * MotionConstants.kSensorUnitsPerRotation / 600.0;
             point.headingDeg = 0; // future feature - not used in this example
             point.profileSlotSelect0 = 0; // which set of gains would you like to use [0,3]?
             point.profileSlotSelect1 = 0; // future feature  - not used in this example - cascaded PID [0,1], leave zero

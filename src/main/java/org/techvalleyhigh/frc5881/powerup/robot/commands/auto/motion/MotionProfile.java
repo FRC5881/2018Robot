@@ -122,6 +122,15 @@ public class MotionProfile extends Command {
 
         SmartDashboard.putNumber("Target left speed", leftMotor.getActiveTrajectoryVelocity());
         SmartDashboard.putNumber("Target right speed", rightMotor.getActiveTrajectoryVelocity());
+        //System.out.println("Target left speed " + leftMotor.getActiveTrajectoryVelocity());
+
+        SmartDashboard.putNumber("Target left pos", leftProfile._pos);
+        SmartDashboard.putNumber("Target right pos", rightProfile._pos);
+        SmartDashboard.putNumber("Target left vel", leftProfile._vel);
+        SmartDashboard.putNumber("Target right vel", rightProfile._pos);
+        SmartDashboard.putNumber("Target left heading", leftProfile._heading);
+        SmartDashboard.putNumber("Target right heading", rightProfile._heading);
+
 
         // Control motors
         SetValueMotionProfile leftSetOutput = leftProfile.getSetValue();
@@ -147,7 +156,7 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void end() {
-
+        System.out.println("Ending");
     }
 
     /**

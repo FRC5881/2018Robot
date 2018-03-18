@@ -23,16 +23,29 @@ public class JaciToTalon {
             double rot = segment.position * 2d / Math.PI;
 
             // Convert fps -> RPM
-            double rpm = segment.velocity / (30d * Math.PI);
+            double rpm = segment.velocity / (Math.PI / 30);
 
             // Convert radians -> degrees
-            double heading = segment.heading * 180 / Math.PI;
+            double heading = segment.heading * 180d / Math.PI;
 
             // Set value
             output[i] = new double[] {rot, rpm, dt, heading};
         }
         // Return
         return output;
+    }
+
+    public static double[] positions(Trajectory trajectory) {
+        double[] out = new double[trajectory.length()];
+
+        for (int i = 0; i < trajectory.length(); i++) {
+            Trajectory.Segment segment = trajectory.get(i);
+
+            double rot = segment.position * 2d / Math.PI;
+            out[i] = rot * 1440;
+        }
+
+        return out;
     }
 
     /**

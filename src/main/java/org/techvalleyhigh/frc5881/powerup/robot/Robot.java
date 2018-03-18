@@ -249,10 +249,23 @@ public class Robot extends TimedRobot {
         // Since this method is called by the periodic we use it to make sure hte compressor stays on
         RobotMap.compressor.setClosedLoopControl(true);
 
+        /*
+        MotionProfileStatus status = new MotionProfileStatus();
+        RobotMap.driveFrontLeft.getMotionProfileStatus(status);
+        System.out.println(status.);
+        */
+
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Right Error", RobotMap.driveFrontRight.getClosedLoopError(0));
         SmartDashboard.putNumber("Left Error", RobotMap.driveFrontLeft.getClosedLoopError(0));
+        SmartDashboard.putNumber("Left Target Velocity", RobotMap.driveFrontLeft.getActiveTrajectoryVelocity());
+        SmartDashboard.putNumber("Right Target Velocity", RobotMap.driveFrontRight.getActiveTrajectoryVelocity());
+        SmartDashboard.putNumber("Left Velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Right Velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Left output", RobotMap.driveFrontLeft.get());
+        SmartDashboard.putNumber("Right output", RobotMap.driveFrontRight.get());
+
 
         SmartDashboard.putNumber("Velocity", driveControl.getVelocity());
         SmartDashboard.putNumber("Speed output", driveControl.speedPIDOutput);
@@ -284,6 +297,7 @@ public class Robot extends TimedRobot {
      * Puts owned side position on the SmartDashboard
      */
     private void MatchData() {
+        /*
         if (MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != MatchData.OwnedSide.UNKNOWN) {
             SmartDashboard.putBoolean("Far Right", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_FAR) == MatchData.OwnedSide.RIGHT);
             SmartDashboard.putBoolean("Far Left", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_FAR) == MatchData.OwnedSide.LEFT);
@@ -292,5 +306,6 @@ public class Robot extends TimedRobot {
             SmartDashboard.putBoolean("Near Right", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.RIGHT);
             SmartDashboard.putBoolean("Near Left", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.LEFT);
         }
+        */
     }
 }
