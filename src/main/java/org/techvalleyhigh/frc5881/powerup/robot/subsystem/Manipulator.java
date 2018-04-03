@@ -4,35 +4,66 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 
-import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.grabDoubleSolenoid;
+import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.grabSolenoid;
 
 public class Manipulator extends Subsystem {
+    /**
+     * Create the subsystem with default name
+     */
     public Manipulator() {
         super();
     }
 
+    /**
+     * Create the subsystem with default name
+     */
     public Manipulator(String name) {
         super(name);
     }
 
+    /**
+     * Initialize SmartDashboard and other local variables
+     */
+    public void init() {
+        // We want to close the grabbers to grab the cube at the start of the match
+        closeGrabbers();
+    }
+
+    /**
+     * Starts a command on init of subsystem, defining commands in robot and OI is preferred
+     */
     @Override
     protected void initDefaultCommand() {
-        new ManipulatorOpen();
+
     }
 
+    /**
+     * Open the manipulator grabbers
+     */
     public void openGrabbers(){
-        grabDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
+        grabSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
+    /**
+     * Close the manipulator grabbers
+     */
     public void closeGrabbers(){
-        grabDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+        grabSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
+    /**
+     * Set the grabber to Off
+     */
     public void stop(){
-        grabDoubleSolenoid.set(DoubleSolenoid.Value.kOff);
+        grabSolenoid.set(DoubleSolenoid.Value.kOff);
     }
 
+    /**
+     * Get the current state of the ratchet
+     * @return boolean true enabled - false disabled
+     */
     public boolean getGrabberEnabled() {
-        return grabDoubleSolenoid.get() == DoubleSolenoid.Value.kForward;
+        return grabSolenoid.get() == DoubleSolenoid.Value.kForward;
     }
+
 }

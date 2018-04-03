@@ -203,40 +203,40 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="libraryTable">
-    <library name="Gradle: edu.wpi.first.cscore:cscore-java:1.2.0">
+    <library name="Gradle: edu.wpi.first.cscore:cscore-java:1.3.0">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.2.0/c9566ae38df752482652a3d591fe7ede7fde7899/cscore-java-1.2.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.3.0/af0c62cf7e9903d052e67008105e014357917e13/cscore-java-1.3.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.2.0/753c649bb16620f1287d2e6fd29c2d949eac23f3/cscore-java-1.2.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.3.0/2f60952b33c41e708cbd3efec5402d29aab472ca/cscore-java-1.3.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: edu.wpi.first.ntcore:ntcore-java:4.0.0">
+    <library name="Gradle: edu.wpi.first.ntcore:ntcore-java:4.1.0">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.ntcore/ntcore-java/4.0.0/990c1034226bc7fd81d2a21ee3de08ba477fbcfb/ntcore-java-4.0.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.ntcore/ntcore-java/4.1.0/52e7d8449aacb56e104020f10b39f33549177078/ntcore-java-4.1.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.ntcore/ntcore-java/4.0.0/43b974107629beb83d40c0ac43d92107343056ac/ntcore-java-4.0.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.ntcore/ntcore-java/4.1.0/af2f67e3ca637328b5d87a2ca66f3cc7eed0bb9/ntcore-java-4.1.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: edu.wpi.first.wpilibj:wpilibj-java:2018.3.2">
+    <library name="Gradle: edu.wpi.first.wpilibj:wpilibj-java:2018.4.1">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.3.2/e3191e0075cf0e5d1e953ff8b854db3c716ee73f/wpilibj-java-2018.3.2.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.4.1/897367c0a37b2ec4dcb6aeb578be84f066c46f4a/wpilibj-java-2018.4.1.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.3.2/66af8fda88c4eea15952cbce6c72b889d551773a/wpilibj-java-2018.3.2-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.4.1/b71b340c616d5c841deef19c9721044f57477788/wpilibj-java-2018.4.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: edu.wpi.first.wpiutil:wpiutil-java:3.1.0">
+    <library name="Gradle: edu.wpi.first.wpiutil:wpiutil-java:3.2.0">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpiutil/wpiutil-java/3.1.0/14247d5f28aff116176e946ebc6861dcdd8631df/wpiutil-java-3.1.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpiutil/wpiutil-java/3.2.0/40b6832a84296f9146b27584e22c8507dab874dd/wpiutil-java-3.2.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpiutil/wpiutil-java/3.1.0/159e59abb5b4ab21b9f7947bade5f65e7528858c/wpiutil-java-3.1.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpiutil/wpiutil-java/3.2.0/c2f13b5007365c2b972c3d37e6104e4213c70c53/wpiutil-java-3.2.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: jaci.pathfinder:Pathfinder-Java:1.8">
@@ -257,13 +257,13 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: openrio.mirror.third.ctre:CTRE-phoenix-java:5.2.1.1">
+    <library name="Gradle: openrio.mirror.third.ctre:CTRE-phoenix-java:5.2.2.0">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.2.1.1/469f4905ff49fe297be19c0c6724e27b444fbb5c/CTRE-phoenix-java-5.2.1.1.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.2.2.0/469f4905ff49fe297be19c0c6724e27b444fbb5c/CTRE-phoenix-java-5.2.2.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.2.1.1/6ef53967acb57f11e0be1e3d825d8a013945bc27/CTRE-phoenix-java-5.2.1.1-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.2.2.0/6ef53967acb57f11e0be1e3d825d8a013945bc27/CTRE-phoenix-java-5.2.2.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: openrio.powerup:MatchData:2018.01.07">

@@ -1,11 +1,12 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ManipulatorClose extends Command {
-    public ManipulatorClose() {
-        requires(Robot.manipulator);
+public class EnableRatchet extends Command {
+
+    public EnableRatchet() {
+        requires(Robot.elevator);
     }
 
     /**
@@ -16,11 +17,11 @@ public class ManipulatorClose extends Command {
     }
 
     /**
-     * Called repeatedly when this Command is scheduled to run
+     * Called repeatedly when this Command is scheduled to run (just once)
      */
     @Override
     protected void execute() {
-        Robot.manipulator.closeGrabbers();
+        Robot.ratchet.enableRatchet();
     }
 
     /**
@@ -37,7 +38,6 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void end() {
-        //Robot.manipulator.stop();
     }
 
     /**
@@ -46,7 +46,6 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void interrupted() {
-        System.out.println("Manipulator Open command was interrupted... That shouldn't happen");
         end();
     }
 }

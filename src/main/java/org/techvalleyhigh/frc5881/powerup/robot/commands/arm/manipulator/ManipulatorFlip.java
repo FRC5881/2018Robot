@@ -3,8 +3,8 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ManipulatorClose extends Command {
-    public ManipulatorClose() {
+public class ManipulatorFlip extends Command {
+    public ManipulatorFlip() {
         requires(Robot.manipulator);
     }
 
@@ -16,11 +16,15 @@ public class ManipulatorClose extends Command {
     }
 
     /**
-     * Called repeatedly when this Command is scheduled to run
+     * Called repeatedly when this Command is scheduled to run (just once)
      */
     @Override
     protected void execute() {
-        Robot.manipulator.closeGrabbers();
+        if (Robot.manipulator.getGrabberEnabled()) {
+            Robot.manipulator.closeGrabbers();
+        } else {
+            Robot.manipulator.openGrabbers();
+        }
     }
 
     /**
@@ -46,7 +50,8 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void interrupted() {
-        System.out.println("Manipulator Open command was interrupted... That shouldn't happen");
+        System.out.println("Manipulator flip command was interrupted... That shouldn't happen");
         end();
     }
 }
+

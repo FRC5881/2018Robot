@@ -1,11 +1,14 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ManipulatorClose extends Command {
-    public ManipulatorClose() {
-        requires(Robot.manipulator);
+/**
+ * Use Speed and Gryo pids for driving the bot around, gives better control with accelerations / turning rates, etc.
+ */
+public class RampedArcade extends Command {
+    public RampedArcade() {
+        requires(Robot.driveControl);
     }
 
     /**
@@ -20,16 +23,16 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void execute() {
-        Robot.manipulator.closeGrabbers();
+        Robot.driveControl.rampedArcade(false);
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * This is a pneumatic command so needs to end instantly
+     * Since this is a drive command we never want it to end
      */
     @Override
     protected boolean isFinished() {
-        return true;
+        return false;
     }
 
     /**
@@ -37,7 +40,8 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void end() {
-        //Robot.manipulator.stop();
+        System.out.println("RampedArcade command ended... That shouldn't happen");
+        Robot.driveControl.stopDrive();
     }
 
     /**
@@ -46,7 +50,6 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void interrupted() {
-        System.out.println("Manipulator Open command was interrupted... That shouldn't happen");
         end();
     }
 }

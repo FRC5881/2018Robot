@@ -1,11 +1,14 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class ManipulatorClose extends Command {
-    public ManipulatorClose() {
-        requires(Robot.manipulator);
+/**
+ * Implements arcadeDrive feature
+ */
+public class ArcadeDrive extends Command {
+    public ArcadeDrive() {
+        requires(Robot.driveControl);
     }
 
     /**
@@ -17,27 +20,28 @@ public class ManipulatorClose extends Command {
 
     /**
      * Called repeatedly when this Command is scheduled to run
-     */
+      */
     @Override
     protected void execute() {
-        Robot.manipulator.closeGrabbers();
+        Robot.driveControl.arcadeJoystickInputs();
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * This is a pneumatic command so needs to end instantly
+     * Since this is a drive command we never want it to end
      */
     @Override
     protected boolean isFinished() {
-        return true;
+        return false;
     }
 
     /**
-     * Called once after isFinished returns true OR the command is interrupted
-     */
+      * Called once after isFinished returns true OR the command is interrupted
+      */
     @Override
     protected void end() {
-        //Robot.manipulator.stop();
+        System.out.println("Arcade Drive command ended... That shouldn't happen");
+        Robot.driveControl.stopDrive();
     }
 
     /**
@@ -46,7 +50,6 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void interrupted() {
-        System.out.println("Manipulator Open command was interrupted... That shouldn't happen");
         end();
     }
 }
