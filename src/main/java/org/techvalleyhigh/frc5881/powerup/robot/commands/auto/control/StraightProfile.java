@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionConstants;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfileExample;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile.MotionConstants;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile.MotionProfileExample;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.MotionUtil;
 
 // TODO: Work in progress
 public class StraightProfile extends Command {
@@ -43,7 +43,7 @@ public class StraightProfile extends Command {
     protected void initialize() {
         System.out.println("Driving " + distance + " feet");
 
-        double[][] points = JaciToTalon.straightPath(distance, velocity, acceleration, dt);
+        double[][] points = MotionUtil.straightPath(distance, velocity, acceleration, dt);
 
         double startAngle = Robot.driveControl.getGyroAngle();
 
@@ -58,7 +58,7 @@ public class StraightProfile extends Command {
 
         /*
          * status 10 provides the trajectory target for auto profile AND
-         * motion magic
+         * profiles magic
          */
         rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
         leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);

@@ -11,14 +11,11 @@ import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.SpeedPID;
 
 /**
- * Subsystem to control everything that has to do with drive (except motion profiling)
+ * Subsystem to control everything that has to do with drive (except profiles profiling)
  */
 public class DriveControl extends Subsystem {
     // SmartDashboard key for Gyro Tolerance
     private static final String GYRO_TOLERANCE = "Gyro Tolerance %";
-
-    // SmartDashboard key for Speed Tolerance
-    private static final String SPEED_TOLERANCE = "Speed Tolerance %";
 
     // SmartDashboard key for Auto Turn Speed
     private static final String AUTO_TURN_SPEED = "Auto Turn Speed %";
@@ -32,20 +29,14 @@ public class DriveControl extends Subsystem {
     // Joystick dead zone
     private static final double deadZone = 0.2;
 
-    // Max speeds ticks / 100 ms
-    private static final double maxForward = 1500;
-    private static final double maxReverse = -1500;
-
     // Robot drive
     private DifferentialDrive robotDrive;
 
     // PIDs
     private static PIDController gyroPID;
-    private static PIDController speedPID;
 
-    // PID outputs
+    // PID output
     public double gyroPIDOutput;
-    public double speedPIDOutput;
 
     // Current values for ramping
     public double currentSpeed;
@@ -114,12 +105,11 @@ public class DriveControl extends Subsystem {
         // Put PID values
         putSmartDashboard();
 
-        // Create PID controls
-        gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
-                RobotMap.digitalGyro, output -> gyroPIDOutput = output);
+        double[] gyro = get_gyroPIDf();
 
-        speedPID = new PIDController(getSpeed_kP(), getSpeed_kI(), getSpeed_kD(), getSpeed_kF(),
-                new SpeedPID(), output -> speedPIDOutput = output);
+        // Create PID controls
+        gyroPID = new PIDController(gyro[0], gyro[1], gyro[2], gyro[3],
+                RobotMap.digitalGyro, output -> gyroPIDOutput = output);
 
         initPID();
     }
@@ -137,35 +127,18 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1.0);
 
         // --- Pid controls --- //
-        // Left Motors
-        SmartDashboard.putNumber("L kP", 0.018);
-        SmartDashboard.putNumber("L kI", 0.0);
-        SmartDashboard.putNumber("L kD", 0.012);
-        SmartDashboard.putNumber("L kF", 0.0);
+        // Left PIDf
+        SmartDashboard.putNumberArray("Left PIDf", new double[]{0.018, 0.0, 0.012, 0.0});
 
-        // Right Motors
-        SmartDashboard.putNumber("R kP", 0.018);
-        SmartDashboard.putNumber("R kI", 0.0);
-        SmartDashboard.putNumber("R kD", 0.012);
-        SmartDashboard.putNumber("R kF", 0.0);
+        // Right PIDf
+        SmartDashboard.putNumberArray("Right PIDf", new double[]{0.018, 0.0, 0.012, 0.0});
 
-        /*
-        // Gyro
-        SmartDashboard.putNumber("Gyro kP", 0.057);
-        SmartDashboard.putNumber("Gyro kI", 0.000000001);
-        SmartDashboard.putNumber("Gyro kD", 0.14);
-        SmartDashboard.putNumber("Gyro kF", 0.0);
-
-        // Speed control
-        SmartDashboard.putNumber("Speed kP", 0.5);
-        SmartDashboard.putNumber("Speed kI", 0.0);
-        SmartDashboard.putNumber("Speed kD", 5);
-        SmartDashboard.putNumber("Speed kF", 0.076);
+        // Gyrp PIDf
+        SmartDashboard.putNumberArray("Gyro PIDF", new double[]{0.057, 0.000000001, 0.14, 0.0});
 
         SmartDashboard.putNumber("Speed Ramp", 0.05);
         SmartDashboard.putNumber("Turn Rate", 1);
         SmartDashboard.putNumber("Turn Ramp", 0.35);
-        */
     }
 
     /**
@@ -175,34 +148,29 @@ public class DriveControl extends Subsystem {
         zeroEncoders();
 
         // Set motor PID values
-        RobotMap.driveFrontLeft.config_kP(0 , getLeft_kP(), 10);
-        RobotMap.driveFrontLeft.config_kI(0, getLeft_kI(), 10);
-        RobotMap.driveFrontLeft.config_kD(0, getLeft_kD(), 10);
-        RobotMap.driveFrontLeft.config_kF(0, getLeft_kF(), 10);
+        double[] left = get_leftPIDf();
+        RobotMap.driveFrontLeft.config_kP(0 , left[0], 10);
+        RobotMap.driveFrontLeft.config_kI(0, left[1], 10);
+        RobotMap.driveFrontLeft.config_kD(0, left[2], 10);
+        RobotMap.driveFrontLeft.config_kF(0, left[3], 10);
 
-        RobotMap.driveFrontRight.config_kP(0 , getRight_kP(), 10);
-        RobotMap.driveFrontRight.config_kI(0, getRight_kI(), 10);
-        RobotMap.driveFrontRight.config_kD(0, getRight_kD(), 10);
-        RobotMap.driveFrontRight.config_kF(0, getRight_kF(), 10);
+        double[] right = get_rightPIDf();
+        RobotMap.driveFrontRight.config_kP(0 , right[0], 10);
+        RobotMap.driveFrontRight.config_kI(0, right[1], 10);
+        RobotMap.driveFrontRight.config_kD(0, right[2], 10);
+        RobotMap.driveFrontRight.config_kF(0, right[3], 10);
 
         // Set other PID values
-        gyroPID.setP(getGyro_kP());
-        gyroPID.setI(getGyro_kI());
-        gyroPID.setD(getGyro_kD());
-        gyroPID.setF(getGyro_kF());
+        double[] gyro = get_gyroPIDf();
+        gyroPID.setP(gyro[0]);
+        gyroPID.setI(gyro[1]);
+        gyroPID.setD(gyro[2]);
+        gyroPID.setF(gyro[3]);
         gyroPID.setPercentTolerance(getGyroTolerance());
         gyroPID.reset();
 
-        speedPID.setP(getSpeed_kP());
-        speedPID.setI(getSpeed_kI());
-        speedPID.setD(getSpeed_kD());
-        speedPID.setF(getSpeed_kF());
-        speedPID.setPercentTolerance(getSpeedTolerance());
-        speedPID.reset();
-
         // Just keep the PIDs running
         gyroPID.enable();
-        speedPID.enable();
     }
 
     /**
@@ -283,20 +251,8 @@ public class DriveControl extends Subsystem {
         return gyroPID.onTarget();
     }
 
-    public double getGyro_kP() {
-        return SmartDashboard.getNumber("Gyro kP", 0.14);
-    }
-
-    public double getGyro_kI() {
-        return SmartDashboard.getNumber("Gyro kI", 0.02);
-    }
-
-    public double getGyro_kD() {
-        return SmartDashboard.getNumber("Gyro kD", 0.045);
-    }
-
-    public double getGyro_kF() {
-        return SmartDashboard.getNumber("Gyro kF", 0.0);
+    public double[] get_gyroPIDf() {
+        return SmartDashboard.getNumberArray("Gyro PIDf", new double[] {0, 0, 0, 0});
     }
 
     // ----------------------- DRIVE HANDLING ----------------------- //
@@ -411,57 +367,15 @@ public class DriveControl extends Subsystem {
 
 
     // ---- Getters ---- //
-    public double getLeft_kP() {
-        return SmartDashboard.getNumber("L kP", 0.013);
+    public double[] get_leftPIDf() {
+        return SmartDashboard.getNumberArray("Left PIDf", new double[] {0, 0, 0, 0});
     }
 
-    public double getLeft_kI() {
-        return SmartDashboard.getNumber("L kI", 0.001);
-    }
-
-    public double getLeft_kD() {
-        return SmartDashboard.getNumber("L kD", 0.012);
-    }
-
-    public double getLeft_kF() {
-        return SmartDashboard.getNumber("L kF", 0d);
-    }
-
-    public double getRight_kP() {
-        return SmartDashboard.getNumber("R kP", 0.013);
-    }
-
-    public double getRight_kI() {
-        return SmartDashboard.getNumber("R kI", 0.001);
-    }
-
-    public double getRight_kD() {
-        return SmartDashboard.getNumber("R kD", 0.012);
-    }
-
-    public double getRight_kF() {
-        return SmartDashboard.getNumber("R kF", 0d);
+    public double[] get_rightPIDf() {
+        return SmartDashboard.getNumberArray("Right PIDf", new double[] {0, 0, 0, 0});
     }
 
     // ----------------------- Speed Control ----------------------- //
-
-    /**
-     * Implements gyro and speed PIDs into arcade drive for added control w/ joysticks
-     */
-    public void arcadedPID() {
-        // Get scaled inputs
-        double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
-        double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
-
-        // Set the setpoints
-        // TODO: Need to change gyro pid relatively
-        setGyroPid(turn);
-        setSpeedPID(speed);
-
-        // Just pass to arcade drive
-        rawArcadeDrive(speedPIDOutput, gyroPIDOutput);
-    }
-
     /**
      * Ramps turn and speed inputs for arcade drive
      */
@@ -514,53 +428,19 @@ public class DriveControl extends Subsystem {
     }
 
     /**
-     * returns the robots current average velocity
-     * @return average of the right speed and left speed in ticks per 100 ms
+     * Returns the robots current average velocity
+     * @return average of the right speed and left speed in feet per second
      */
     public double getVelocity() {
-        //noinspection UnnecessaryLocalVariable
         double v1 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
-        // TODO: Get a second encoder!
-        //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
-        //return v1 + v2 / 2
-        return v1;
-    }
+        double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
 
-    public void setSpeedPID(double setpoint) {
-        speedPID.setSetpoint(setpoint);
-    }
+        double ave = (v1 + v2) / 2;
+        // Convert ave ticks per 100 milliseconds to ticks per second
+        double ticksPerSecond = ave * 10;
 
-    // ---- Getters for PID ---- //
-    public double getSpeedSetpoint() {
-        return speedPID.getSetpoint();
-    }
-
-    public double getSpeedError() {
-        return speedPID.getError();
-    }
-
-    public boolean getSpeedOnTarget() {
-        return speedPID.onTarget();
-    }
-
-    public double getSpeedTolerance() {
-        return SmartDashboard.getNumber(SPEED_TOLERANCE, 5);
-    }
-
-    public double getSpeed_kP() {
-        return SmartDashboard.getNumber("Speed kP", 2.0);
-    }
-
-    public double getSpeed_kI() {
-        return SmartDashboard.getNumber("Speed kI", 0.0);
-    }
-
-    public double getSpeed_kD() {
-        return SmartDashboard.getNumber("Speed kD", 20.0);
-    }
-
-    public double getSpeed_kF() {
-        return SmartDashboard.getNumber("Speed kF", 0.076);
+        // Then to feet per second
+        return ticksPerSecond / ticksPerFoot;
     }
 
     /**

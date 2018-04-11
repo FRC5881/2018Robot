@@ -1,7 +1,7 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile;
 
 /**
- * Store constant used in motion profile
+ * Store constant used in profiles profile
  */
 public class MotionConstants {
     /**

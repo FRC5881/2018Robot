@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Util class holding all kinds of useful data to streamline working with autonomous profiles
+ * Util class holding all kinds of useful data to streamline working with autonomous ProfileMode
  */
 public class TrajectoryUtil {
     // Starting locations

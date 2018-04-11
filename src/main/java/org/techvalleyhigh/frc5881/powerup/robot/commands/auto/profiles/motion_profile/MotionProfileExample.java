@@ -1,5 +1,5 @@
 /**
- * Example logic for firing and managing auto profiles.
+ * Example logic for firing and managing auto ProfileMode.
  * This example sends MPs, waits for them to finish
  * Although this code uses a CANTalon, nowhere in this module do we changeMode() or call set() to change the output.
  * This is done in Robot2.java to demonstrate how to change control modes on the fly.
@@ -15,13 +15,13 @@
  * clearMotionProfileTrajectories
  * processMotionProfileBuffer,   to push/clear, and process the trajectory points.
  *
- * getControlMode, to check if we are in Motion Profile Control mode.
+ * getControlMode, to check if we are in Motion PositionProfile Control mode.
  *
  * Example of advanced features not demonstrated here...
  * [1] Calling pushMotionProfileTrajectory() continuously while the Talon executes the auto profile, thereby keeping it going indefinitely.
  * [2] Instead of setting the sensor position to zero at the start of each MP, the program could offset the MP's position based on current position.
  */
-package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -186,7 +186,7 @@ public class MotionProfileExample {
                  * something is wrong. Talon is not present, unplugged, breaker
                  * tripped
                  */
-                System.out.println("Motion Profile : Talon Timeout");
+                System.out.println("Motion PositionProfile : Talon Timeout");
             } else {
                 --_loopTimeout;
             }
@@ -307,7 +307,7 @@ public class MotionProfileExample {
     }
 
     /**
-     * Pushes a number of points into motion profile buffer
+     * Pushes a number of points into profiles profile buffer
      * @param start Where in generated profile to start pushing values from
      * @param cnt How many points to push
      */
@@ -354,8 +354,7 @@ public class MotionProfileExample {
 
             // for each point, fill our structure and pass it to API
             point.position = position * MotionConstants.kSensorUnitsPerRotation; // Convert Revolutions to Units
-            point.velocity = velocity * MotionConstants.kSensorUnitsPerRotation; // Convert RPM to Units/100ms
-            System.out.println(point.velocity);
+            point.velocity = velocity * MotionConstants.kSensorUnitsPerRotation / 600.0; // Convert RPM to Units/100ms
             //point.position = _points[i][0] * MotionConstants.kSensorUnitsPerRotation;
             //point.velocity = _points[i][1] * MotionConstants.kSensorUnitsPerRotation / 600.0;
             point.headingDeg = 0; // future feature - not used in this example

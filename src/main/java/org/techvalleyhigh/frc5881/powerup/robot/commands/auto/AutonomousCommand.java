@@ -1,15 +1,17 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import openrio.powerup.MatchData;
+import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetElevator;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Straight;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfile;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.Profile;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile.MotionProfile;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.PositionProfile;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.VelocityProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
@@ -30,12 +32,18 @@ public class AutonomousCommand extends CommandGroup {
     private Map<Integer, Autonomous> autos;
 
     /**
+     * Chosen auto to profile
+     */
+    private Autonomous auto;
+
+
+    /**
      * Logic for choosing and running an autonomous command
      * @param chosen array list of integers
      * @param timeToWait milliseconds to wait before running the commands
      */
     public AutonomousCommand(ArrayList<Integer> chosen, long timeToWait) {
-        currentMode = mode.NONE;
+        currentState = states.NONE;
 
         startCommands = new ArrayList<>();
         endCommands = new ArrayList<>();
@@ -82,7 +90,7 @@ public class AutonomousCommand extends CommandGroup {
                 if (auto.getFeature() == null) {
                     System.out.println("Overwriting auto choosing");
                     System.out.println("Added Auto " + i);
-                    addSequential(new Profile(auto));
+                    addSequential(profile(auto));
                     found = true;
                     break;
                 }
@@ -127,96 +135,85 @@ public class AutonomousCommand extends CommandGroup {
         MOVE_ARM
     }
 
-    private enum mode {
+    private enum states {
         INIT,
         RUNNING,
         END,
+        DONE,
         NONE
     }
 
-    private mode currentMode;
-
-    private Autonomous auto;
+    private states currentState;
 
     /**
      * Logic for sending moveArm and elevator commands if we want to score a cube
      */
     private void score(Autonomous autoToRun) {
-        this.auto = autoToRun;
-        // Start with just sending the motion profile
-        profile = new Profile(autoToRun);
-        addParallel(profile);
+        auto = autoToRun;
+
+        // Start with just sending the profile to a command
+        positionProfile = profile(autoToRun);
+        addParallel(positionProfile);
 
         startCommands.add(commands.CLOSE_GRABBER);
         startCommands.add(commands.MOVE_ARM);
 
-        // Tip the moveArm forward just to be out of the elevator
-        //addParallel(new SetArm(800, 0));
-
         // Set the moveArm to correct height to score in owned structure and tell the manipulator to score slightly after
         if (autoToRun.getFeature() == MatchData.GameFeature.SWITCH_NEAR) {
             startCommands.add(commands.SWITCH);
-            //addParallel(new SetElevator(Elevator.switchTicks, autoToRun.getTimeToWait()));
 
         } else if (autoToRun.getFeature() == MatchData.GameFeature.SCALE) {
             startCommands.add(commands.SCALE);
-            //addParallel(new SetElevator(Elevator.scaleTicks, autoToRun.getTimeToWait()));
         }
 
         endCommands.add(commands.OPEN_GRABBER);
-        //addSequential(new ManipulatorOpen());
 
-        currentMode = mode.INIT;
+        currentState = states.INIT;
     }
 
+    // Groups of commands to run during execute
     private ArrayList<commands> startCommands;
     private ArrayList<commands> endCommands;
 
+    // Instance variables storing each command we'll run so we can easily switch states
     private ManipulatorClose close;
     private SetArm moveArm;
     private SetElevator elevator;
-    private Profile profile;
+    private Command positionProfile;
     private ManipulatorOpen open;
 
+    /**
+     * Called repeatedly when this Command is scheduled to run
+     * Sort of thrown together finite state machine to control all the autonomous
+     */
     @Override
     protected void execute() {
-        //System.out.println(currentMode);
-
-        if (currentMode == mode.NONE) {
-            //System.out.println(currentMode);
+        if (currentState == states.NONE || currentState == states.DONE) {
             // Do nothing
 
-        } else if (currentMode == mode.INIT) {
-            startCommands(startCommands);
+        } else if (currentState == states.INIT) {
+            runCommands(startCommands);
 
-            // Change mode
-            currentMode = mode.RUNNING;
-            System.out.println(currentMode);
+            // Change states
+            currentState = states.RUNNING;
 
-        } else if (currentMode == mode.RUNNING) {
-            if (profile.isCompleted()) {
-                currentMode = mode.END;
-                System.out.println(currentMode);
+        } else if (currentState == states.RUNNING) {
+            if (positionProfile.isCompleted()) {
+                currentState = states.END;
             }
 
-        } else if (currentMode == mode.END) {
-            startCommands(endCommands);
-            currentMode = mode.NONE;
-            System.out.println(currentMode);
+        } else if (currentState == states.END) {
+            runCommands(endCommands);
+            currentState = states.DONE;
         }
     }
 
-    private void startCommands(ArrayList<commands> list) {
+    /**
+     * Logic for converting command enum to a running command
+     * @param list ArrayList of commands to run
+     */
+    private void runCommands(ArrayList<commands> list) {
         for (commands c: list) {
-                /*
-                private enum commands {
-                    CLOSE_GRABBER,
-                    OPEN_GRABBER,
-                    SWITCH,
-                    SCALE,
-                    MOVE_ARM
-                }
-                 */
             if (c.equals(commands.CLOSE_GRABBER)) {
                 System.out.println("Close Grabber");
                 close = new ManipulatorClose();
@@ -247,14 +244,14 @@ public class AutonomousCommand extends CommandGroup {
 
     @Override
     protected boolean isFinished() {
-        return false;
+        return currentState == states.DONE;
     }
 
     /**
      * Just cross the auto line
      */
     private void autoline() {
-        addSequential(new MotionProfile(autos.get(100)));
+        addSequential(profile(autos.get(100)));
     }
 
 
@@ -266,4 +263,31 @@ public class AutonomousCommand extends CommandGroup {
         return MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != MatchData.OwnedSide.UNKNOWN;
     }
 
+    /**
+     * Enum for supporting different profile generation methods
+     */
+    public enum ProfileMode {
+        MOTION,
+        VELOCITY,
+        POSITION
+    }
+
+    /**
+     * Return command running a profile in chosen states
+     * @param auto Autonomous object to generate profile from
+     * @return command controlling a profile
+     */
+    private Command profile(Autonomous auto) {
+        ProfileMode mode = Robot.profileChooser.getSelected();
+
+        if (mode == ProfileMode.MOTION) {
+            return new PositionProfile(auto);
+
+        } else if(mode == ProfileMode.VELOCITY) {
+            return new VelocityProfile(auto);
+
+        } else {
+            return new MotionProfile(auto);
+        }
+    }
 }

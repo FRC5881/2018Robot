@@ -5,7 +5,7 @@ import jaci.pathfinder.Waypoint;
 import openrio.powerup.MatchData;
 
 /**
- * Read only class stores all the useful data when it comes to storing an autonomous profile
+ * Simple class stores all the useful data when it comes to storing an autonomous profile
  */
 public class Autonomous {
     private final int autoNumber;

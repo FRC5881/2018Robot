@@ -2,7 +2,10 @@ package org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories;
 
 import jaci.pathfinder.Trajectory;
 
-public class JaciToTalon {
+public class MotionUtil {
+    // 6 inch diameter wheel
+    public static final double wheelRadius = 3/12;
+
     /**
      * Convert a PathFinder trajectory into a format talons can use
      * @param trajectory input Trajectory
@@ -22,8 +25,13 @@ public class JaciToTalon {
             // Convert feet -> rotations
             double rot = segment.position * 2d / Math.PI;
 
-            // Convert fps -> RPM
-            double rpm = segment.velocity / (Math.PI / 30);
+            // Linear velocity = radius * angular velocity RAD / second
+            // v = r * w
+            // v / r = w
+            double radiansPerSecond = segment.velocity / wheelRadius;
+
+            // k RAD / second * 2pi/60 = k RPM
+            double rpm = radiansPerSecond * 2 * Math.PI / 60;
 
             // Convert radians -> degrees
             double heading = segment.heading * 180d / Math.PI;
@@ -35,21 +43,53 @@ public class JaciToTalon {
         return output;
     }
 
+    /**
+     * Creates a one dimensional array of just the position of every segment in a Pathfinder.Trajectory object
+     * @param trajectory PathFinder.Trajectory object to pull positions from
+     * @return Positions converted from feet to rotations
+     */
     public static double[] positions(Trajectory trajectory) {
+        // Create new output array
+        double[] out = new double[trajectory.length()];
+
+        // Loop through each trajectory segment
+        for (int i = 0; i < trajectory.length(); i++) {
+            Trajectory.Segment segment = trajectory.get(i);
+
+            // Save rotations (6 inch wheel diameter)
+            out[i] = segment.position * 2d / Math.PI;
+        }
+
+        // Return;
+        return out;
+    }
+
+    /**
+     * Creates a one dimensional array of just the velocities of every segment in a Pathfinder.Trajectory object
+     * @param trajectory PathFinder.Trajectory object to pull velocities from
+     * @return Velocities in rotations per minute
+     */
+    public static double[] velocities(Trajectory trajectory) {
         double[] out = new double[trajectory.length()];
 
         for (int i = 0; i < trajectory.length(); i++) {
             Trajectory.Segment segment = trajectory.get(i);
 
-            double rot = segment.position * 2d / Math.PI;
-            out[i] = rot * 1440;
+            // Linear velocity = radius * angular velocity RAD / second
+            // v = r * w
+            // v / r = w
+            double radiansPerSecond = segment.velocity / wheelRadius;
+
+            // k RAD / second * 2pi/60 = k RPM
+            out[i] = radiansPerSecond * 2 * Math.PI / 60;
         }
 
+        // Return
         return out;
     }
 
     /**
-     * Generates a trapezoidal motion profile to go straightPath
+     * Generates a trapezoidal profiles profile to go straightPath
      * @param distance distance to travel
      * @param velocity max velocity
      * @param acceleration max acceleration
@@ -109,8 +149,13 @@ public class JaciToTalon {
             // Convert feet to rotations
             double rot = d * 2.0 / Math.PI;
 
-            // Convert f/s to RPM
-            double rpm = v / (30.0 * Math.PI);
+            // Linear velocity = radius * angular velocity RAD / second
+            // v = r * w
+            // v / r = w
+            double radiansPerSecond = velocity / wheelRadius;
+
+            // k RAD / second * 2pi/60 = k RPM
+            double rpm = radiansPerSecond * 2 * Math.PI / 60;
 
             // Form the array, heading is always 0
             output[i] = new double[] {rot, rpm, dt, 0};

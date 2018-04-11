@@ -38,7 +38,7 @@ public class ElevatorDrive extends Command {
         //Robot.elevator.setFloor();
 
         // Init lastpoint
-        lastpoint = 0;
+        lastpoint = RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0);
         resetTimeouts();
     }
 

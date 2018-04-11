@@ -50,8 +50,6 @@ public class SetArm extends Command {
      */
     @Override
     protected boolean isFinished() {
-        System.out.println(System.currentTimeMillis() - startTime >= timeToWait);
-
         return System.currentTimeMillis() - startTime >= timeToWait;
     }
 
@@ -60,8 +58,6 @@ public class SetArm extends Command {
      */
     @Override
     protected void end() {
-        System.out.println("Trying my hardest");
-
         Robot.arm.setSetpoint(this.setpoint);
     }
 

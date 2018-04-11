@@ -1,24 +1,25 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.modifiers.TankModifier;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.MotionUtil;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
 
-public class Profile extends Command {
+public class PositionProfile extends Command {
     private double[] leftPoints;
     private double[] rightPoints;
     private int current;
 
-    public Profile(Autonomous auto) {
+    public PositionProfile(Autonomous auto) {
+        System.out.println("Position Profile Constructed...");
+
         // Get pid values
         Robot.driveControl.initPID();
 
@@ -42,8 +43,8 @@ public class Profile extends Command {
         Trajectory leftTrajectory = modifier.getLeftTrajectory();
         Trajectory rightTrajectory = modifier.getRightTrajectory();
 
-        leftPoints = JaciToTalon.positions(leftTrajectory);
-        rightPoints = JaciToTalon.positions(rightTrajectory);
+        leftPoints = MotionUtil.positions(leftTrajectory);
+        rightPoints = MotionUtil.positions(rightTrajectory);
     }
 
     @Override
@@ -58,8 +59,8 @@ public class Profile extends Command {
         if (current < leftPoints.length) {
             System.out.println(RobotMap.driveFrontLeft.getClosedLoopTarget(0));
 
-            SmartDashboard.putNumber("left idk target", leftPoints[current]);
-            SmartDashboard.putNumber("right idk target", rightPoints[current]);
+            SmartDashboard.putNumber("left velocity target", leftPoints[current]);
+            SmartDashboard.putNumber("right velocity target", rightPoints[current]);
 
             RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current]);
             RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current]);
@@ -80,6 +81,6 @@ public class Profile extends Command {
 
     @Override
     protected boolean isFinished() {
-        return false; //current >= leftPoints.length;
+        return current >= leftPoints.length;
     }
 }

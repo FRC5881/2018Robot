@@ -34,8 +34,6 @@ public class SetElevator extends Command {
     @Override
     protected void initialize() {
         this.startTime = System.currentTimeMillis();
-        System.out.println("start: " + startTime);
-        System.out.println("waiting: " + timeToWait);
     }
 
     /**
