@@ -10,6 +10,8 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
 
+import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.armTalon;
+
 public class Robot extends TimedRobot {
     // Define OI and subsystems
     public static OI oi;
@@ -92,8 +94,6 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         RobotMap.initMotorState();
 
-        // Ends autonomous command
-
         // Starts elevator command
         if (elevatorCommand != null) {
             elevatorCommand.start();
@@ -102,9 +102,11 @@ public class Robot extends TimedRobot {
             System.err.println("teleopInit() failed to start elevator command due to null");
         }
 
-
         // Start arm command
         if (armCommand != null) {
+            int position;
+            position = armTalon.getActiveTrajectoryPosition();
+            armTalon.setSelectedSensorPosition(0, 0,20);
             armCommand.start();
         } else {
             System.err.println("teleopInit() failed to start arm command due to null");
@@ -186,11 +188,11 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Elevator error", elevator.getError());
         SmartDashboard.putNumber("Elevator voltage", RobotMap.elevatorTalonMaster.getMotorOutputVoltage());
 
-        SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Arm output", RobotMap.armTalon.getMotorOutputPercent());
+        SmartDashboard.putNumber("Arm encoder", armTalon.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Arm output", armTalon.getMotorOutputPercent());
         //SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
         SmartDashboard.putNumber("Arm error", arm.getError());
-        SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Arm voltage", armTalon.getMotorOutputVoltage());
 
         //MatchData();
     }
