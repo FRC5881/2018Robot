@@ -1,23 +1,14 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
-import com.ctre.phoenix.motion.MotionProfileStatus;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
-import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
-
-import java.util.Set;
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
@@ -33,9 +24,6 @@ public class Robot extends TimedRobot {
     public static ArmDrive armCommand;
     public static Command driveCommand;
     public static SendableChooser<Command> driveChooser;
-
-    // Define auto code
-    public static Command autonomousCommand;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -64,21 +52,11 @@ public class Robot extends TimedRobot {
         */
         oi = new OI();
 
-        // Instantiate the command used for the autonomous period
-        autonomousCommand = null;
         driveCommand = null;
-
-        // Add Auto commands to the smart dashboard
-        SmartDashboard.putString("Possible Paths", "None");
-        SmartDashboard.putNumber("Seconds to wait", 0);
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
-        driveChooser.addDefault("Ramped Arcade Drive", new RampedArcade());
-        driveChooser.addObject("Arcade Drive", new ArcadeDrive());
-        driveChooser.addObject("Tank Drive", new TankDrive());
-        driveChooser.addObject("Curvature Drive", new CurvatureDrive());
-        driveChooser.addObject("Arcaded PID drive", new ArcadedPID());
+        driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
         SmartDashboard.putNumber("Turn", 0);
@@ -103,57 +81,8 @@ public class Robot extends TimedRobot {
         updateSensors();
 
         // Provide info
-        String autoOptions = SmartDashboard.getString("Possible Paths", "None");
         Scheduler.getInstance().run();
 
-        SmartDashboard.putBoolean("Paths Are Valid", AutonomousDecoder.isValidIntRangeInput(autoOptions));
-    }
-
-    /**
-     * This function is called before autonomous periodic is called for the first time
-     */
-    @Override
-    public void autonomousInit() {
-        // Make sure the motors are in the correct states
-        RobotMap.initMotorState();
-
-        SetArm move = new SetArm(800, 0);
-        move.start();
-
-        // Get autonomous selection data
-        String autoOptions = SmartDashboard.getString("Possible Paths", "None");
-        double seconds = SmartDashboard.getNumber("Seconds to wait", 0);
-        long timeToWait = Double.valueOf(seconds).longValue() * 1000;
-
-        SmartDashboard.putBoolean("Match Data", false);
-
-        // Clear trajectories and PID set point, not so much a problem for competition but necessary testing
-        RobotMap.driveFrontRight.clearMotionProfileTrajectories();
-        RobotMap.driveFrontLeft.clearMotionProfileTrajectories();
-
-        RobotMap.driveFrontRight.pidWrite(0);
-        RobotMap.driveFrontLeft.pidWrite(0);
-
-        //autonomousCommand = new Turn(SmartDashboard.getNumber("Turn", 0));
-        //autonomousCommand.start();
-
-        // Start Autonomous Command
-        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
-            AutonomousCommand autonomousCommand = new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
-            autonomousCommand.start();
-        } else {
-            System.err.println("YOU DIDN'T CHOOSE AN AUTO!!!!!");
-        }
-    }
-
-    /**
-     * This function is called periodically during autonomous
-     */
-    @Override
-    public void autonomousPeriodic() {
-        updateSensors();
-
-        Scheduler.getInstance().run();
     }
 
     /**
@@ -263,12 +192,13 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Arm error", arm.getError());
         SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
 
-        MatchData();
+        //MatchData();
     }
 
     /**
      * Puts owned side position on the SmartDashboard
      */
+    /*
     private void MatchData() {
         if (MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != MatchData.OwnedSide.UNKNOWN) {
             SmartDashboard.putBoolean("Far Right", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_FAR) == MatchData.OwnedSide.RIGHT);
@@ -279,4 +209,5 @@ public class Robot extends TimedRobot {
             SmartDashboard.putBoolean("Near Left", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.LEFT);
         }
     }
+    */
 }

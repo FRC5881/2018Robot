@@ -2,7 +2,6 @@ package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.grabSolenoid;
 
