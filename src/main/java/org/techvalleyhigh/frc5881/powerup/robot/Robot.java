@@ -104,9 +104,7 @@ public class Robot extends TimedRobot {
 
         // Start arm command
         if (armCommand != null) {
-            int position;
-            position = armTalon.getActiveTrajectoryPosition();
-            armTalon.setSelectedSensorPosition(0, 0,20);
+            arm.setSetpoint(armTalon.getSelectedSensorPosition(0));
             armCommand.start();
         } else {
             System.err.println("teleopInit() failed to start arm command due to null");
