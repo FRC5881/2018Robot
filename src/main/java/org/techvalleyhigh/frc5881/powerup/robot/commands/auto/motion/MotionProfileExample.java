@@ -29,6 +29,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.Notifier;
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class MotionProfileExample {
@@ -102,6 +103,11 @@ public class MotionProfileExample {
     private boolean isLeft;
 
     /**
+     * Starting angle we start auto at
+     */
+    private double startAngle;
+
+    /**
      * Lets create a periodic task to funnel our trajectory points into our talon.
      * It doesn't need to be very accurate, just needs to keep pace with the auto
      * profiler executer.  Now if you're trajectory points are slow, there is no need
@@ -122,11 +128,12 @@ public class MotionProfileExample {
      * @param talon
      *            reference to Talon object to fetch auto profile status from.
      */
-    public MotionProfileExample(TalonSRX talon, double [][] _points, boolean isLeft) {
+    public MotionProfileExample(TalonSRX talon, double [][] _points, boolean isLeft, double startAngle) {
         _talon = talon;
         this._points = _points;
         this.isLeft = isLeft;
         this.currentPoint = 0;
+        this.startAngle = startAngle;
 
         /*
          * since our MP is 10ms per point, set the control frame rate and the
@@ -262,7 +269,9 @@ public class MotionProfileExample {
                          * because we set the last point's isLast to true, we will
                          * get here when the MP is done
                          */
-                        _setValue = SetValueMotionProfile.Hold;
+                        System.out.println("Setting Hold - end of MP");
+                        System.out.println("Current: " + currentPoint + " length " + _points.length);
+                        _setValue = SetValueMotionProfile.Enable;
                         _state = 0;
                         _loopTimeout = -1;
                     }
@@ -287,11 +296,6 @@ public class MotionProfileExample {
         /* convert duration to supported type */
         retval = retval.valueOf(durationMs);
 
-        /* check that it is valid */
-        //if (retval.value != durationMs) {
-        //  DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);
-        //}
-
         /* pass to caller */
         return retval;
     }
@@ -302,12 +306,16 @@ public class MotionProfileExample {
         fill(currentPoint, MotionConstants.maxTrajectories);
     }
 
+    /**
+     * Pushes a number of points into motion profile buffer
+     * @param start Where in generated profile to start pushing values from
+     * @param cnt How many points to push
+     */
     private void fill(int start, int cnt) {
-
-        /* create an empty point */
+        // create an empty point
         TrajectoryPoint point = new TrajectoryPoint();
 
-        /* did we get an under run condition since last time we checked ? */
+        // did we get an under run condition since last time we checked?
         if (_status.hasUnderrun) {
             /*
              * clear the error. This flag does not auto clear, this way
@@ -316,33 +324,45 @@ public class MotionProfileExample {
             _talon.clearMotionProfileHasUnderrun(0);
         }
 
-        /* This is fast since it's just into our TOP buffer */
+        // This is fast since it's just into our TOP buffer
         for (int i = start; i < start + cnt && i < _points.length; ++i) {
-            // Edit velocity to account for drift using gyro pid
-            Robot.driveControl.setGyroPid(_points[i][3] - Robot.driveControl.getGyroAngle());
-            double percentage = 1 + (Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1));
-            double velocityRPM = _points[i][1] * percentage;
 
-            // Edit the position to account for drift using calculus
+
+            // Edit velocity to account for drift using gyro pid
+            double setpoint = _points[i][3] - startAngle;
+            if (setpoint > 360) {
+                setpoint = -1 * (setpoint - 360);
+            }
+
+            Robot.driveControl.setGyroPid(setpoint);
+            double percentage = 1 + (Robot.driveControl.gyroPIDOutput * (isLeft ? 1 : -1));
+            double velocity = _points[i][1] * percentage;
+            SmartDashboard.putNumber("Change in velocity", velocity - _points[i][1]);
+
+            // Edit the position to account for drift using physics
             // Change in position = integral of the change in velocity (assume constant acceleration)
             // d = v0 * t + 0.5 * a * t^2
             // d = v0 * dt + 0.5(v1 - v0)dt^2
             double d = 0;
+            // As long as there is a next point to get an acceleration from
             if (i + 1 < _points.length) {
                 double dt = _points[i][2] / 1000;
-                d = velocityRPM * (dt) + 0.5 * percentage * (_points[i + 1][1] - _points[i][1]) * (dt * dt);
+                d = velocity * (dt) + 0.5 * percentage * (_points[i + 1][1] - _points[i][1]) * (dt * dt);
             }
-            double positionRot =_points[i][0] + d;
+            double position =_points[i][0] + d;
+            SmartDashboard.putNumber("Change in position", position - _points[i][0]);
 
-            /* for each point, fill our structure and pass it to API */
-            point.position = positionRot * MotionConstants.kSensorUnitsPerRotation; //Convert Revolutions to Units
-            point.velocity = velocityRPM * MotionConstants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
-            point.headingDeg = 0; /* future feature - not used in this example*/
-            point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
-            point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
+            // for each point, fill our structure and pass it to API
+            point.position = position * MotionConstants.kSensorUnitsPerRotation; // Convert Revolutions to Units
+            point.velocity = velocity * MotionConstants.kSensorUnitsPerRotation; // Convert RPM to Units/100ms
+            System.out.println(point.velocity);
+            //point.position = _points[i][0] * MotionConstants.kSensorUnitsPerRotation;
+            //point.velocity = _points[i][1] * MotionConstants.kSensorUnitsPerRotation / 600.0;
+            point.headingDeg = 0; // future feature - not used in this example
+            point.profileSlotSelect0 = 0; // which set of gains would you like to use [0,3]?
+            point.profileSlotSelect1 = 0; // future feature  - not used in this example - cascaded PID [0,1], leave zero
             point.timeDur = GetTrajectoryDuration((int)_points[i][2]);
             point.zeroPos = i == 0;
-
             point.isLastPoint = (i + 1) == _points.length;
 
             _talon.pushMotionProfileTrajectory(point);

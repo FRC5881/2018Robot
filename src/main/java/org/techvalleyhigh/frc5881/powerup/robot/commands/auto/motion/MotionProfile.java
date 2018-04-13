@@ -11,6 +11,7 @@ import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.modifiers.TankModifier;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Turn;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
@@ -74,9 +75,11 @@ public class MotionProfile extends Command {
         long endTime = System.currentTimeMillis();
         System.out.println("It took " + Math.round((endTime - startTime) * 100) / 100000 + " Seconds");
 
+        double startAngle = Robot.driveControl.getGyroAngle();
+
         // Init profiles
-        leftProfile = new MotionProfileExample(leftMotor, leftPoints, true);
-        rightProfile = new MotionProfileExample(rightMotor, rightPoints, false);
+        leftProfile = new MotionProfileExample(leftMotor, leftPoints, true, startAngle);
+        rightProfile = new MotionProfileExample(rightMotor, rightPoints, false, startAngle);
 
         // Convert seconds to milliseconds
         int time = Double.valueOf(auto.getConfig().dt * 1000).intValue();
@@ -91,6 +94,8 @@ public class MotionProfile extends Command {
          */
         rightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
         leftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, time, MotionConstants.kTimeoutMs);
+
+        System.out.println("Starting Profile....");
 
         leftProfile.startMotionProfile();
         rightProfile.startMotionProfile();
@@ -117,6 +122,15 @@ public class MotionProfile extends Command {
 
         SmartDashboard.putNumber("Target left speed", leftMotor.getActiveTrajectoryVelocity());
         SmartDashboard.putNumber("Target right speed", rightMotor.getActiveTrajectoryVelocity());
+        //System.out.println("Target left speed " + leftMotor.getActiveTrajectoryVelocity());
+
+        SmartDashboard.putNumber("Target left pos", leftProfile._pos);
+        SmartDashboard.putNumber("Target right pos", rightProfile._pos);
+        SmartDashboard.putNumber("Target left vel", leftProfile._vel);
+        SmartDashboard.putNumber("Target right vel", rightProfile._pos);
+        SmartDashboard.putNumber("Target left heading", leftProfile._heading);
+        SmartDashboard.putNumber("Target right heading", rightProfile._heading);
+
 
         // Control motors
         SetValueMotionProfile leftSetOutput = leftProfile.getSetValue();
@@ -128,10 +142,13 @@ public class MotionProfile extends Command {
 
     /**
      * Make this return true when this Command no longer needs to run execute()
+     * The command is finished when the profile set values are Hold
      */
     @Override
     protected boolean isFinished() {
-        return false;
+        return leftProfile.getSetValue() == SetValueMotionProfile.Hold
+                && rightProfile.getSetValue() == SetValueMotionProfile.Hold;
+    //return false;
     }
 
     /**
@@ -139,7 +156,7 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void end() {
-        System.out.println("Motion profile ended that shouldn't happen...");
+        System.out.println("Ending");
     }
 
     /**
@@ -148,6 +165,7 @@ public class MotionProfile extends Command {
      */
     @Override
     protected void interrupted() {
+        System.out.println("Motion profile interrupted that shouldn't happen...");
         end();
     }
 }

@@ -1,4 +1,4 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control;
 
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -13,7 +13,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfi
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.JaciToTalon;
 
 // TODO: Work in progress
-public class Straight extends Command {
+public class StraightProfile extends Command {
     private WPI_TalonSRX rightMotor;
     private WPI_TalonSRX leftMotor;
 
@@ -25,7 +25,7 @@ public class Straight extends Command {
     private double acceleration;
     private double dt;
 
-    public Straight(double distance, double velocity, double acceleration, double dt) {
+    public StraightProfile(double distance, double velocity, double acceleration, double dt) {
         requires(Robot.driveControl);
         this.distance = distance;
         this.velocity = velocity;
@@ -45,8 +45,10 @@ public class Straight extends Command {
 
         double[][] points = JaciToTalon.straightPath(distance, velocity, acceleration, dt);
 
-        leftProfile = new MotionProfileExample(leftMotor, points, true);
-        rightProfile = new MotionProfileExample(rightMotor, points, false);
+        double startAngle = Robot.driveControl.getGyroAngle();
+
+        leftProfile = new MotionProfileExample(leftMotor, points, true, startAngle);
+        rightProfile = new MotionProfileExample(rightMotor, points, false, startAngle);
 
         // Set timing for profile
         int time = Double.valueOf(dt * 1000).intValue();

@@ -10,7 +10,9 @@ import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.SpeedPID;
 
-
+/**
+ * Subsystem to control everything that has to do with drive (except motion profiling)
+ */
 public class DriveControl extends Subsystem {
     // SmartDashboard key for Gyro Tolerance
     private static final String GYRO_TOLERANCE = "Gyro Tolerance %";
@@ -28,7 +30,7 @@ public class DriveControl extends Subsystem {
     private static final String Y_AXIS_SENSITIVITY = "Y Axis sensitivity";
 
     // Joystick dead zone
-    private static final double deadZone = 0.1;
+    private static final double deadZone = 0.2;
 
     // Max speeds ticks / 100 ms
     private static final double maxForward = 1500;
@@ -44,6 +46,10 @@ public class DriveControl extends Subsystem {
     // PID outputs
     public double gyroPIDOutput;
     public double speedPIDOutput;
+
+    // Current values for ramping
+    public double currentSpeed;
+    public double currentTurn;
 
     /**
      * Used for converting feet to ticks.
@@ -127,33 +133,39 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.75);
 
         // Joystick sensitivities
-        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 1);
-        SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1);
+        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, -0.80);
+        SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1.0);
 
         // --- Pid controls --- //
         // Left Motors
-        SmartDashboard.putNumber("Left kP", 2.0);
-        SmartDashboard.putNumber("Left kI", 0.0);
-        SmartDashboard.putNumber("Left kD", 20.0);
-        SmartDashboard.putNumber("Left kF", 0.076);
+        SmartDashboard.putNumber("L kP", 0.018);
+        SmartDashboard.putNumber("L kI", 0.0);
+        SmartDashboard.putNumber("L kD", 0.012);
+        SmartDashboard.putNumber("L kF", 0.0);
 
         // Right Motors
-        SmartDashboard.putNumber("Right kP", 2.0);
-        SmartDashboard.putNumber("Right kI", 0.0);
-        SmartDashboard.putNumber("Right kD", 20.0);
-        SmartDashboard.putNumber("Right kF", 0.076);
+        SmartDashboard.putNumber("R kP", 0.018);
+        SmartDashboard.putNumber("R kI", 0.0);
+        SmartDashboard.putNumber("R kD", 0.012);
+        SmartDashboard.putNumber("R kF", 0.0);
 
+        /*
         // Gyro
         SmartDashboard.putNumber("Gyro kP", 0.057);
         SmartDashboard.putNumber("Gyro kI", 0.000000001);
         SmartDashboard.putNumber("Gyro kD", 0.14);
         SmartDashboard.putNumber("Gyro kF", 0.0);
 
-        // Speed
-        SmartDashboard.putNumber("Speed kP", 2.0);
+        // Speed control
+        SmartDashboard.putNumber("Speed kP", 0.5);
         SmartDashboard.putNumber("Speed kI", 0.0);
-        SmartDashboard.putNumber("Speed kD", 20.0);
+        SmartDashboard.putNumber("Speed kD", 5);
         SmartDashboard.putNumber("Speed kF", 0.076);
+
+        SmartDashboard.putNumber("Speed Ramp", 0.05);
+        SmartDashboard.putNumber("Turn Rate", 1);
+        SmartDashboard.putNumber("Turn Ramp", 0.35);
+        */
     }
 
     /**
@@ -287,7 +299,6 @@ public class DriveControl extends Subsystem {
         return SmartDashboard.getNumber("Gyro kF", 0.0);
     }
 
-
     // ----------------------- DRIVE HANDLING ----------------------- //
     // ---- Getters for SmartDashboard drive values ---- //
     public double getAutoTurnSpeed() {
@@ -309,7 +320,7 @@ public class DriveControl extends Subsystem {
      * @return scaled double value
      */
     private double scaleXAxis(double x) {
-        return x * getXAxisSensitivity();
+        return OI.applyDeadzone(x, deadZone) * getXAxisSensitivity();
     }
 
     /**
@@ -318,26 +329,28 @@ public class DriveControl extends Subsystem {
      * @return scaled double value
      */
     private double scaleYAxis(double y) {
-        return y * getYAxisSensitivity();
+        return OI.applyDeadzone(y, deadZone) * getYAxisSensitivity();
     }
 
     // --- Joystick drive methods --- //
 
     /**
-     * Implements arcade drive with joystick inputs
+     * Implements arcade drive with joystick inputs and co-pilot turn controls
      */
     public void arcadeJoystickInputs() {
-        // Checks if driver controller is not being operated and if so give slight control to pilot z rotation
         double turn;
 
-        if (Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) < deadZone && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone) {
+        // Checks if driver controller is not being operated and if so give slight control to copilot z rotation
+        if (Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) < deadZone
+                && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone) {
             turn = Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION) / 2;
+
         } else {
             turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
         }
         double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
-        robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), true);
+        robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), false);
     }
 
     /**
@@ -399,35 +412,35 @@ public class DriveControl extends Subsystem {
 
     // ---- Getters ---- //
     public double getLeft_kP() {
-        return SmartDashboard.getNumber("Left kP", 0.013);
+        return SmartDashboard.getNumber("L kP", 0.013);
     }
 
     public double getLeft_kI() {
-        return SmartDashboard.getNumber("Left kI", 0.001);
+        return SmartDashboard.getNumber("L kI", 0.001);
     }
 
     public double getLeft_kD() {
-        return SmartDashboard.getNumber("Left kD", 0.012);
+        return SmartDashboard.getNumber("L kD", 0.012);
     }
 
     public double getLeft_kF() {
-        return SmartDashboard.getNumber("Left kF", 0d);
+        return SmartDashboard.getNumber("L kF", 0d);
     }
 
     public double getRight_kP() {
-        return SmartDashboard.getNumber("Right kP", 0.013);
+        return SmartDashboard.getNumber("R kP", 0.013);
     }
 
     public double getRight_kI() {
-        return SmartDashboard.getNumber("Right kI", 0.001);
+        return SmartDashboard.getNumber("R kI", 0.001);
     }
 
     public double getRight_kD() {
-        return SmartDashboard.getNumber("Right kD", 0.012);
+        return SmartDashboard.getNumber("R kD", 0.012);
     }
 
     public double getRight_kF() {
-        return SmartDashboard.getNumber("Right kF", 0d);
+        return SmartDashboard.getNumber("R kF", 0d);
     }
 
     // ----------------------- Speed Control ----------------------- //
@@ -440,14 +453,64 @@ public class DriveControl extends Subsystem {
         double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
 
-        // If speed or gyro PID is on target reset it to clear integral error
-        if (getSpeedOnTarget()) speedPID.reset();
-        if (getGyroOnTarget()) gyroPID.reset();
-
+        // Set the setpoints
+        // TODO: Need to change gyro pid relatively
         setGyroPid(turn);
         setSpeedPID(speed);
 
+        // Just pass to arcade drive
         rawArcadeDrive(speedPIDOutput, gyroPIDOutput);
+    }
+
+    /**
+     * Ramps turn and speed inputs for arcade drive
+     */
+    public void rampedArcade(boolean manual) {
+        double turn;
+
+        // Checks if driver controller is not being operated and if so give slight control to copilot z rotation
+        if (Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) < deadZone
+                && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone
+                // If co pilot is obviously trying to turn
+                && Math.abs(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) > 0.75) {
+            turn = Math.signum(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) / 2;
+
+        } else {
+            turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
+        }
+
+        double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
+
+        // Initialize dt and ds
+        double dt = Math.signum(turn - currentTurn) * getTurnRamp();
+        double ds = Math.signum(speed - currentSpeed) * getSpeedRamp();
+
+        // If manual is selected we can use our test values off SmartDashboard otherwise use regression info
+        // Prevent overshooting on turning
+
+        /*
+        if (Math.abs(turn - currentTurn) < dt) {
+            currentTurn = turn;
+        } else {
+            currentTurn += dt;
+        }
+
+        // Prevent overshooting on speed
+        if (Math.abs(speed - currentSpeed) < ds) {
+            currentSpeed = speed;
+        } else {
+            currentSpeed += ds;
+        }
+        */
+        currentSpeed += ds;
+        currentTurn = turn;
+
+        // Some SmartDashboard debugging
+        SmartDashboard.putNumber("Current Speed", currentSpeed);
+        SmartDashboard.putNumber("Current Turn", currentTurn);
+
+        gyroPID.setSetpoint(gyroPID.getSetpoint() + currentTurn * getTurnRate());
+        rawArcadeDrive(currentSpeed, currentTurn);
     }
 
     /**
@@ -456,7 +519,7 @@ public class DriveControl extends Subsystem {
      */
     public double getVelocity() {
         //noinspection UnnecessaryLocalVariable
-        double v1 = RobotMap.driveFrontRight.getSelectedSensorVelocity(0);
+        double v1 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
         // TODO: Get a second encoder!
         //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
         //return v1 + v2 / 2
@@ -498,6 +561,48 @@ public class DriveControl extends Subsystem {
 
     public double getSpeed_kF() {
         return SmartDashboard.getNumber("Speed kF", 0.076);
+    }
+
+    /**
+     * Uses an exponential regression to get speed ramp at different elevator heights
+     * @return Speed ramp to send to drive motors
+     */
+    public double getScaledSpeedRamp() {
+        // Elevator Down 0.35, 0.05
+        // Elevator Switch 0.35 0.03
+        // Elevator Up 0.35, 0.005
+
+        // Speed ramp = A*B^x
+        // A = 0.05439865157
+        // B = 0.9999283587
+        double ramp = 0.05439865157 * Math.pow(0.9999283587, Robot.elevator.getHeight());
+        SmartDashboard.putNumber("Speed Ramp", ramp);
+
+        return ramp;
+    }
+
+    /**
+     * Get the speed ramp to use in ramped arcade drive
+     * @return "Speed Ramp" SmartDashboard number
+     */
+    public double getSpeedRamp() {
+        return SmartDashboard.getNumber("Speed Ramp", 0.03);
+    }
+
+    /**
+     * Get the turn ramp to use in ramped arcade drive
+     * @return "Turn Ramp" SmartDashboard number
+     */
+    public double getTurnRamp() {
+        return SmartDashboard.getNumber("Turn Ramp", 0.35);
+    }
+
+    /**
+     * Degrees to edit gyro pid by in ramping
+     * @return "Turn Rate" SmartDashboard number
+     */
+    public double getTurnRate() {
+        return SmartDashboard.getNumber("Turn Rate", 1);
     }
 
     /**

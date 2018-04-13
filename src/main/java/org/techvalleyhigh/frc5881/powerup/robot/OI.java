@@ -5,12 +5,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorFlip;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.DisableRatchet;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.EnableRatchet;
 
 /**
- * Controls operator interfaces, such as controllers
+ * Controls operator interfaces, such as controllers (and a few buttons)
  */
 public class OI {
     public final GenericHID driverController;
@@ -39,9 +41,6 @@ public class OI {
     public final JoystickButton coPilotBottomRightBack;
 
     // Joysticks
-    /**
-     * Controls Left joystick, forward/backward for Arcade Drive
-     */
     public static final int XBOX_LEFT_Y_AXIS = 1;
     public static final int XBOX_LEFT_X_AXIS = 2;
     public static final int XBOX_RIGHT_Y_AXIS = 3;
@@ -107,11 +106,32 @@ public class OI {
         driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
-        // Add commands below
-        coPilotLeftTrigger.whenPressed(new ManipulatorOpen());
-        coPilotTrigger.whenPressed(new ManipulatorClose());
+        // Add commands below but DON'T put elevator and arm autonomous commands down here since
+        // they interfere with operator controls
+        coPilotTrigger.whenPressed(new ManipulatorFlip());
 
         coPilotBottomLeftForward.whenPressed(new EnableRatchet());
         coPilotBottomRightForward.whenPressed(new DisableRatchet());
+
+        coPilotBottomRightBack.whenPressed(new SetArm(1870, 0));
+    }
+
+    /**
+     * Applies deadzone to input and scales output
+     * @param input the input to apply a deadzone to
+     * @param deadZone the deadzone to apply
+     * @return 0 if absolute value of the input is less than dead zone or the signed input squared if otherwise
+     */
+    public static double applyDeadzone(double input, double deadZone) {
+        double output;
+
+        if (Math.abs(input) < deadZone) {
+            output = 0;
+        } else {
+            // If we're above the joystick deadzone sqaure the inputs but keep the sign
+            output = input < 0 ? -input * input : input * input;
+        }
+
+        return output;
     }
 }

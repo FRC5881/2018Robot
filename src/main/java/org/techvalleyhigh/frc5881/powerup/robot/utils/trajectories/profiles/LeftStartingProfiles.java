@@ -19,7 +19,7 @@ public class LeftStartingProfiles {
     // Left Side Switch
     private static final Waypoint[] path_0 = new Waypoint[] {
             TrajectoryUtil.startLeft, // Starting point
-            new Waypoint(13.5, 23, 0), // Middle Point
+            new Waypoint(10, 24, 0), // Middle Point
             TrajectoryUtil.leftSideSwitch // Ending Point
     };
     private static final Autonomous auto_0 = new Autonomous(0,path_0, defaultConfig, SWITCH_NEAR, LEFT); // Autonomous Object
@@ -35,7 +35,10 @@ public class LeftStartingProfiles {
     // Right Side Switch
     private static final Waypoint[] path_2 = new Waypoint[]{
             TrajectoryUtil.startLeft,
-            new Waypoint(5, 11, Math.toRadians(-90)),
+            new Waypoint(16, 24.04, 0),
+            new Waypoint(19, 19, - Math.PI / 2),
+            new Waypoint(19, 7, - Math.PI / 2),
+            new Waypoint(17, 4, - Math.PI),
             TrajectoryUtil.rightSideSwitch
     };
     private static final Autonomous auto_2 = new Autonomous(2, path_2, defaultConfig, SWITCH_NEAR, RIGHT);
@@ -61,13 +64,13 @@ public class LeftStartingProfiles {
     // Right Side Scale
     private static final Waypoint[] path_5 = new Waypoint[]{
             TrajectoryUtil.startLeft,
-            new Waypoint(2, 23, 0),
-            new Waypoint(10,24.8, 0),
-            new Waypoint(15, 24.8, 0),
-            new Waypoint(19.65, 19, Math.toRadians(-90)),
-            new Waypoint(19.65, 10, Math.toRadians(-90)),
-            new Waypoint(19.8, 4, Math.toRadians(-135)),
-            new Waypoint(16.5, 3.25, Math.toRadians(-200)),
+            new Waypoint(5, 23.04, 0),
+            new Waypoint(10,23.04, 0),
+            new Waypoint(15, 23.04, 0),
+            new Waypoint(20.25, 19, Math.toRadians(-90)),
+            new Waypoint(20.25, 8, Math.toRadians(-90)),
+            new Waypoint(20.25, 4, Math.toRadians(-45)),
+            new Waypoint(22.25, 3.25, 0),
             TrajectoryUtil.rightSideScale
     };
     private static final Autonomous auto_5 = new Autonomous(5, path_5, defaultConfig, SCALE, RIGHT);

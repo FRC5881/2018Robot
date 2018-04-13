@@ -36,7 +36,7 @@ public class TrajectoryUtil {
 
     // Configs
     public static final Trajectory.Config defaultConfig = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-            Trajectory.Config.SAMPLES_HIGH, 0.05, 2.5, 4, 60);
+            Trajectory.Config.SAMPLES_HIGH, 0.05, 2.0, 1, 60);
 
     /**
      * Set of waypoints that together generate a figure eight for testing
@@ -57,17 +57,21 @@ public class TrajectoryUtil {
      * Reflects inputs across the line y = 13.5 and negate angles
      * Since the field is nicely symmetrical this allows us to flip auto paths from the left side to the right side
      * @param input input waypoints
-     * @return
+     * @return Array of waypoints reflected over center line of the field (long ways)
      */
     public static Waypoint[] mirror(Waypoint[] input) {
-        Waypoint[] ret = input.clone();
+        Waypoint[] clone = input.clone();
+        Waypoint[] ret = new Waypoint[clone.length];
 
-        for (int i = 0; i < input.length; i++) {
+        for (int i = 0; i < clone.length; i++) {
+
             // Reflect over y = 13.5
-            ret[i].y = 27d - input[i].y;
+            double y = 27d - clone[i].y;
 
             // Negate the angle
-            ret[i].angle = -input[i].angle;
+            double angle = -clone[i].angle;
+
+            ret[i] = new Waypoint(clone[i].x, y, angle);
         }
 
         return ret;
@@ -77,12 +81,12 @@ public class TrajectoryUtil {
      * Takes in the only 2 parameters we'll likely ever change using Trajectory.Config velocity and acceleration
      * And returns Trajectory.Config with everything else defaults
      * @param max_velocity max velocity to generate trajectories can drive
-     * @param max_acceleration max acceleration the bot should never pass
+     * @param max_acceleration max acceleration the bot should ever experience
      * @return {Trajectory.Config} our default trajectory with edited velocity and acceleration
      */
     public static Trajectory.Config ourConfig(double max_velocity, double max_acceleration) {
         return new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-                0.5, max_velocity, max_acceleration, 60);
+                0.05, max_velocity, max_acceleration, 60);
     }
 
     /**

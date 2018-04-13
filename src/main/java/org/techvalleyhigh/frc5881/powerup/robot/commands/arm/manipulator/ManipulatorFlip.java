@@ -1,12 +1,11 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class EnableRatchet extends Command {
-
-    public EnableRatchet() {
-        requires(Robot.ratchet);
+public class ManipulatorFlip extends Command {
+    public ManipulatorFlip() {
+        requires(Robot.manipulator);
     }
 
     /**
@@ -21,7 +20,11 @@ public class EnableRatchet extends Command {
      */
     @Override
     protected void execute() {
-        Robot.ratchet.enableRatchet();
+        if (Robot.manipulator.getGrabberEnabled()) {
+            Robot.manipulator.closeGrabbers();
+        } else {
+            Robot.manipulator.openGrabbers();
+        }
     }
 
     /**
@@ -38,6 +41,7 @@ public class EnableRatchet extends Command {
      */
     @Override
     protected void end() {
+        //Robot.manipulator.stop();
     }
 
     /**
@@ -46,6 +50,8 @@ public class EnableRatchet extends Command {
      */
     @Override
     protected void interrupted() {
+        System.out.println("Manipulator flip command was interrupted... That shouldn't happen");
         end();
     }
 }
+
