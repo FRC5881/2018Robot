@@ -11,7 +11,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
 
 import static org.techvalleyhigh.frc5881.powerup.robot.RobotMap.armTalon;
-import java.util.Set;
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
