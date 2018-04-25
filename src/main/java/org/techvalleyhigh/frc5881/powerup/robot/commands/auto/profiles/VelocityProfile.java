@@ -3,6 +3,7 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.modifiers.TankModifier;
@@ -77,8 +78,15 @@ public class VelocityProfile extends Command {
     @Override
     protected void execute() {
         // 1440 units per revolution, 600 "100 milliseconds" in a minute
-        leftMotor.set(ControlMode.Velocity, leftProfile[current] * 1440.0 / 600.0);
-        rightMotor.set(ControlMode.Velocity, rightProfile[current] * 1440.0 / 600.0);
+        leftMotor.set(ControlMode.Velocity, leftProfile[current] * 1440.0 / 0.5);
+        rightMotor.set(ControlMode.Velocity, rightProfile[current] * 1440.0 / 0.5);
+
+        SmartDashboard.putNumber("left speed", leftMotor.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("right speed", rightMotor.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("left error", leftMotor.getClosedLoopError(0));
+        SmartDashboard.putNumber("right error", rightMotor.getClosedLoopError(0));
+
+        //System.out.println(leftProfile[current] * 1440.0 / 60.0);
 
         if (current < leftProfile.length) {
             current++;

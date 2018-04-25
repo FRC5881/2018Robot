@@ -3,6 +3,8 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.auto.tuning;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.opencv.core.Mat;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class VelocityTest extends Command {
@@ -23,6 +25,8 @@ public class VelocityTest extends Command {
     public VelocityTest(WPI_TalonSRX motor, double velocity, double time) {
         requires(Robot.driveControl);
 
+        System.out.println("Testing velocity");
+
         this.motor = motor;
         this.velocity = velocity;
         this.time = time;
@@ -40,6 +44,10 @@ public class VelocityTest extends Command {
      */
     @Override
     protected void execute() {
+        //System.out.println("ex");
+        SmartDashboard.putNumber("current speed", motor.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("error speed", motor.getClosedLoopError(0) + Math.random());
+
         motor.set(ControlMode.Velocity, velocity);
     }
 

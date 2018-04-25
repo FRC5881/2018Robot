@@ -4,7 +4,7 @@ import jaci.pathfinder.Trajectory;
 
 public class MotionUtil {
     // 6 inch diameter wheel
-    public static final double wheelRadius = 3/12;
+    public static final double wheelRadius = 3.0/12.0;
 
     /**
      * Convert a PathFinder trajectory into a format talons can use
@@ -57,7 +57,7 @@ public class MotionUtil {
             Trajectory.Segment segment = trajectory.get(i);
 
             // Save rotations (6 inch wheel diameter)
-            out[i] = segment.position * 2d / Math.PI;
+            out[i] = segment.position * 2d / Math.PI * 1440;
         }
 
         // Return;
@@ -78,10 +78,10 @@ public class MotionUtil {
             // Linear velocity = radius * angular velocity RAD / second
             // v = r * w
             // v / r = w
-            double radiansPerSecond = segment.velocity / wheelRadius;
+            //double radiansPerSecond = segment.velocity / wheelRadius;
 
             // k RAD / second * 2pi/60 = k RPM
-            out[i] = radiansPerSecond * 2 * Math.PI / 60;
+            out[i] = segment.velocity;
         }
 
         // Return

@@ -42,8 +42,8 @@ public class OI {
 
     // Joysticks
     public static final int XBOX_LEFT_Y_AXIS = 1;
-    public static final int XBOX_LEFT_X_AXIS = 2;
-    public static final int XBOX_RIGHT_Y_AXIS = 3;
+    public static final int XBOX_LEFT_X_AXIS = 0;
+    public static final int XBOX_RIGHT_Y_AXIS = 5;
     public static final int XBOX_RIGHT_X_AXIS = 4;
 
     public static final int BUTTON_A = 1;

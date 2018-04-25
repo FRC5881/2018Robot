@@ -1,5 +1,6 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -128,7 +129,7 @@ public class DriveControl extends Subsystem {
 
         // --- Pid controls --- //
         // Left PIDf
-        SmartDashboard.putNumberArray("Left PIDf", new double[]{0.018, 0.0, 0.012, 0.0});
+        SmartDashboard.putNumberArray("Left PIDf", new double[]{2.5, 0.0, 10, 0.0});
 
         // Right PIDf
         SmartDashboard.putNumberArray("Right PIDf", new double[]{0.018, 0.0, 0.012, 0.0});
@@ -327,6 +328,25 @@ public class DriveControl extends Subsystem {
         double left = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
         robotDrive.tankDrive(right, left, true);
+    }
+
+    /**
+     * Implements tank drive with joystick inputs but using ControlMode.velocity
+     */
+    public void velocityTankJoystickInputs() {
+        // feet per second
+        double right = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS) * 5.0;
+        double left = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS) * 5.0;
+
+        // w = v / r
+        double wRight = right / 0.25;
+        double wleft = left / 0.25;
+
+        // w          = x
+        // 2 PI rad/s = 1440 ticks/second
+        // w * 1440 / 2 PI  = ticks
+        RobotMap.driveFrontLeft.set(ControlMode.Velocity, wleft * 1440); // (2 * Math.PI));
+        RobotMap.driveFrontRight.set(ControlMode.Velocity, wRight * 1440); // (2 * Math.PI));
     }
 
     // --- Raw drive methods to be used during autonomous --- //

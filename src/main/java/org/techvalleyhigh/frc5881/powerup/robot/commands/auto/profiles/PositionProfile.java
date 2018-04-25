@@ -45,6 +45,8 @@ public class PositionProfile extends Command {
 
         leftPoints = MotionUtil.positions(leftTrajectory);
         rightPoints = MotionUtil.positions(rightTrajectory);
+
+        System.out.println(leftPoints.length);
     }
 
     @Override
@@ -57,13 +59,13 @@ public class PositionProfile extends Command {
     @Override
     protected void execute() {
         if (current < leftPoints.length) {
-            System.out.println(RobotMap.driveFrontLeft.getClosedLoopTarget(0));
+            //System.out.println(RobotMap.driveFrontLeft.getClosedLoopTarget(0));
 
             SmartDashboard.putNumber("left velocity target", leftPoints[current]);
             SmartDashboard.putNumber("right velocity target", rightPoints[current]);
 
-            RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current]);
-            RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current]);
+            RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current] * 1440);
+            RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 1440);
 
             if (RobotMap.driveFrontLeft.getClosedLoopError(0) < 50 || RobotMap.driveFrontRight.getClosedLoopError(0) < 50) {
                 current++;
