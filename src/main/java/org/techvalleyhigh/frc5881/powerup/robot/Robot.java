@@ -102,13 +102,6 @@ public class Robot extends TimedRobot {
 
         arm.initPID();
 
-        //new Straight(12);
-
-        // Get autonomous selection data
-        String autoOptions = SmartDashboard.getString("Possible Paths", "None");
-        double seconds = SmartDashboard.getNumber("Seconds to wait", 0);
-        long timeToWait = Double.valueOf(seconds).longValue() * 1000;
-
         SmartDashboard.putBoolean("Match Data", false);
 
         // Clear trajectories and PID set point, not so much a problem for competition but necessary testing
