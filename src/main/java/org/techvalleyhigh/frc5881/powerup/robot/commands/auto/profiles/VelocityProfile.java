@@ -81,15 +81,11 @@ public class VelocityProfile extends Command {
         leftMotor.set(ControlMode.Velocity, leftProfile[current] * 4 * 1440 / (2 * Math.PI) / 10);
         rightMotor.set(ControlMode.Velocity, rightProfile[current] * 4 * 1440 / (2 * Math.PI) / 10);
 
-        System.out.println("\n" + leftProfile[current]);
-        System.out.println(leftProfile[current] * 100);
-
         SmartDashboard.putNumber("left speed", leftMotor.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("right speed", rightMotor.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("left error", leftMotor.getClosedLoopError(0));
         SmartDashboard.putNumber("right error", rightMotor.getClosedLoopError(0));
 
-        //System.out.println(leftProfile[current] * 1440.0 / 60.0);
 
         if (current < leftProfile.length) {
             current++;
