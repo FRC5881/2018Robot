@@ -2,12 +2,8 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorFlip;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.DisableRatchet;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.EnableRatchet;
 
@@ -112,8 +108,6 @@ public class OI {
 
         coPilotBottomLeftForward.whenPressed(new EnableRatchet());
         coPilotBottomRightForward.whenPressed(new DisableRatchet());
-
-        coPilotBottomRightBack.whenPressed(new SetArm(1870, 0));
     }
 
     /**

@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.SpeedPID;
 
 /**
  * Subsystem to control everything that has to do with drive (except motion profiling)
@@ -41,11 +40,9 @@ public class DriveControl extends Subsystem {
 
     // PIDs
     private static PIDController gyroPID;
-    private static PIDController speedPID;
 
     // PID outputs
     public double gyroPIDOutput;
-    public double speedPIDOutput;
 
     // Current values for ramping
     public double currentSpeed;
@@ -118,8 +115,6 @@ public class DriveControl extends Subsystem {
         gyroPID = new PIDController(getGyro_kP(), getGyro_kI(), getGyro_kD(), getGyro_kF(),
                 RobotMap.digitalGyro, output -> gyroPIDOutput = output);
 
-        speedPID = new PIDController(getSpeed_kP(), getSpeed_kI(), getSpeed_kD(), getSpeed_kF(),
-                new SpeedPID(), output -> speedPIDOutput = output);
 
         initPID();
     }
@@ -193,16 +188,9 @@ public class DriveControl extends Subsystem {
         gyroPID.setPercentTolerance(getGyroTolerance());
         gyroPID.reset();
 
-        speedPID.setP(getSpeed_kP());
-        speedPID.setI(getSpeed_kI());
-        speedPID.setD(getSpeed_kD());
-        speedPID.setF(getSpeed_kF());
-        speedPID.setPercentTolerance(getSpeedTolerance());
-        speedPID.reset();
 
         // Just keep the PIDs running
         gyroPID.enable();
-        speedPID.enable();
     }
 
     /**
@@ -456,10 +444,9 @@ public class DriveControl extends Subsystem {
         // Set the setpoints
         // TODO: Need to change gyro pid relatively
         setGyroPid(turn);
-        setSpeedPID(speed);
 
         // Just pass to arcade drive
-        rawArcadeDrive(speedPIDOutput, gyroPIDOutput);
+        //rawArcadeDrive(speedPIDOutput, gyroPIDOutput);
     }
 
     /**
@@ -524,23 +511,6 @@ public class DriveControl extends Subsystem {
         //double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
         //return v1 + v2 / 2
         return v1;
-    }
-
-    public void setSpeedPID(double setpoint) {
-        speedPID.setSetpoint(setpoint);
-    }
-
-    // ---- Getters for PID ---- //
-    public double getSpeedSetpoint() {
-        return speedPID.getSetpoint();
-    }
-
-    public double getSpeedError() {
-        return speedPID.getError();
-    }
-
-    public boolean getSpeedOnTarget() {
-        return speedPID.onTarget();
     }
 
     public double getSpeedTolerance() {

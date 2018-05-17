@@ -1,25 +1,15 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
-import com.ctre.phoenix.motion.MotionProfileStatus;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
-import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Straight;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
-
-import java.util.Set;
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
@@ -39,8 +29,6 @@ public class Robot extends TimedRobot {
     public static Command driveCommand;
     public static SendableChooser<Command> driveChooser;
 
-    // Define auto code
-    public static Command autonomousCommand;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -56,7 +44,6 @@ public class Robot extends TimedRobot {
         elevator = new Elevator();
         ratchet = new Ratchet();
 
-
         // Define drive and elevator command to during tele - op
         elevatorCommand = new ElevatorDrive();
         armCommand = new ArmDrive();
@@ -70,23 +57,15 @@ public class Robot extends TimedRobot {
         oi = new OI();
 
         // Instantiate the command used for the autonomous period
-        autonomousCommand = null;
         driveCommand = null;
 
-        // Add Auto commands to the smart dashboard
-        SmartDashboard.putString("Possible Paths", "None");
-        SmartDashboard.putNumber("Seconds to wait", 0);
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
-        driveChooser.addDefault("Ramped Arcade Drive", new RampedArcade());
-        driveChooser.addObject("Arcade Drive", new ArcadeDrive());
+        driveChooser.addDefault("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
-        driveChooser.addObject("Curvature Drive", new CurvatureDrive());
-        driveChooser.addObject("Arcaded PID drive", new ArcadedPID());
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
-        SmartDashboard.putNumber("Turn", 0);
 
         // Camera Server
         NetworkTableInstance.getDefault()
@@ -111,12 +90,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         updateSensors();
-
-        // Provide info
-        String autoOptions = SmartDashboard.getString("Possible Paths", "None");
-        Scheduler.getInstance().run();
-
-        SmartDashboard.putBoolean("Paths Are Valid", AutonomousDecoder.isValidIntRangeInput(autoOptions));
     }
 
     /**
@@ -144,18 +117,6 @@ public class Robot extends TimedRobot {
 
         RobotMap.driveFrontRight.pidWrite(0);
         RobotMap.driveFrontLeft.pidWrite(0);
-
-        //autonomousCommand = new Turn(SmartDashboard.getNumber("Turn", 0));
-        //autonomousCommand.start();
-
-        // Start Autonomous Command
-        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
-            AutonomousCommand autonomousCommand = new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
-            autonomousCommand.start();
-        } else {
-            System.err.println("YOU DIDN'T CHOOSE AN AUTO!!!!!");
-        }
-
     }
 
     /**
@@ -266,11 +227,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left output", RobotMap.driveFrontLeft.get());
         SmartDashboard.putNumber("Right output", RobotMap.driveFrontRight.get());
 
-
         SmartDashboard.putNumber("Velocity", driveControl.getVelocity());
-        SmartDashboard.putNumber("Speed output", driveControl.speedPIDOutput);
-        SmartDashboard.putNumber("Speed setpoint", driveControl.getSpeedSetpoint());
-        SmartDashboard.putNumber("Speed error", driveControl.getSpeedError());
 
         SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
         SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());

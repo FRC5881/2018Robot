@@ -52,13 +52,13 @@ public class ElevatorDrive extends Command {
 
         // Override if we're targeting the switch or scale or floor
         if (Robot.oi.coPilotTopBackLeft.get()) {
-            Robot.elevator.setSwitch();
+            //Robot.elevator.setSwitch();
 
         } else if (Robot.oi.coPilotTopBackRight.get()) {
-            Robot.elevator.setScale();
+            //Robot.elevator.setScale();
 
         } else if(Robot.oi.coPilotLeftTrigger.get()) {
-            Robot.elevator.setFloor();
+            //Robot.elevator.setFloor();
         }
 
         // Make sure we're moving and not burning out the motors
