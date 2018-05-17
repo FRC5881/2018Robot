@@ -36,7 +36,7 @@ public class TrajectoryUtil {
 
     // Configs
     public static final Trajectory.Config defaultConfig = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-            Trajectory.Config.SAMPLES_HIGH, 0.05, 2.0, 1, 60);
+            Trajectory.Config.SAMPLES_HIGH, 0.02, 2.5, 1, 60);
 
     /**
      * Set of waypoints that together generate a figure eight for testing

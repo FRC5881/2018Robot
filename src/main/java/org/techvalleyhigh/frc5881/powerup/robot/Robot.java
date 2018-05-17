@@ -157,7 +157,8 @@ public class Robot extends TimedRobot {
         RobotMap.driveFrontLeft.pidWrite(0);
 
         // Start Autonomous Command
-        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)
+                || testChooser.getSelected() != AutonomousCommand.TestMode.NONE) {
             AutonomousCommand autonomousCommand = new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
             autonomousCommand.start();
         } else {
@@ -257,10 +258,10 @@ public class Robot extends TimedRobot {
         // Since this method is called by the periodic we use it to make sure the compressor stays on since it's been buggy
         RobotMap.compressor.setClosedLoopControl(true);
 
-        //SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
-        //SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
-        //SmartDashboard.putNumber("Left Velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
-        //SmartDashboard.putNumber("Right Velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Left Velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Right Velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
         //SmartDashboard.putNumber("Right output", RobotMap.driveFrontRight.getMotorOutputVoltage());
         //SmartDashboard.putNumber("Left output", RobotMap.driveFrontLeft.getMotorOutputVoltage());
 

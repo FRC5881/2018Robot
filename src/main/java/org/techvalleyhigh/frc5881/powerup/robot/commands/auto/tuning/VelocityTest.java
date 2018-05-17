@@ -46,7 +46,7 @@ public class VelocityTest extends Command {
     protected void execute() {
         //System.out.println("ex");
         SmartDashboard.putNumber("current speed", motor.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("error speed", motor.getClosedLoopError(0) + Math.random());
+        SmartDashboard.putNumber("error speed", motor.getClosedLoopError(0));
 
         motor.set(ControlMode.Velocity, velocity);
     }

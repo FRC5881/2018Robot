@@ -47,7 +47,7 @@ public class AutonomousCommand extends CommandGroup {
      */
     public AutonomousCommand(ArrayList<Integer> chosen, long timeToWait) {
         if (Robot.testChooser.getSelected() == TestMode.VELOCITY) {
-            addSequential(new VelocityTest(RobotMap.driveFrontLeft, 100, 15.0));
+            addSequential(new VelocityTest(RobotMap.driveFrontLeft, 175, 2.0));
 
         } else {
             currentState = states.NONE;

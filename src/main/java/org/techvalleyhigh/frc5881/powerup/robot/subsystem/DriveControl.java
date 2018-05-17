@@ -1,15 +1,20 @@
 package org.techvalleyhigh.frc5881.powerup.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableValue;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.SpeedPID;
+import org.techvalleyhigh.frc5881.powerup.robot.utils.TalonSRX_PID_Controller;
+
+import java.util.function.*;
 
 /**
  * Subsystem to control everything that has to do with drive (except profiles profiling)
@@ -49,10 +54,7 @@ public class DriveControl extends Subsystem {
      * 1 rotation = 2( pi )( 1/4 feet )
      * 1 rotation = pi / 2 feet
      * 1 tick = pi / (2 * 1440) feet
-     * k ticks = k * pi / (2 * 1440) feet // k is number of ticks
-     * d = pi * k / (2 * 1440) // d feet to travel
-     * 2 * 1440 * d / pi feet = k ticks
-     * 2 * 1440 / pi = ticks per foot
+     * 2 * 1440 / pi ticks = 1 foot
      */
     public static final double ticksPerFoot = 2 * 1440 / Math.PI;
 
@@ -88,6 +90,8 @@ public class DriveControl extends Subsystem {
         // Calibrate gyro on robot start up
         calibrateGyro();
 
+        addChild(RobotMap.driveFrontLeft);
+
         // Create DifferentialDrive for all our control needs
         SpeedControllerGroup m_left = new SpeedControllerGroup(RobotMap.driveFrontLeft);
         SpeedControllerGroup m_right = new SpeedControllerGroup(RobotMap.driveFrontRight);
@@ -119,6 +123,7 @@ public class DriveControl extends Subsystem {
      * Puts values on Smart Dashboard
      */
     private void putSmartDashboard() {
+
         // Auto values
         SmartDashboard.putNumber(GYRO_TOLERANCE, 5);
         SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.75);
@@ -127,19 +132,23 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(X_AXIS_SENSITIVITY, -0.80);
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1.0);
 
+
         // --- Pid controls --- //
         // Left PIDf
-        SmartDashboard.putNumberArray("Left PIDf", new double[]{2.5, 0.0, 10, 0.0});
+        SmartDashboard.putNumberArray("Left PIDf", new double[]{1.6, 0.0, 0.0, 1023.0/1000.0});
 
         // Right PIDf
-        SmartDashboard.putNumberArray("Right PIDf", new double[]{0.018, 0.0, 0.012, 0.0});
+        SmartDashboard.putNumberArray("Right PIDf", new double[]{1.6, 0.0, 0.0, 1023.0/1000.0});
 
         // Gyrp PIDf
         SmartDashboard.putNumberArray("Gyro PIDF", new double[]{0.057, 0.000000001, 0.14, 0.0});
 
-        SmartDashboard.putNumber("Speed Ramp", 0.05);
-        SmartDashboard.putNumber("Turn Rate", 1);
-        SmartDashboard.putNumber("Turn Ramp", 0.35);
+        //SmartDashboard.putNumber("Speed Ramp", 0.05);
+        //SmartDashboard.putNumber("Turn Rate", 1);
+        //SmartDashboard.putNumber("Turn Ramp", 0.35);
+
+        //addChild(new TalonSRX_PID_Controller(RobotMap.driveFrontLeft, 2.5, 0.0, 10, 0.0));
+        //addChild(new TalonSRX_PID_Controller(RobotMap.driveFrontRight, 2.5, 0.0, 10, 0.0));
     }
 
     /**

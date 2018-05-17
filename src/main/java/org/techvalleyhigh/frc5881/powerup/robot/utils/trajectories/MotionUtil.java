@@ -67,7 +67,7 @@ public class MotionUtil {
     /**
      * Creates a one dimensional array of just the velocities of every segment in a Pathfinder.Trajectory object
      * @param trajectory PathFinder.Trajectory object to pull velocities from
-     * @return Velocities in rotations per minute
+     * @return Velocities in feet per second
      */
     public static double[] velocities(Trajectory trajectory) {
         double[] out = new double[trajectory.length()];

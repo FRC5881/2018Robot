@@ -78,8 +78,11 @@ public class VelocityProfile extends Command {
     @Override
     protected void execute() {
         // 1440 units per revolution, 600 "100 milliseconds" in a minute
-        leftMotor.set(ControlMode.Velocity, leftProfile[current] * 1440.0 / 0.5);
-        rightMotor.set(ControlMode.Velocity, rightProfile[current] * 1440.0 / 0.5);
+        leftMotor.set(ControlMode.Velocity, leftProfile[current] * 4 * 1440 / (2 * Math.PI) / 10);
+        rightMotor.set(ControlMode.Velocity, rightProfile[current] * 4 * 1440 / (2 * Math.PI) / 10);
+
+        System.out.println("\n" + leftProfile[current]);
+        System.out.println(leftProfile[current] * 100);
 
         SmartDashboard.putNumber("left speed", leftMotor.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("right speed", rightMotor.getSelectedSensorVelocity(0));
