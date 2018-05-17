@@ -48,7 +48,9 @@ public class ElevatorDrive extends Command {
     @Override
     protected void execute() {
         // Try to drive with inputs first
-        Robot.elevator.driveControllerInputs();
+        if (Robot.oi.driveControllerButtonX.get()) {
+            Robot.elevator.manualDrive();
+        }
 
         // Override if we're targeting the switch or scale or floor
         if (Robot.oi.coPilotTopBackLeft.get()) {

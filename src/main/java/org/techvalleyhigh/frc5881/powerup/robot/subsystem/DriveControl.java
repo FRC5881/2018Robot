@@ -304,16 +304,7 @@ public class DriveControl extends Subsystem {
      * Implements arcade drive with joystick inputs and co-pilot turn controls
      */
     public void arcadeJoystickInputs() {
-        double turn;
-
-        // Checks if driver controller is not being operated and if so give slight control to copilot z rotation
-        if (Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) < deadZone
-                && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone) {
-            turn = Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION) / 2;
-
-        } else {
-            turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
-        }
+        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
         double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
 
         robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), false);
@@ -409,18 +400,7 @@ public class DriveControl extends Subsystem {
      * Ramps turn and speed inputs for arcade drive
      */
     public void rampedArcade(boolean manual) {
-        double turn;
-
-        // Checks if driver controller is not being operated and if so give slight control to copilot z rotation
-        if (Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) < deadZone
-                && Math.abs(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS)) < deadZone
-                // If co pilot is obviously trying to turn
-                && Math.abs(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) > 0.75) {
-            turn = Math.signum(Robot.oi.coPilotController.getRawAxis(OI.PILOT_Z_ROTATION)) / 2;
-
-        } else {
-            turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
-        }
+        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
 
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
 

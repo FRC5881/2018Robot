@@ -33,15 +33,13 @@ public class Elevator extends Subsystem {
      */
     public static final int scaleTicks = 22 * 1440;
 
-    /**
-     * Time (milliseconds) to reach scale from bottom position
-     */
-    public static final long scaleTime = 5000;
+    public enum states {
+        FLOOR,
+        SWITCH,
+        SCALE
+    }
 
-    /**
-     * Time (milliseconds) to reach switch from bottom position
-     */
-    public static final long switchTime = 1000;
+    public states currentState = states.FLOOR;
 
     /**
      * Initialize Elevator subsystem with default name
@@ -115,23 +113,14 @@ public class Elevator extends Subsystem {
     /**
      * Drive the elevator with controller input
      */
-    public void driveControllerInputs() {
-        // Get POV position from controller
-        int pov = Robot.oi.coPilotController.getPOV();
-
-        double speed = 0;
+    public void manualDrive() {
+        double speed = 100;
         // Check POV is any of the up angles
-        if (pov == 315 || pov == 0 || pov == 45) {
-            speed = 1;
-        // Check if POV is any of the bottom angles
-        } else if(pov == 225 || pov == 180 || pov == 135){
-            speed = -1;
+        if (Robot.oi.driveControllerLeftBumper.get()) {
+            addPosition(-speed);
+        } else if(Robot.oi.driveControllerRightBumper.get()) {
+            addPosition(speed);
         }
-        // Scale the speed by co pilot slider (down 0% - up 100%)
-        speed *= (1.0 - Robot.oi.coPilotController.getRawAxis(OI.PILOT_SLIDER)) / 2.0;
-
-        // Finally add the change to the current setpoint
-        addPosition((int)(speed * getMaxSpeed()));
     }
 
     /**
@@ -147,6 +136,7 @@ public class Elevator extends Subsystem {
      * Set elevator setpoint to scale
      */
     public void setScale() {
+        currentState = states.SCALE;
         setSetpoint(scaleTicks);
     }
 
@@ -154,6 +144,7 @@ public class Elevator extends Subsystem {
      * Set elevator setpoint to switch
      */
     public void setSwitch() {
+        currentState = states.SWITCH;
         setSetpoint(switchTicks);
     }
 
@@ -161,6 +152,7 @@ public class Elevator extends Subsystem {
      * Set elevator setpoint to min
      */
     public void setFloor() {
+        currentState = states.FLOOR;
         setSetpoint(minTicks);
     }
 
@@ -215,10 +207,6 @@ public class Elevator extends Subsystem {
 
     public double getError() {
         return elevatorTalonMaster.getClosedLoopError(0);
-    }
-
-    public double getMaxSpeed() {
-        return SmartDashboard.getNumber("Elevator Speed", 300);
     }
 
     public double getHeight() {
