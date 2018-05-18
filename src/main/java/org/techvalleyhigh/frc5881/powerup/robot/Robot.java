@@ -100,8 +100,6 @@ public class Robot extends TimedRobot {
         // Make sure the motors are in the correct states
         RobotMap.initMotorState();
 
-        arm.initPID();
-
         SmartDashboard.putBoolean("Match Data", false);
 
         // Clear trajectories and PID set point, not so much a problem for competition but necessary testing
@@ -138,7 +136,6 @@ public class Robot extends TimedRobot {
         } else {
             System.err.println("teleopInit() failed to start elevator command due to null");
         }
-
 
         // Start arm command
         if (armCommand != null) {

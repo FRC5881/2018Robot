@@ -95,10 +95,7 @@ public class Arm extends Subsystem {
         armTalon.set(ControlMode.Position.value);
 
         // Reset encoder
-        armTalon.setSelectedSensorPosition(0, 0, 10);
-
-        // Tell the pid control to stay where it is
-        armTalon.pidWrite(0);
+        //armTalon.setSelectedSensorPosition(0, 0, 10);
     }
 
     // ---- Drive ---- //
@@ -114,7 +111,7 @@ public class Arm extends Subsystem {
         speed = OI.applyDeadzone(speed, deadzone);
 
         // Scale by extend ticks and set setpoint
-        System.out.println(speed);
+        //System.out.println(speed);
         addPosition(speed * getMaxSpeed());
     }
 
