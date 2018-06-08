@@ -89,6 +89,7 @@ public class Arm extends Subsystem {
         armTalon.config_kF(0, getArm_kF(), 10);
 
         armTalon.configAllowableClosedloopError(0, (int)getAllowedError(),0);
+        // ---- Drive ---- //
 
         // Reset PID control
         // Set the arm to be in position mode again to be safe
@@ -101,13 +102,13 @@ public class Arm extends Subsystem {
         armTalon.pidWrite(0);
     }
 
-    // ---- Drive ---- //
 
     /**
      * Drive the arm with controller input
      */
     public void driveControllerInput() {
         // Negate the inputs so pushing stick forward is negative
+        // TODO: Finish changing the controls
         double speed = -Robot.oi.coPilotController.getRawAxis(OI.PILOT_X_AXIS);
 
         // The deadzone we apply on the controller input

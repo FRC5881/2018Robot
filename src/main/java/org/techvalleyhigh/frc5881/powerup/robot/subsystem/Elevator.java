@@ -133,6 +133,32 @@ public class Elevator extends Subsystem {
     // ---- Auto reach targets ---- //
 
     /**
+     * Sets elevator to target up a level
+     */
+    public void incrementState() {
+        // If it's at the floor goto the switch
+        if (currentState.equals(states.FLOOR)) {
+            setSwitch();
+        // if it's at the switch goto the scale
+        } else if (currentState.equals(states.SWITCH)) {
+            setScale();
+        }
+    }
+
+    /**
+     * Sets the elevator to target down a level
+     */
+    public void decreaseState() {
+        // if it's at the switch go down to the floor
+        if (currentState.equals(states.SWITCH)) {
+            setFloor();
+        // if it's at the scale go down to the switch
+        } else if (currentState.equals(states.SCALE)) {
+            setSwitch();
+        }
+    }
+
+    /**
      * Set elevator setpoint to scale
      */
     public void setScale() {
