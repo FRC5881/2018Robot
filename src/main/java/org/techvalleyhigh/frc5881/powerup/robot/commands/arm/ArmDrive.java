@@ -1,5 +1,4 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
-// TODO: Get an arm
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;

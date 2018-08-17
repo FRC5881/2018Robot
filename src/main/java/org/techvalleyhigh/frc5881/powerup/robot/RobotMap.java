@@ -68,7 +68,6 @@ public class RobotMap {
      */
     public static void init() {
         // Drive Talons Back talons follow the ones in front of them
-        // TODO: Figure out phases
         driveFrontLeft = new WPI_TalonSRX(1);
         driveFrontLeft.setName("Drive", "Front Left Motor");
         driveFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);

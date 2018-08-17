@@ -28,6 +28,9 @@ public class OI {
     // Joysticks
     public static final int XBOX_LEFT_Y_AXIS = 1;
     public static final int XBOX_LEFT_X_AXIS = 0;
+    // TODO: Trigger warning (check if triggers are correct)
+    public static final int XBOX_LEFT_TRIGGER = 2;
+    public static final int XBOX_RIGHT_TRIGGER = 3;
     public static final int XBOX_RIGHT_Y_AXIS = 5;
     public static final int XBOX_RIGHT_X_AXIS = 4;
 
@@ -56,11 +59,11 @@ public class OI {
         driveControllerBackButton = new JoystickButton(driverController, BUTTON_BACK);
         driveControllerStartButton = new JoystickButton(driverController, BUTTON_START);
 
-        // Turns the rumble off
-        driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.25);
-        driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0.25);
+        // Turns the rumble off or on if you're feeling meme-y
+        driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+        driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
-        // Controls
+        // Controls elevator ratchet and manipulator closing / opening
         driveControllerButtonY.whenPressed(new RatchetFlip());
         driveControllerButtonA.whenPressed(new ManipulatorFlip());
     }
