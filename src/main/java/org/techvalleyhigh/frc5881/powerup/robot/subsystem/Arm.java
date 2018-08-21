@@ -152,6 +152,9 @@ public class Arm extends Subsystem {
     }
 
     // ----- Getters for PID ----- //
+    public double getPosition() {
+        return armTalon.getSelectedSensorPosition(0);
+    }
 
     public double getSetpoint() {
         return armTalon.getClosedLoopTarget(0);

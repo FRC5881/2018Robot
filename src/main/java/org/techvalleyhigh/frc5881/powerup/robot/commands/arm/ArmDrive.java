@@ -37,6 +37,9 @@ public class ArmDrive extends Command {
 
         // Init lastpoint
         lastpoint = 0;
+
+        // Prevent the arm from jumping to last enabled position
+        Robot.arm.setSetpoint(Robot.arm.getPosition());
         resetTimeouts();
     }
 
