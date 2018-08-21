@@ -59,7 +59,7 @@ public class OI {
         driveControllerBackButton = new JoystickButton(driverController, BUTTON_BACK);
         driveControllerStartButton = new JoystickButton(driverController, BUTTON_START);
 
-        // Turns the rumble off or on if you're feeling meme-y
+        // Turns the rumble off or on if you're feeling memey
         driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
