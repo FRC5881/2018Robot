@@ -52,6 +52,7 @@ public class PositionProfile extends Command {
     @Override
     protected void initialize() {
         current = 0;
+
         RobotMap.driveFrontLeft.set(ControlMode.Position, 0);
         RobotMap.driveFrontRight.set(ControlMode.Position, 0);
     }
@@ -64,10 +65,12 @@ public class PositionProfile extends Command {
             SmartDashboard.putNumber("left velocity target", leftPoints[current]);
             SmartDashboard.putNumber("right velocity target", rightPoints[current]);
 
+            // TODO: Convert feet to ticks properly
             RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current] * 1440);
             RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 1440);
 
-            if (RobotMap.driveFrontLeft.getClosedLoopError(0) < 50 || RobotMap.driveFrontRight.getClosedLoopError(0) < 50) {
+            // Only continue if we're on target
+            if (RobotMap.driveFrontLeft.getClosedLoopError(0) < 50 && RobotMap.driveFrontRight.getClosedLoopError(0) < 50) {
                 current++;
             }
         }

@@ -86,7 +86,6 @@ public class VelocityProfile extends Command {
         SmartDashboard.putNumber("left error", leftMotor.getClosedLoopError(0));
         SmartDashboard.putNumber("right error", rightMotor.getClosedLoopError(0));
 
-
         if (current < leftProfile.length) {
             current++;
         }
