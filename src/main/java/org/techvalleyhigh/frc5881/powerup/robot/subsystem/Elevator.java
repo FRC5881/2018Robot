@@ -115,7 +115,7 @@ public class Elevator extends Subsystem {
      */
     public void manualDrive() {
         double speed = 100;
-        // Check POV is any of the up angles
+        System.out.println(speed);
         if (Robot.oi.driveControllerLeftBumper.get()) {
             addPosition(-speed);
         } else if(Robot.oi.driveControllerRightBumper.get()) {
