@@ -14,7 +14,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.Ratche
  */
 public class OI {
     public final GenericHID driverController;
-    public final GenericHID coPilotController;
 
     public final JoystickButton driveControllerButtonA;
     public final JoystickButton driveControllerButtonB;
@@ -47,7 +46,6 @@ public class OI {
     public OI() {
         // Define controllers as joysticks
         driverController = new Joystick(0);
-        coPilotController = new Joystick(1);
 
         // Assign EACH xBox controller button
         driveControllerButtonA = new JoystickButton(driverController, BUTTON_A);

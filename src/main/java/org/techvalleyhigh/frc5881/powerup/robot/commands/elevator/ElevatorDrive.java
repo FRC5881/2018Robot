@@ -51,11 +51,11 @@ public class ElevatorDrive extends Command {
         if (Robot.oi.driveControllerButtonX.get()) {
             Robot.elevator.manualDrive();
         } else {
-            // Right bumper raise
+            // Right bumper raises
             if (Robot.oi.driveControllerRightBumper.get()) {
                 Robot.elevator.incrementState();
 
-            // Left bumper lower
+            // Left bumper lowers
             } else if (Robot.oi.driveControllerLeftBumper.get()) {
                 Robot.elevator.decreaseState();
             }

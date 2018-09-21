@@ -1,18 +1,22 @@
 package org.techvalleyhigh.frc5881.powerup.robot.utils;
 
+/**
+ * Util class that will have more math than the calculus textbooks
+ */
 public class PIDUtil {
     private double mass = 65.8; // Kilogram
-    private double width = I2M(27); // Meters
-    private double height = I2M(53); // Meters
-    private double depth = I2M(31); // Meters
+    private double width = I2M(27); // Front to back, meters
+    private double height = I2M(53); // Top to bottom meters
+    private double depth = I2M(31); // Left to right meters
 
+    // Approximate robot as a cube rotating about it's center
     private double momentOfInertia = 1/6 * mass * width * width;
 
     private double gear_left = 10.57; // Gear ratio left side
     private double gear_right = 10.57; // Gear ratio right side
     private double wheel_radius = I2M(6); // Drive train wheel radius meters
 
-    // TODO: Calculate kT, kV and R
+    // TODO: Calculate/ Measure kT, kV and R
     private double k_torque = 1; // Torque constant on drive train motors
     private double k_voltage = 1; // Voltage constant on drive train motors
     private double resistance = 1; // Resistance of motor
@@ -24,7 +28,7 @@ public class PIDUtil {
     private final double C4 = gear_right * k_torque / (resistance * wheel_radius);
 
     /**
-     * Force by left side
+     * Force applied by left side
      * @param velocity_left current velocity left side
      * @param voltage_left voltage to apply
      * @return Force Newtons
@@ -34,7 +38,7 @@ public class PIDUtil {
     }
 
     /**
-     * Force by right side
+     * Force applied by right side
      * @param velocity_right current velocity right side
      * @param voltage_right voltage to apply
      * @return Force Newtons

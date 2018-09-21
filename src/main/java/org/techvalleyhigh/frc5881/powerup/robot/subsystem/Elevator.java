@@ -33,12 +33,18 @@ public class Elevator extends Subsystem {
      */
     public static final int scaleTicks = 22 * 1440;
 
+    /**
+     * Possible states the elevator can be targetting
+     */
     public enum states {
         FLOOR,
         SWITCH,
-        SCALE
+        SCALE,
     }
 
+    /**
+     * Init on the floor of course
+     */
     public states currentState = states.FLOOR;
 
     /**
@@ -73,6 +79,7 @@ public class Elevator extends Subsystem {
         // Set the elevator to be in Position mode
         elevatorTalonMaster.set(ControlMode.Position.value);
 
+        // Put PIDf values up
         SmartDashboard.putNumber("Elevator kP", 2.0);
         SmartDashboard.putNumber("Elevator kI", 0);
         SmartDashboard.putNumber("Elevator kD", 20);
@@ -111,11 +118,11 @@ public class Elevator extends Subsystem {
 
     // ---- Drive --- //
     /**
-     * Drive the elevator with controller input
+     * Manually drive the elevator with controller inputs
      */
     public void manualDrive() {
         double speed = 100;
-        System.out.println(speed);
+
         if (Robot.oi.driveControllerLeftBumper.get()) {
             addPosition(-speed);
         } else if(Robot.oi.driveControllerRightBumper.get()) {
@@ -163,6 +170,7 @@ public class Elevator extends Subsystem {
      */
     public void setScale() {
         currentState = states.SCALE;
+        System.out.println("SCALE");
         setSetpoint(scaleTicks);
     }
 
@@ -171,6 +179,7 @@ public class Elevator extends Subsystem {
      */
     public void setSwitch() {
         currentState = states.SWITCH;
+        System.out.println("SWITCH");
         setSetpoint(switchTicks);
     }
 
@@ -179,6 +188,7 @@ public class Elevator extends Subsystem {
      */
     public void setFloor() {
         currentState = states.FLOOR;
+        System.out.println("FLOOR");
         setSetpoint(minTicks);
     }
 

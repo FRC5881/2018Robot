@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Util class holding all kinds of useful data to streamline working with autonomous ProfileMode
+ * Util class holding all kinds of useful data to streamline working with autonomous profiles
  */
 public class TrajectoryUtil {
     // Starting locations
@@ -54,7 +54,7 @@ public class TrajectoryUtil {
     };
 
     /**
-     * Reflects inputs across the line y = 13.5 and negate angles
+     * Reflects inputs across the line y = 13.5 feet and negate angles
      * Since the field is nicely symmetrical this allows us to flip auto paths from the left side to the right side
      * @param input input waypoints
      * @return Array of waypoints reflected over center line of the field (long ways)
