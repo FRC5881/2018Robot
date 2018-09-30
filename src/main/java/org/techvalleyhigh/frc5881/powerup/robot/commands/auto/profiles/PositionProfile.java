@@ -18,7 +18,7 @@ public class PositionProfile extends Command {
     private int current;
 
     public PositionProfile(Autonomous auto) {
-        System.out.println("Position Profile Constructed...");
+        System.out.println("Position Profile Constructing...");
 
         // Get pid values
         Robot.driveControl.initPID();
@@ -46,7 +46,7 @@ public class PositionProfile extends Command {
         leftPoints = MotionUtil.positions(leftTrajectory);
         rightPoints = MotionUtil.positions(rightTrajectory);
 
-        System.out.println(leftPoints.length);
+        System.out.println("Set points found" + leftPoints.length);
     }
 
     @Override

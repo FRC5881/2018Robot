@@ -117,7 +117,6 @@ public class DriveControl extends Subsystem {
      * Puts values on Smart Dashboard
      */
     private void putSmartDashboard() {
-
         // Auto values
         SmartDashboard.putNumber(GYRO_TOLERANCE, 5);
         SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.75);
@@ -135,14 +134,13 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumberArray("Right PIDf", new double[]{1.6, 0.0, 0.0, 1023.0/1000.0});
 
         // Gyrp PIDf
-        SmartDashboard.putNumberArray("Gyro PIDF", new double[]{0.057, 0.000000001, 0.14, 0.0});
+        SmartDashboard.putNumberArray("Gyro PIDf", new double[]{0.057, 0.000000001, 0.14, 0.0});
 
-        //SmartDashboard.putNumber("Speed Ramp", 0.05);
-        //SmartDashboard.putNumber("Turn Rate", 1);
-        //SmartDashboard.putNumber("Turn Ramp", 0.35);
-
-        //addChild(new TalonSRX_PID_Controller(RobotMap.driveFrontLeft, 2.5, 0.0, 10, 0.0));
-        //addChild(new TalonSRX_PID_Controller(RobotMap.driveFrontRight, 2.5, 0.0, 10, 0.0));
+        // Speed control
+        SmartDashboard.putNumber("Speed A", 1);
+        SmartDashboard.putNumber("Speed B", 0);
+        SmartDashboard.putNumber("Turn C", 1);
+        SmartDashboard.putNumber("Torque Constant", 1);
     }
 
     /**
@@ -298,30 +296,20 @@ public class DriveControl extends Subsystem {
      * Implements arcade drive with joystick inputs and co-pilot turn controls
      */
     public void arcadeJoystickInputs() {
-        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
-        double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
+        double turn = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS), deadZone);
+        double speed = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS), deadZone);
 
         robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), false);
-    }
-
-    /**
-     * Implements Curvature drive with joystick inputs
-     */
-    public void curvatureJoystickInputs(boolean isQuickTurn) {
-        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
-        double speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
-
-        robotDrive.curvatureDrive(scaleXAxis(turn), scaleYAxis(speed), !isQuickTurn);
     }
 
     /**
      * Implements tank drive with joystick inputs
      */
     public void tankJoystickInputs() {
-        double right = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS);
-        double left = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS);
+        double right = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS), deadZone);
+        double left = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS), deadZone);
 
-        robotDrive.tankDrive(right, left, true);
+        rawTankDrive(right, left);
     }
 
     /**
@@ -336,9 +324,9 @@ public class DriveControl extends Subsystem {
         double wRight = right / 0.25;
         double wleft = left / 0.25;
 
-        // w          = x
         // 2 PI rad/s = 1440 ticks/second
-        // w * 1440 / 2 PI  = ticks
+        // w * 1440 / 2 PI = ticks per second
+        // w * 1440 / 2Pi / 10 = ticks per 100 milliseconds
         RobotMap.driveFrontLeft.set(ControlMode.Velocity, wleft * 1440); // (2 * Math.PI));
         RobotMap.driveFrontRight.set(ControlMode.Velocity, wRight * 1440); // (2 * Math.PI));
     }
@@ -346,37 +334,26 @@ public class DriveControl extends Subsystem {
     // --- Raw drive methods to be used during autonomous --- //
 
     /**
-     * Pass raw values to arcade drive, shouldn't be used with joystick inputs
+     * Pass raw values to arcade drive, don't pass joystick inputs directly
      * @param move Drive speed -1 backwards -> 1 forward
      * @param turn Turn rate -1 left -> 1 right
      */
     public void rawArcadeDrive(double move, double turn) {
         updateDashboard();
 
-        robotDrive.arcadeDrive(turn, move, true);
+
+        robotDrive.arcadeDrive(turn, move, false);
     }
 
     /**
-     * Pass raw values to curvature drive, shouldn't be used with joystick inputs
-     * @param speed Drive speed -1 backwards -> 1 forward
-     * @param rotation Turn rate -1 left -> 1 right
-     * @param isQuickTurn boolean for isQuickTurn function
-     */
-    public void rawCurvatureDrive(double speed, double rotation, boolean isQuickTurn) {
-        updateDashboard();
-
-        robotDrive.curvatureDrive(speed, rotation, isQuickTurn);
-    }
-
-    /**
-     * Pass raw values to tank drive, shouldn't be used with joystick inputs
+     * Pass raw values to tank drive, don't pass joystick inputs directly
      * @param right Speed to command right motors, -1 backwards -> 1 forward
      * @param left Speed to command left motors, -1 backwards -> 1 forward
      */
     public void rawTankDrive(double right, double left) {
         updateDashboard();
 
-        robotDrive.tankDrive(left, right, true);
+        robotDrive.tankDrive(left, right, false);
     }
 
 
@@ -393,41 +370,32 @@ public class DriveControl extends Subsystem {
     /**
      * Ramps turn and speed inputs for arcade drive
      */
-    public void rampedArcade(boolean manual) {
-        double turn = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS);
-
+    public void rampedArcade() {
+        // Get and scale controller inputs
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
+        double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
 
-        // Initialize dt and ds
-        double dt = Math.signum(turn - currentTurn) * getTurnRamp();
-        double ds = Math.signum(speed - currentSpeed) * getSpeedRamp();
-
-        // If manual is selected we can use our test values off SmartDashboard otherwise use regression info
-        // Prevent overshooting on turning
-
-        /*
-        if (Math.abs(turn - currentTurn) < dt) {
-            currentTurn = turn;
-        } else {
-            currentTurn += dt;
+        // Get elevator height
+        double height = Robot.elevator.getHeight();
+        // If height <= 0 use normal arcade drive instead
+        if (height <= 1 || height > Elevator.maxTicks + 100) {
+            arcadeJoystickInputs();
+            return;
         }
 
-        // Prevent overshooting on speed
-        if (Math.abs(speed - currentSpeed) < ds) {
-            currentSpeed = speed;
-        } else {
-            currentSpeed += ds;
-        }
-        */
-        currentSpeed += ds;
-        currentTurn = turn;
+        // Torque is a function of height
+        double torque = getTorqueConstant() / Robot.elevator.getHeight();
+        //torque = torque > 12 ? 12 : torque;
 
-        // Some SmartDashboard debugging
-        SmartDashboard.putNumber("Current Speed", currentSpeed);
-        SmartDashboard.putNumber("Current Turn", currentTurn);
+        // Think about equation
+        // T = kt * (V - w/kv)/R
+        // R*T/kT + w/kv = V
+        // A * T + B * w = V
+        speed = (torque * getA() + speed * getB()) * speed;
+        turn = (getC() * Robot.elevator.getHeight()) * turn;
 
-        gyroPID.setSetpoint(gyroPID.getSetpoint() + currentTurn * getTurnRate());
-        rawArcadeDrive(currentSpeed, currentTurn);
+        // Drive
+        rawArcadeDrive(speed, turn);
     }
 
     /**
@@ -446,46 +414,20 @@ public class DriveControl extends Subsystem {
         return ticksPerSecond / ticksPerFoot;
     }
 
-    /**
-     * Uses an exponential regression to get speed ramp at different elevator heights
-     * @return Speed ramp to send to drive motors
-     */
-    public double getScaledSpeedRamp() {
-        // Elevator Down 0.35, 0.05
-        // Elevator Switch 0.35 0.03
-        // Elevator Up 0.35, 0.005
-
-        // Speed ramp = A*B^x
-        // A = 0.05439865157
-        // B = 0.9999283587
-        double ramp = 0.05439865157 * Math.pow(0.9999283587, Robot.elevator.getHeight());
-        SmartDashboard.putNumber("Speed Ramp", ramp);
-
-        return ramp;
+    public double getA() {
+        return SmartDashboard.getNumber("Speed A", 0);
     }
 
-    /**
-     * Get the speed ramp to use in ramped arcade drive
-     * @return "Speed Ramp" SmartDashboard number
-     */
-    public double getSpeedRamp() {
-        return SmartDashboard.getNumber("Speed Ramp", 0.03);
+    public double getB() {
+        return SmartDashboard.getNumber("Speed B", 0);
     }
 
-    /**
-     * Get the turn ramp to use in ramped arcade drive
-     * @return "Turn Ramp" SmartDashboard number
-     */
-    public double getTurnRamp() {
-        return SmartDashboard.getNumber("Turn Ramp", 0.35);
+    public double getC() {
+        return SmartDashboard.getNumber("Turn C", 1);
     }
 
-    /**
-     * Degrees to edit gyro pid by in ramping
-     * @return "Turn Rate" SmartDashboard number
-     */
-    public double getTurnRate() {
-        return SmartDashboard.getNumber("Turn Rate", 1);
+    public double getTorqueConstant() {
+        return SmartDashboard.getNumber("Torque Constant", 1);
     }
 
     /**

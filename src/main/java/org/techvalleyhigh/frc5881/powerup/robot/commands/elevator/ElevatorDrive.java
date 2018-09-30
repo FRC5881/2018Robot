@@ -48,18 +48,9 @@ public class ElevatorDrive extends Command {
     @Override
     protected void execute() {
         // Try to drive with inputs first
-        if (Robot.oi.driveControllerButtonX.get()) {
-            Robot.elevator.manualDrive();
-        } else {
-            // Right bumper raises
-            if (Robot.oi.driveControllerRightBumper.get()) {
-                Robot.elevator.incrementState();
+        Robot.elevator.manualDrive();
 
-            // Left bumper lowers
-            } else if (Robot.oi.driveControllerLeftBumper.get()) {
-                Robot.elevator.decreaseState();
-            }
-        }
+        // TODO: Add jump to next state mechanic
 
         // Make sure we're moving and not burning out the motors
         double newpoint = Robot.elevator.getSetpoint();

@@ -23,7 +23,7 @@ public class RampedArcade extends Command {
      */
     @Override
     protected void execute() {
-        Robot.driveControl.rampedArcade(false);
+        Robot.driveControl.rampedArcade();
     }
 
     /**

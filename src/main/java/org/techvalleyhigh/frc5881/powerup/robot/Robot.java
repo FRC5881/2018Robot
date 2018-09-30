@@ -80,7 +80,6 @@ public class Robot extends TimedRobot {
         driveChooser.addDefault("Ramped Arcade Drive", new RampedArcade());
         driveChooser.addObject("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
-        driveChooser.addObject("Curvature Drive", new CurvatureDrive());
         driveChooser.addObject("Velocity Tank", new VelocityTank());
 
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
