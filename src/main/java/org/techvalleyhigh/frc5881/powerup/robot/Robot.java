@@ -252,8 +252,9 @@ public class Robot extends TimedRobot {
     private void updateSensors() {
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Left Velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("Right Velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Left velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Right velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Average velocity", driveControl.getVelocity());
 
         SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
         SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());

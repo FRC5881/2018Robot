@@ -57,13 +57,16 @@ public class OI {
         driveControllerBackButton = new JoystickButton(driverController, BUTTON_BACK);
         driveControllerStartButton = new JoystickButton(driverController, BUTTON_START);
 
-        // Turns the rumble off or on if you're feeling memey
+        // Turns the rumble off in case it was left on
         driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
         driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
-        // Controls elevator ratchet and manipulator closing / opening
-        driveControllerButtonY.whenPressed(new RatchetFlip());
+        // Controls cube manipulator closing / opening
         driveControllerButtonA.whenPressed(new ManipulatorFlip());
+
+        // Controls elevator ratchet
+        driveControllerBackButton.whenPressed(new RatchetEnable());
+        driveControllerStartButton.whenPressed(new RatchetDisable());
     }
 
     /**

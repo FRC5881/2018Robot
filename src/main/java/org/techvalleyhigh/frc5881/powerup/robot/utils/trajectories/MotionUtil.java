@@ -56,8 +56,7 @@ public class MotionUtil {
         for (int i = 0; i < trajectory.length(); i++) {
             Trajectory.Segment segment = trajectory.get(i);
 
-            // Save rotations (6 inch wheel diameter)
-            out[i] = segment.position * 2d / Math.PI * 1440;
+            out[i] = segment.position;
         }
 
         // Return;

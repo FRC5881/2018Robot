@@ -38,10 +38,6 @@ public class DriveControl extends Subsystem {
     // PID output
     public double gyroPIDOutput;
 
-    // Current values for ramping
-    public double currentSpeed;
-    public double currentTurn;
-
     /**
      * Used for converting feet to ticks.
      * 1 rotation = 2( pi )( wheel radius )
@@ -137,10 +133,9 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumberArray("Gyro PIDf", new double[]{0.057, 0.000000001, 0.14, 0.0});
 
         // Speed control
-        SmartDashboard.putNumber("Speed A", 1);
+        SmartDashboard.putNumber("Speed A", 12 * Elevator.maxTicks / ticksPerFoot);
         SmartDashboard.putNumber("Speed B", 0);
         SmartDashboard.putNumber("Turn C", 1);
-        SmartDashboard.putNumber("Torque Constant", 1);
     }
 
     /**
@@ -296,8 +291,8 @@ public class DriveControl extends Subsystem {
      * Implements arcade drive with joystick inputs and co-pilot turn controls
      */
     public void arcadeJoystickInputs() {
-        double turn = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS), deadZone);
-        double speed = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS), deadZone);
+        double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
+        double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
 
         robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), false);
     }
@@ -306,28 +301,29 @@ public class DriveControl extends Subsystem {
      * Implements tank drive with joystick inputs
      */
     public void tankJoystickInputs() {
-        double right = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS), deadZone);
-        double left = OI.applyDeadzone(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS), deadZone);
+        double right = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS));
+        double left = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
 
         rawTankDrive(right, left);
     }
 
     /**
      * Implements tank drive with joystick inputs but using ControlMode.velocity
+     * Used for testing only
      */
     public void velocityTankJoystickInputs() {
         // feet per second
-        double right = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS) * 5.0;
-        double left = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS) * 5.0;
+        double right = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_Y_AXIS)) * 5.0;
+        double left = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS)) * 5.0;
 
         // w = v / r
         double wRight = right / 0.25;
-        double wleft = left / 0.25;
+        double wLeft = left / 0.25;
 
         // 2 PI rad/s = 1440 ticks/second
         // w * 1440 / 2 PI = ticks per second
         // w * 1440 / 2Pi / 10 = ticks per 100 milliseconds
-        RobotMap.driveFrontLeft.set(ControlMode.Velocity, wleft * 1440); // (2 * Math.PI));
+        RobotMap.driveFrontLeft.set(ControlMode.Velocity, wLeft * 1440); // (2 * Math.PI));
         RobotMap.driveFrontRight.set(ControlMode.Velocity, wRight * 1440); // (2 * Math.PI));
     }
 
@@ -383,16 +379,21 @@ public class DriveControl extends Subsystem {
             return;
         }
 
-        // Torque is a function of height
-        double torque = getTorqueConstant() / Robot.elevator.getHeight();
+        // Torque is a function of height, convert ticks to feet so we can deal with smaller values
+        double torque = 1 / (Robot.elevator.getHeight() / ticksPerFoot);
         //torque = torque > 12 ? 12 : torque;
 
-        // Think about equation
-        // T = kt * (V - w/kv)/R
-        // R*T/kT + w/kv = V
-        // A * T + B * w = V
-        speed = (torque * getA() + speed * getB()) * speed;
+        // We had some conversations about a voltage ramp
+        // aT + bv = V
+        // a, b are constants, v is current velocity, T is proportional to desired torque and V is output voltage
+
+        // Max voltage we could apply given the current states
+        double maxVoltage = (getA() * torque + getB() * getVelocity());
+
+        speed *= maxVoltage / 12;
         turn = (getC() * Robot.elevator.getHeight()) * turn;
+
+        SmartDashboard.putNumber("Ramped Speed", speed);
 
         // Drive
         rawArcadeDrive(speed, turn);
@@ -407,7 +408,7 @@ public class DriveControl extends Subsystem {
         double v2 = RobotMap.driveFrontLeft.getSelectedSensorVelocity(0);
 
         double ave = (v1 + v2) / 2;
-        // Convert ave ticks per 100 milliseconds to ticks per second
+        // Convert ticks per 100 milliseconds to ticks per second
         double ticksPerSecond = ave * 10;
 
         // Then to feet per second
@@ -426,8 +427,15 @@ public class DriveControl extends Subsystem {
         return SmartDashboard.getNumber("Turn C", 1);
     }
 
-    public double getTorqueConstant() {
-        return SmartDashboard.getNumber("Torque Constant", 1);
+    public void assistedDrive() {
+        double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
+        double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
+
+        // Edit the gyro set point
+        gyroPID.setSetpoint(getGyroSetpoint() + turn);
+
+        // Pass speed and PID output to arcade drive
+        rawArcadeDrive(speed, gyroPIDOutput);
     }
 
     /**

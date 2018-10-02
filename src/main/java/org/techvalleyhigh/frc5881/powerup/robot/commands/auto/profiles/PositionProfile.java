@@ -60,14 +60,15 @@ public class PositionProfile extends Command {
     @Override
     protected void execute() {
         if (current < leftPoints.length) {
-            //System.out.println(RobotMap.driveFrontLeft.getClosedLoopTarget(0));
-
             SmartDashboard.putNumber("left velocity target", leftPoints[current]);
             SmartDashboard.putNumber("right velocity target", rightPoints[current]);
 
-            // TODO: Convert feet to ticks properly
-            RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current] * 1440);
-            RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 1440);
+            // Save rotations (6 inch wheel diameter)
+            // Feet to travel = Wheel circumference * rotations
+            // 1 Rotation = 1440 Ticks
+            // 1 foot = 2 * PI * Wheel radius * 1440 Ticks
+            RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current] * 2 * Math.PI * 0.5 * 1440);
+            RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 2 * Math.PI * 0.5 * 1440);
 
             // Only continue if we're on target
             if (RobotMap.driveFrontLeft.getClosedLoopError(0) < 50 && RobotMap.driveFrontRight.getClosedLoopError(0) < 50) {
