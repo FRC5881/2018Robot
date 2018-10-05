@@ -38,6 +38,9 @@ public class DriveControl extends Subsystem {
     // PID output
     public double gyroPIDOutput;
 
+    // Previous
+    public double lastVoltage = 0;
+
     /**
      * Used for converting feet to ticks.
      * 1 rotation = 2( pi )( wheel radius )
@@ -371,29 +374,16 @@ public class DriveControl extends Subsystem {
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
         double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
 
-        // Get elevator height
-        double height = Robot.elevator.getHeight();
-        // If height <= 0 use normal arcade drive instead
-        if (height <= 1 || height > Elevator.maxTicks + 100) {
-            arcadeJoystickInputs();
-            return;
+        // Get elevator height %
+        double height = Robot.elevator.getHeight() / Elevator.maxTicks;
+
+        double dV;
+        if (speed < 0) {
+            dV = 1 - getA() * height * height;
+        } else {
+            dV = 1 - getB() * height * height;
         }
-
-        // Torque is a function of height, convert ticks to feet so we can deal with smaller values
-        double torque = 1 / (Robot.elevator.getHeight() / ticksPerFoot);
-        //torque = torque > 12 ? 12 : torque;
-
-        // We had some conversations about a voltage ramp
-        // aT + bv = V
-        // a, b are constants, v is current velocity, T is proportional to desired torque and V is output voltage
-
-        // Max voltage we could apply given the current states
-        double maxVoltage = (getA() * torque + getB() * getVelocity());
-
-        speed *= maxVoltage / 12;
-        turn = (getC() * Robot.elevator.getHeight()) * turn;
-
-        SmartDashboard.putNumber("Ramped Speed", speed);
+        lastVoltage += dV * speed;
 
         // Drive
         rawArcadeDrive(speed, turn);
