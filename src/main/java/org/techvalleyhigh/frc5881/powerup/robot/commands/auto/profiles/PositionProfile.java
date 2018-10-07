@@ -17,6 +17,8 @@ public class PositionProfile extends Command {
     private double[] rightPoints;
     private int current;
 
+    private static final int target = 30;
+
     public PositionProfile(Autonomous auto) {
         System.out.println("Position Profile Constructing...");
 
@@ -46,7 +48,7 @@ public class PositionProfile extends Command {
         leftPoints = MotionUtil.positions(leftTrajectory);
         rightPoints = MotionUtil.positions(rightTrajectory);
 
-        System.out.println("Set points found" + leftPoints.length);
+        System.out.println("Set points found " + leftPoints.length);
     }
 
     @Override
@@ -60,8 +62,8 @@ public class PositionProfile extends Command {
     @Override
     protected void execute() {
         if (current < leftPoints.length) {
-            SmartDashboard.putNumber("left velocity target", leftPoints[current]);
-            SmartDashboard.putNumber("right velocity target", rightPoints[current]);
+            SmartDashboard.putNumber("left target", leftPoints[current]);
+            SmartDashboard.putNumber("right target", rightPoints[current]);
 
             // Save rotations (6 inch wheel diameter)
             // Feet to travel = Wheel circumference * rotations
@@ -71,7 +73,7 @@ public class PositionProfile extends Command {
             RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 2 * Math.PI * 0.5 * 1440);
 
             // Only continue if we're on target
-            if (RobotMap.driveFrontLeft.getClosedLoopError(0) < 50 && RobotMap.driveFrontRight.getClosedLoopError(0) < 50) {
+            if (RobotMap.driveFrontLeft.getClosedLoopError(0) < target && RobotMap.driveFrontRight.getClosedLoopError(0) < target) {
                 current++;
             }
         }
@@ -79,10 +81,12 @@ public class PositionProfile extends Command {
 
     @Override
     protected void end() {
+        System.out.println("Auto finished");
     }
 
     @Override
     protected void interrupted() {
+        System.out.println("Auto routine interrupted, that shouldn't happen");
     }
 
     @Override

@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class AutonomousCommand extends CommandGroup {
-
-
     /**
      * Milliseconds to allow waiting for Match Data since it might not send instantly
      */
@@ -66,7 +64,7 @@ public class AutonomousCommand extends CommandGroup {
 
             // Wait for match data or until time passed
             while (!hasData() && System.currentTimeMillis() - start > matchDataTime) {
-
+                // Do nothing we are just waiting
             }
 
             if (hasData()) {
@@ -78,6 +76,7 @@ public class AutonomousCommand extends CommandGroup {
 
             // Wait for our time to wait has expired
             while (System.currentTimeMillis() - start < timeToWait) {
+                // Do nothing we are just waiting
             }
 
             // Tell the drive team how long the robot waited to start (they should already have this information)
@@ -97,6 +96,7 @@ public class AutonomousCommand extends CommandGroup {
                     // is the same as the Autonomous command's copy of "owned side"
 
                     // Set feature to null to tell the bot to overwrite normal checks and run that specific auto
+                    // Used for routines such as crossing the auto line
                     if (auto.getFeature() == null) {
                         System.out.println("Overwriting auto choosing");
                         System.out.println("Added Auto " + i);
@@ -115,7 +115,7 @@ public class AutonomousCommand extends CommandGroup {
                         // Score a cube with chosen auto
                         score(auto);
 
-                        // Let the record that we found an autonomous routine and don't default to the outline
+                        // Let the record know that we found an autonomous routine and don't default to the outline
                         found = true;
                         break;
                     }
@@ -127,7 +127,7 @@ public class AutonomousCommand extends CommandGroup {
                     //autoline();
                 }
 
-                // If we don't get the data in time flip out and just run the auto line
+            // If we don't get the data in time flip out and just run the auto line
             } else {
                 System.out.println("Defaulting to auto line");
                 SmartDashboard.putBoolean("Match Data", false);
@@ -187,15 +187,11 @@ public class AutonomousCommand extends CommandGroup {
     private ArrayList<commands> endCommands;
 
     // Instance variables storing each command we'll run so we can easily switch states
-    private ManipulatorClose close;
-    private SetArm moveArm;
-    private SetElevator elevator;
     private Command positionProfile;
-    private ManipulatorOpen open;
 
     /**
      * Called repeatedly when this Command is scheduled to run
-     * Sort of thrown together finite state machine to control all the autonomous
+     * Sort of a together finite state machine to control all the autonomous
      */
     @Override
     protected void execute() {
@@ -227,27 +223,27 @@ public class AutonomousCommand extends CommandGroup {
         for (commands c: list) {
             if (c.equals(commands.CLOSE_GRABBER)) {
                 System.out.println("Close Grabber");
-                close = new ManipulatorClose();
+                ManipulatorClose close = new ManipulatorClose();
                 close.start();
 
             } else if (c.equals(commands.OPEN_GRABBER)) {
                 System.out.println("Open Grabber");
-                open = new ManipulatorOpen();
+                ManipulatorOpen open = new ManipulatorOpen();
                 open.start();
 
             } else if (c.equals(commands.SWITCH)) {
                 System.out.println("Switch");
-                elevator = new SetElevator(Elevator.switchTicks, auto.getTimeToWait());
+                SetElevator elevator = new SetElevator(Elevator.switchTicks, auto.getElevatorTimeToWait());
                 elevator.start();
 
             } else if (c.equals(commands.SCALE)) {
                 System.out.println("Scale");
-                elevator = new SetElevator(Elevator.scaleTicks, auto.getTimeToWait());
+                SetElevator elevator = new SetElevator(Elevator.scaleTicks, auto.getElevatorTimeToWait());
                 elevator.start();
 
             } else if (c.equals(commands.MOVE_ARM)) {
                 System.out.println("Arm");
-                moveArm = new SetArm(800, 0);
+                SetArm moveArm = new SetArm(800, 0);
                 moveArm.start();
             }
         }

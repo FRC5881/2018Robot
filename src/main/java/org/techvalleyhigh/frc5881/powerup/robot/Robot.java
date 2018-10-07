@@ -1,6 +1,7 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -78,10 +79,10 @@ public class Robot extends TimedRobot {
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
         driveChooser.addDefault("Ramped Arcade Drive", new RampedArcade());
+        driveChooser.addObject("Assisted Drive", new AssistedDrive());
         driveChooser.addObject("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
         driveChooser.addObject("Velocity Tank", new VelocityTank());
-
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
 
         // Profile Control Selection
@@ -89,19 +90,22 @@ public class Robot extends TimedRobot {
         profileChooser.addDefault("Motion Profile", AutonomousCommand.ProfileMode.MOTION);
         profileChooser.addObject("Velocity Profile", AutonomousCommand.ProfileMode.VELOCITY);
         profileChooser.addObject("Position Profile", AutonomousCommand.ProfileMode.POSITION);
-
         SmartDashboard.putData("Auto Profile Selection", profileChooser);
 
         testChooser = new SendableChooser<>();
         testChooser.addDefault("NONE", AutonomousCommand.TestMode.NONE);
         testChooser.addObject("Velocity", AutonomousCommand.TestMode.VELOCITY);
-
         SmartDashboard.putData("Test Selection", testChooser);
 
-        // TODO: Fix camera server
+        // TODO: Test camera server
+        CameraServer test = CameraServer.getInstance();
+        test.addServer("http://" + ADDRESS + ":" + port + "/cam.mjpg");
+
+        /*
         NetworkTableInstance.getDefault()
                 .getEntry("/CameraPublisher/NVIDIACAMERA/streams")
                 .setStringArray(new String[]{"mjpeg:http://" + ADDRESS + ":" + port + "/cam.mjpg"});
+        */
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -158,7 +162,8 @@ public class Robot extends TimedRobot {
         // Start Autonomous Command
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)
                 || testChooser.getSelected() != AutonomousCommand.TestMode.NONE) {
-            AutonomousCommand autonomousCommand = new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
+            AutonomousCommand autonomousCommand =
+                    new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
             autonomousCommand.start();
         } else {
             System.err.println("YOU DIDN'T CHOOSE AN AUTO!!!!!");
@@ -185,7 +190,6 @@ public class Robot extends TimedRobot {
         // Starts elevator command
         if (elevatorCommand != null) {
             elevatorCommand.start();
-            // Get selected drive command and start it
         } else {
             System.err.println("teleopInit() failed to start elevator command due to null");
         }
@@ -252,8 +256,12 @@ public class Robot extends TimedRobot {
     private void updateSensors() {
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Right setpoint", RobotMap.driveFrontRight.getClosedLoopTarget(0));
+        SmartDashboard.putNumber("Left setpoint", RobotMap.driveFrontLeft.getClosedLoopTarget(0));
         SmartDashboard.putNumber("Left velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("Right velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Left voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Right voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
         SmartDashboard.putNumber("Average velocity", driveControl.getVelocity());
 
         SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);

@@ -79,12 +79,10 @@ public class RobotMap {
         driveBackLeft.setName("Drive", "Back Left Motor");
         LiveWindow.add(driveBackLeft);
 
-        // 631.2 per rotation
         driveFrontRight = new WPI_TalonSRX(3);
+        driveFrontRight.setName("Drive", "Front Right Motor");
         driveFrontRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0 , 10);
         driveFrontLeft.configAllowableClosedloopError(0, 50, 10);
-        driveFrontRight.setName("Drive", "Front Right Motor");
-        // TODO: Get drive encoders!
         LiveWindow.add(driveFrontRight);
 
         driveBackRight = new WPI_TalonSRX(4);
@@ -144,23 +142,19 @@ public class RobotMap {
     }
 
     /**
-     * Set up the motor states in their own function so we could call it repeatably if things we're getting interesting
+     * Set up the motor states in their own function so we could call it repeatably if things are getting interesting
      * (Talons decide to stop following)
      */
     public static void initMotorState() {
+        // Set drive talons following
         driveBackLeft.set(ControlMode.Follower, 1);
         driveBackRight.set(ControlMode.Follower, 3);
+
+        // Put the talons in coast mode, helps us stop tipping
         driveFrontLeft.setNeutralMode(NeutralMode.Coast);
         driveFrontRight.setNeutralMode(NeutralMode.Coast);
 
-        // "Acceleration Control" helps prevent tipping on accelerating
-        // RampedArcade is a better solution keep these 0
-        driveFrontLeft.configOpenloopRamp(0, 10);
-        driveFrontRight.configOpenloopRamp(0, 10);
-
-        driveFrontLeft.configClosedloopRamp(0, 10);
-        driveFrontRight.configClosedloopRamp(0, 10);
-
+        // Set elevator talon following
         elevatorTalonFollower.set(ControlMode.Follower, 5);
     }
 }

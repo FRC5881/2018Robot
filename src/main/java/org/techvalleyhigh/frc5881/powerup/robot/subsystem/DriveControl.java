@@ -355,7 +355,6 @@ public class DriveControl extends Subsystem {
         robotDrive.tankDrive(left, right, false);
     }
 
-
     // ---- Getters ---- //
     public double[] get_leftPIDf() {
         return SmartDashboard.getNumberArray("Left PIDf", new double[] {0, 0, 0, 0});
@@ -376,17 +375,27 @@ public class DriveControl extends Subsystem {
 
         // Get elevator height %
         double height = Robot.elevator.getHeight() / Elevator.maxTicks;
+        // If our height is negative or 0
+        if (height <= 0) {
+            // Run normal arcade drive
+            arcadeJoystickInputs();
+            return;
+        }
 
+        // Initialize Change in voltage
         double dV;
-        if (speed < 0) {
+
+        // We have different ramps based on wanted direction
+        if (speed >= 0) {
             dV = 1 - getA() * height * height;
         } else {
             dV = 1 - getB() * height * height;
         }
-        lastVoltage += dV * speed;
+
+        //lastVoltage += dV * speed;
 
         // Drive
-        rawArcadeDrive(speed, turn);
+        rawArcadeDrive(dV * speed, turn);
     }
 
     /**
@@ -405,16 +414,14 @@ public class DriveControl extends Subsystem {
         return ticksPerSecond / ticksPerFoot;
     }
 
+    // Change in voltage when elevator is all the way up going forwards
     public double getA() {
-        return SmartDashboard.getNumber("Speed A", 0);
+        return SmartDashboard.getNumber("Speed A", 0)/12;
     }
 
+    // Change in voltage when elevator is all the way up going backwards
     public double getB() {
-        return SmartDashboard.getNumber("Speed B", 0);
-    }
-
-    public double getC() {
-        return SmartDashboard.getNumber("Turn C", 1);
+        return SmartDashboard.getNumber("Speed B", 0)/12;
     }
 
     public void assistedDrive() {
@@ -424,7 +431,7 @@ public class DriveControl extends Subsystem {
         // Edit the gyro set point
         gyroPID.setSetpoint(getGyroSetpoint() + turn);
 
-        // Pass speed and PID output to arcade drive
+        // Pass speed and gyro PID output to arcade drive
         rawArcadeDrive(speed, gyroPIDOutput);
     }
 
