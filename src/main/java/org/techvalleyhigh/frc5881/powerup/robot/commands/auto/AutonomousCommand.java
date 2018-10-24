@@ -33,12 +33,6 @@ public class AutonomousCommand extends CommandGroup {
     private Map<Integer, Autonomous> autos;
 
     /**
-     * Chosen auto to profile
-     */
-    private Autonomous auto;
-
-
-    /**
      * Logic for choosing and running an autonomous command
      * @param chosen array list of integers
      * @param timeToWait milliseconds to wait before running the commands
@@ -48,11 +42,6 @@ public class AutonomousCommand extends CommandGroup {
             addSequential(new VelocityTest(RobotMap.driveFrontLeft, 175, 2.0));
 
         } else {
-            currentState = states.NONE;
-
-            startCommands = new ArrayList<>();
-            endCommands = new ArrayList<>();
-
             // Add all the autonomous paths into one big Map
             this.autos = TrajectoryUtil.getAutos();
 
@@ -124,7 +113,7 @@ public class AutonomousCommand extends CommandGroup {
                 // If we don't find a routine default to crossing the auto line
                 if (!found) {
                     // Add auto 100 (auto line)
-                    //autoline();
+                    autoline();
                 }
 
             // If we don't get the data in time flip out and just run the auto line
@@ -138,120 +127,31 @@ public class AutonomousCommand extends CommandGroup {
         }
     }
 
-    private enum commands {
-        CLOSE_GRABBER,
-        OPEN_GRABBER,
-        SWITCH,
-        SCALE,
-        MOVE_ARM
-    }
-
-    private enum states {
-        INIT,
-        RUNNING,
-        END,
-        DONE,
-        NONE
-    }
-
-    private states currentState;
-
     /**
      * Logic for sending moveArm and elevator commands if we want to score a cube
      */
     private void score(Autonomous autoToRun) {
-        auto = autoToRun;
+        // Start by grabbing the cube (the pistons should be activated anyway)
+        addSequential(new ManipulatorClose());
+        // Move the arm into a safe orientation for the elevator
+        addSequential(new SetArm(800, 0));
+        // Begin the autonomous routine
+        addSequential(profile(autoToRun));
 
-        // Start with just sending the profile to a command
-        positionProfile = profile(autoToRun);
-        addParallel(positionProfile);
-
-        startCommands.add(commands.CLOSE_GRABBER);
-        startCommands.add(commands.MOVE_ARM);
-
-        // Set the moveArm to correct height to score in owned structure and tell the manipulator to score slightly after
+        // Set the elevator to correct height to score in owned structure
         if (autoToRun.getFeature() == MatchData.GameFeature.SWITCH_NEAR) {
-            startCommands.add(commands.SWITCH);
-
+            addParallel(new SetElevator(Elevator.switchTicks, autoToRun.getElevatorTimeToWait()));
         } else if (autoToRun.getFeature() == MatchData.GameFeature.SCALE) {
-            startCommands.add(commands.SCALE);
+            addParallel(new SetElevator(Elevator.scaleTicks, autoToRun.getElevatorTimeToWait()));
         }
 
-        endCommands.add(commands.OPEN_GRABBER);
-
-        currentState = states.INIT;
-    }
-
-    // Groups of commands to run during execute
-    private ArrayList<commands> startCommands;
-    private ArrayList<commands> endCommands;
-
-    // Instance variables storing each command we'll run so we can easily switch states
-    private Command positionProfile;
-
-    /**
-     * Called repeatedly when this Command is scheduled to run
-     * Sort of a together finite state machine to control all the autonomous
-     */
-    @Override
-    protected void execute() {
-        if (currentState == states.NONE || currentState == states.DONE) {
-            // Do nothing
-
-        } else if (currentState == states.INIT) {
-            runCommands(startCommands);
-
-            // Change states
-            currentState = states.RUNNING;
-
-        } else if (currentState == states.RUNNING) {
-            if (positionProfile.isCompleted()) {
-                currentState = states.END;
-            }
-
-        } else if (currentState == states.END) {
-            runCommands(endCommands);
-            currentState = states.DONE;
-        }
-    }
-
-    /**
-     * Logic for converting command enum to a running command
-     * @param list ArrayList of commands to run
-     */
-    private void runCommands(ArrayList<commands> list) {
-        for (commands c: list) {
-            if (c.equals(commands.CLOSE_GRABBER)) {
-                System.out.println("Close Grabber");
-                ManipulatorClose close = new ManipulatorClose();
-                close.start();
-
-            } else if (c.equals(commands.OPEN_GRABBER)) {
-                System.out.println("Open Grabber");
-                ManipulatorOpen open = new ManipulatorOpen();
-                open.start();
-
-            } else if (c.equals(commands.SWITCH)) {
-                System.out.println("Switch");
-                SetElevator elevator = new SetElevator(Elevator.switchTicks, auto.getElevatorTimeToWait());
-                elevator.start();
-
-            } else if (c.equals(commands.SCALE)) {
-                System.out.println("Scale");
-                SetElevator elevator = new SetElevator(Elevator.scaleTicks, auto.getElevatorTimeToWait());
-                elevator.start();
-
-            } else if (c.equals(commands.MOVE_ARM)) {
-                System.out.println("Arm");
-                SetArm moveArm = new SetArm(800, 0);
-                moveArm.start();
-            }
-        }
+        // After moving the elevator and profiling score
+        addSequential(new ManipulatorOpen());
     }
 
     @Override
     protected boolean isFinished() {
-        return currentState == states.DONE;
+        return false;
     }
 
     /**
@@ -289,10 +189,8 @@ public class AutonomousCommand extends CommandGroup {
 
         if (mode == ProfileMode.POSITION) {
             return new PositionProfile(auto);
-
         } else if(mode == ProfileMode.VELOCITY) {
             return new VelocityProfile(auto);
-
         } else {
             return new MotionProfile(auto);
         }

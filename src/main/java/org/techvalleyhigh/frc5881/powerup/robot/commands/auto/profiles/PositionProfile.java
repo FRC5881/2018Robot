@@ -45,6 +45,7 @@ public class PositionProfile extends Command {
         Trajectory leftTrajectory = modifier.getLeftTrajectory();
         Trajectory rightTrajectory = modifier.getRightTrajectory();
 
+        // Load trajectories into arrays
         leftPoints = MotionUtil.positions(leftTrajectory);
         rightPoints = MotionUtil.positions(rightTrajectory);
 
@@ -53,22 +54,27 @@ public class PositionProfile extends Command {
 
     @Override
     protected void initialize() {
+        // We start at the beginning
         current = 0;
 
+        // Make sure the encoders and PID is reset
         RobotMap.driveFrontLeft.set(ControlMode.Position, 0);
         RobotMap.driveFrontRight.set(ControlMode.Position, 0);
+
+        Robot.driveControl.initPID();
     }
 
     @Override
     protected void execute() {
+        // If we have more points to run
         if (current < leftPoints.length) {
+            // Put targets on dashboard for debug purposes
             SmartDashboard.putNumber("left target", leftPoints[current]);
             SmartDashboard.putNumber("right target", rightPoints[current]);
 
-            // Save rotations (6 inch wheel diameter)
             // Feet to travel = Wheel circumference * rotations
             // 1 Rotation = 1440 Ticks
-            // 1 foot = 2 * PI * Wheel radius * 1440 Ticks
+            // 1 foot = 2 * PI * Wheel radius (feet) * 1440 Ticks
             RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current] * 2 * Math.PI * 0.5 * 1440);
             RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 2 * Math.PI * 0.5 * 1440);
 

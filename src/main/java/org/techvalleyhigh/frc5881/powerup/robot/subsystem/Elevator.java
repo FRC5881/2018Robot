@@ -45,7 +45,7 @@ public class Elevator extends Subsystem {
     /**
      * Init on the floor of course
      */
-    public states currentState = states.FLOOR;
+    private states currentState = states.FLOOR;
 
     /**
      * Initialize Elevator subsystem with default name
@@ -85,10 +85,15 @@ public class Elevator extends Subsystem {
         SmartDashboard.putNumber("Elevator kD", 20);
         SmartDashboard.putNumber("Elevator kF", 0.076);
 
+        // Ticks elevator setpoint can change per 20 milliseconds
         SmartDashboard.putNumber("Elevator Speed", 300);
 
-        // CTRE soft limits, don't work well with current controls
+        // Allowed error for PID control
+        SmartDashboard.putNumber("Elevator Allowed Error", 50);
+
+        // CTRE soft limits, don't work well with current code
         setSoftLimitThresholds(minTicks, maxTicks);
+
         // Keep false
         enableSoftLimits(false);
 
@@ -104,6 +109,9 @@ public class Elevator extends Subsystem {
         elevatorTalonMaster.config_kI(0, getElevator_kI(), 10);
         elevatorTalonMaster.config_kD(0, getElevator_kD(), 10);
         elevatorTalonMaster.config_kF(0, getElevator_kF(), 10);
+
+        // Set allowed error
+        elevatorTalonMaster.configAllowableClosedloopError(0, getAllowedError(), 10);
 
         // Reset PID control
         // Set the elevator to be in position mode again to be safe
@@ -121,12 +129,10 @@ public class Elevator extends Subsystem {
      * Manually drive the elevator with controller inputs
      */
     public void manualDrive() {
-        double speed = 100;
-
         if (Robot.oi.driveControllerLeftBumper.get()) {
-            addPosition(-speed);
+            addPosition(-getElevatorSpeed());
         } else if(Robot.oi.driveControllerRightBumper.get()) {
-            addPosition(speed);
+            addPosition(getElevatorSpeed());
         }
     }
 
@@ -247,5 +253,13 @@ public class Elevator extends Subsystem {
 
     public double getHeight() {
         return elevatorTalonMaster.getSelectedSensorPosition(0);
+    }
+
+    public double getElevatorSpeed() {
+        return SmartDashboard.getNumber("Elevator Speed", 100);
+    }
+
+    public int getAllowedError() {
+        return (int) SmartDashboard.getNumber("Elevator Allowed Error", 50);
     }
 }

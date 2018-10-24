@@ -102,7 +102,7 @@ public class RobotMap {
         elevatorTalonMaster.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         elevatorTalonMaster.configPeakCurrentLimit(32, 10);
         elevatorTalonMaster.configPeakCurrentDuration(4000, 10);
-        elevatorTalonMaster.setNeutralMode(NeutralMode.Coast);
+        elevatorTalonMaster.setNeutralMode(NeutralMode.Brake);
         elevatorTalonMaster.setSensorPhase(true);
         elevatorTalonMaster.setInverted(true);
         LiveWindow.add(elevatorTalonMaster);

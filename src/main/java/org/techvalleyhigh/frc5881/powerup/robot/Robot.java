@@ -264,6 +264,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Right voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
         SmartDashboard.putNumber("Average velocity", driveControl.getVelocity());
 
+        /*
         SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
         SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
         SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
@@ -280,5 +281,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
         SmartDashboard.putNumber("Arm error", arm.getError());
         SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
+        */
     }
 }

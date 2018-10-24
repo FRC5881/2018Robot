@@ -10,7 +10,6 @@ public class RampedArcade extends Command {
     public RampedArcade() {
         requires(Robot.driveControl);
     }
-
     /**
      * Called just before this Command runs the first time
      */

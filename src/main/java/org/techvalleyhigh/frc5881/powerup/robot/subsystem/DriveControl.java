@@ -38,8 +38,10 @@ public class DriveControl extends Subsystem {
     // PID output
     public double gyroPIDOutput;
 
-    // Previous
-    public double lastVoltage = 0;
+    // Previous voltage
+    public double voltage = 0;
+
+    public static final double maxVoltage = 12;
 
     /**
      * Used for converting feet to ticks.
@@ -136,9 +138,8 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumberArray("Gyro PIDf", new double[]{0.057, 0.000000001, 0.14, 0.0});
 
         // Speed control
-        SmartDashboard.putNumber("Speed A", 12 * Elevator.maxTicks / ticksPerFoot);
+        SmartDashboard.putNumber("Speed A", 0);
         SmartDashboard.putNumber("Speed B", 0);
-        SmartDashboard.putNumber("Turn C", 1);
     }
 
     /**
@@ -340,7 +341,6 @@ public class DriveControl extends Subsystem {
     public void rawArcadeDrive(double move, double turn) {
         updateDashboard();
 
-
         robotDrive.arcadeDrive(turn, move, false);
     }
 
@@ -368,34 +368,51 @@ public class DriveControl extends Subsystem {
     /**
      * Ramps turn and speed inputs for arcade drive
      */
+
     public void rampedArcade() {
         // Get and scale controller inputs
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
         double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
 
         // Get elevator height %
-        double height = Robot.elevator.getHeight() / Elevator.maxTicks;
-        // If our height is negative or 0
-        if (height <= 0) {
+        double pHeight = Robot.elevator.getHeight() / Elevator.maxTicks;
+        // If our height is negative
+        if (pHeight < 0) {
             // Run normal arcade drive
             arcadeJoystickInputs();
             return;
         }
 
-        // Initialize Change in voltage
+        // Initialize Maximum Change in voltage
         double dV;
-
         // We have different ramps based on wanted direction
         if (speed >= 0) {
-            dV = 1 - getA() * height * height;
+            // dV = a1 * (1 - (1 - a2/a1)*x^2)
+            dV = getA1() * (1 - (1 - getA2()/getA1()) * pHeight * pHeight);
         } else {
-            dV = 1 - getB() * height * height;
+            // dV = b1 * (1 - (1 - b2/b1)*x^2)
+            dV = getB1() * (1 - (1 - getB2()/getB1()) * pHeight * pHeight);
         }
 
-        //lastVoltage += dV * speed;
+        // Requested change in voltage
+        double difference = 12 * speed - voltage;
+        // dV is the max change if dV < |the requested change| just set to requested voltage
+        if (Math.abs(difference) < dV) {
+            voltage = 12 * speed;
+        } else {
+            // If speed is position
+            if (difference >= 0) {
+                voltage += dV;
+            } else {
+                voltage -= dV;
+            }
+        }
+
+        // Update voltage
+        SmartDashboard.putNumber("Last voltage", voltage);
 
         // Drive
-        rawArcadeDrive(dV * speed, turn);
+        rawArcadeDrive(voltage / maxVoltage, turn);
     }
 
     /**
@@ -414,14 +431,24 @@ public class DriveControl extends Subsystem {
         return ticksPerSecond / ticksPerFoot;
     }
 
-    // Change in voltage when elevator is all the way up going forwards
-    public double getA() {
-        return SmartDashboard.getNumber("Speed A", 0)/12;
+    // Change in voltage per second when elevator is down going forward
+    public double getA1() {
+        return SmartDashboard.getNumber("Speed A1", 0) / 50.0;
     }
 
-    // Change in voltage when elevator is all the way up going backwards
-    public double getB() {
-        return SmartDashboard.getNumber("Speed B", 0)/12;
+    // Change in voltage per second when elevator is up going forward
+    public double getA2() {
+        return SmartDashboard.getNumber("Speed A2", 0) / 50.0;
+    }
+
+    // Change in voltage per second when elevator is down going backwards
+    public double getB1() {
+        return SmartDashboard.getNumber("Speed B1", 0) / 50.0;
+    }
+
+    // Change in voltage per second when elevator is up going backwards
+    public double getB2() {
+        return SmartDashboard.getNumber("Speed B2", 0) / 50.0;
     }
 
     public void assistedDrive() {

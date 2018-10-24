@@ -24,6 +24,7 @@ public class SetArm extends Command {
 
     public SetArm(double setpoint, long timeToWait) {
         requires(Robot.arm);
+
         this.setpoint = setpoint;
         this.timeToWait = timeToWait;
     }
@@ -33,7 +34,7 @@ public class SetArm extends Command {
      */
     @Override
     protected void initialize() {
-        this.startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
     }
 
     /**
@@ -41,7 +42,21 @@ public class SetArm extends Command {
      */
     @Override
     protected void execute() {
+        // Once we've waited the set time
+        if (doneWaiting()) {
+            // Tell the console
+            System.out.println("Setting Arm to " + setpoint);
 
+            // Change the setpoint
+            Robot.arm.setSetpoint(setpoint);
+        }
+    }
+
+    /**
+     *  Check if we've waited enough time before moving the arm
+     */
+    private boolean doneWaiting() {
+        return System.currentTimeMillis() - startTime >= timeToWait;
     }
 
     /**
@@ -50,15 +65,15 @@ public class SetArm extends Command {
      */
     @Override
     protected boolean isFinished() {
-        return System.currentTimeMillis() - startTime >= timeToWait;
+        return Robot.arm.getError() < Robot.arm.getAllowedError();
     }
 
     /**
      * Called once after isFinished returns true
      */
     @Override
-    protected void end() {
-        Robot.arm.setSetpoint(this.setpoint);
+    protected void end(){
+        System.out.println("SetArm command finished");
     }
 
     /**
