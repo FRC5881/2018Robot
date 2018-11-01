@@ -46,14 +46,15 @@ public class MotionUtil {
     /**
      * Creates a one dimensional array of just the position of every segment in a Pathfinder.Trajectory object
      * @param trajectory PathFinder.Trajectory object to pull positions from
+     * @param skip Set >1 to skip some set points
      * @return Positions converted from feet to rotations
      */
-    public static double[] positions(Trajectory trajectory) {
+    public static double[] positions(Trajectory trajectory, int skip) {
         // Create new output array
         double[] out = new double[trajectory.length()];
 
         // Loop through each trajectory segment
-        for (int i = 0; i < trajectory.length(); i++) {
+        for (int i = 0; i < trajectory.length(); i += skip) {
             Trajectory.Segment segment = trajectory.get(i);
 
             out[i] = segment.position;

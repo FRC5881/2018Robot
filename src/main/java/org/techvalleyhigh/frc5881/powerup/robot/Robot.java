@@ -97,15 +97,16 @@ public class Robot extends TimedRobot {
         testChooser.addObject("Velocity", AutonomousCommand.TestMode.VELOCITY);
         SmartDashboard.putData("Test Selection", testChooser);
 
+        /*
         // TODO: Test camera server
         CameraServer test = CameraServer.getInstance();
         test.addServer("http://" + ADDRESS + ":" + port + "/cam.mjpg");
+        */
 
-        /*
         NetworkTableInstance.getDefault()
                 .getEntry("/CameraPublisher/NVIDIACAMERA/streams")
                 .setStringArray(new String[]{"mjpeg:http://" + ADDRESS + ":" + port + "/cam.mjpg"});
-        */
+
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -124,9 +125,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledPeriodic() {
+        // Update sensors
         updateSensors();
 
-        // Provide info
+        // Provide info for autonomous
         String autoOptions = SmartDashboard.getString("Possible Paths", "None");
         Scheduler.getInstance().run();
 
@@ -176,6 +178,12 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         updateSensors();
+
+        // Put setpoints and errors on smartdashboard for testing
+        SmartDashboard.putNumber("Right setpoint", RobotMap.driveFrontRight.getClosedLoopTarget(0));
+        SmartDashboard.putNumber("Left setpoint", RobotMap.driveFrontLeft.getClosedLoopTarget(0));
+        SmartDashboard.putNumber("Right Error", RobotMap.driveFrontRight.getClosedLoopError(0));
+        SmartDashboard.putNumber("Left Error", RobotMap.driveFrontLeft.getClosedLoopError(0));
 
         Scheduler.getInstance().run();
     }
@@ -256,29 +264,22 @@ public class Robot extends TimedRobot {
     private void updateSensors() {
         SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Right setpoint", RobotMap.driveFrontRight.getClosedLoopTarget(0));
-        SmartDashboard.putNumber("Left setpoint", RobotMap.driveFrontLeft.getClosedLoopTarget(0));
         SmartDashboard.putNumber("Left velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("Right velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("Left voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Right voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Average velocity", driveControl.getVelocity());
-
+        SmartDashboard.putNumber("Front left voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Front right voltage", RobotMap.driveFrontRight.getMotorOutputVoltage());
         /*
         SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
-        SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
         SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
 
         SmartDashboard.putBoolean("Ratchet enabled", ratchet.getRatchetEnabled());
         SmartDashboard.putBoolean("Grabber enabled", manipulator.getGrabberEnabled());
 
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Elevator setpoint", elevator.getSetpoint());
         SmartDashboard.putNumber("Elevator error", elevator.getError());
         SmartDashboard.putNumber("Elevator voltage", RobotMap.elevatorTalonMaster.getMotorOutputVoltage());
 
         SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
         SmartDashboard.putNumber("Arm error", arm.getError());
         SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
         */

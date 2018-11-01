@@ -15,6 +15,8 @@ public class RampedArcade extends Command {
      */
     @Override
     protected void initialize() {
+        // Clear the voltage on ramped drive, bad news if this is left on when we enable the robot
+        Robot.driveControl.voltage = 0;
     }
 
     /**

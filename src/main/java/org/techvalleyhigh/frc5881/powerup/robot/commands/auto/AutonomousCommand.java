@@ -10,6 +10,7 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.Manipul
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetElevator;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.EasyAuto;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile.MotionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.PositionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.VelocityProfile;
@@ -128,7 +129,7 @@ public class AutonomousCommand extends CommandGroup {
     }
 
     /**
-     * Logic for sending moveArm and elevator commands if we want to score a cube
+     * Logic for sending commands if we want to score a cube
      */
     private void score(Autonomous autoToRun) {
         // Start by grabbing the cube (the pistons should be activated anyway)
@@ -139,10 +140,11 @@ public class AutonomousCommand extends CommandGroup {
         addSequential(profile(autoToRun));
 
         // Set the elevator to correct height to score in owned structure
+        // TODO Uncomment
         if (autoToRun.getFeature() == MatchData.GameFeature.SWITCH_NEAR) {
-            addParallel(new SetElevator(Elevator.switchTicks, autoToRun.getElevatorTimeToWait()));
+            //addParallel(new SetElevator(Elevator.switchTicks, autoToRun.getElevatorTimeToWait()));
         } else if (autoToRun.getFeature() == MatchData.GameFeature.SCALE) {
-            addParallel(new SetElevator(Elevator.scaleTicks, autoToRun.getElevatorTimeToWait()));
+            //addParallel(new SetElevator(Elevator.scaleTicks, autoToRun.getElevatorTimeToWait()));
         }
 
         // After moving the elevator and profiling score
@@ -158,7 +160,7 @@ public class AutonomousCommand extends CommandGroup {
      * Just cross the auto line
      */
     private void autoline() {
-        addSequential(profile(autos.get(100)));
+        addSequential(new EasyAuto(6, 5));
     }
 
 

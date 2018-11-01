@@ -128,18 +128,24 @@ public class DriveControl extends Subsystem {
 
 
         // --- Pid controls --- //
-        // Left PIDf
-        SmartDashboard.putNumberArray("Left PIDf", new double[]{1.6, 0.0, 0.0, 1023.0/1000.0});
+        SmartDashboard.putNumber("Left kP", 1.6);
+        SmartDashboard.putNumber("Left kI", 0.0);
+        SmartDashboard.putNumber("Left kD", 0.0);
+        SmartDashboard.putNumber("Left kF", 0.0);
 
-        // Right PIDf
-        SmartDashboard.putNumberArray("Right PIDf", new double[]{1.6, 0.0, 0.0, 1023.0/1000.0});
+        SmartDashboard.putNumber("Right kP", 1.6);
+        SmartDashboard.putNumber("Right kI", 0.0);
+        SmartDashboard.putNumber("Right kD", 0.0);
+        SmartDashboard.putNumber("Right kF", 0.0);
 
         // Gyrp PIDf
         SmartDashboard.putNumberArray("Gyro PIDf", new double[]{0.057, 0.000000001, 0.14, 0.0});
 
         // Speed control
-        SmartDashboard.putNumber("Speed A", 0);
-        SmartDashboard.putNumber("Speed B", 0);
+        SmartDashboard.putNumber("Speed A1", 0.1);
+        SmartDashboard.putNumber("Speed A2", 0.1);
+        SmartDashboard.putNumber("Speed B1", 0.1);
+        SmartDashboard.putNumber("Speed B2", 0.1);
     }
 
     /**
@@ -149,17 +155,15 @@ public class DriveControl extends Subsystem {
         zeroEncoders();
 
         // Set motor PID values
-        double[] left = get_leftPIDf();
-        RobotMap.driveFrontLeft.config_kP(0 , left[0], 10);
-        RobotMap.driveFrontLeft.config_kI(0, left[1], 10);
-        RobotMap.driveFrontLeft.config_kD(0, left[2], 10);
-        RobotMap.driveFrontLeft.config_kF(0, left[3], 10);
+        RobotMap.driveFrontLeft.config_kP(0 , getLeft_kP(), 10);
+        RobotMap.driveFrontLeft.config_kI(0, getLeft_kI(), 10);
+        RobotMap.driveFrontLeft.config_kD(0, getLeft_kD(), 10);
+        RobotMap.driveFrontLeft.config_kF(0, getLeft_kF(), 10);
 
-        double[] right = get_rightPIDf();
-        RobotMap.driveFrontRight.config_kP(0 , right[0], 10);
-        RobotMap.driveFrontRight.config_kI(0, right[1], 10);
-        RobotMap.driveFrontRight.config_kD(0, right[2], 10);
-        RobotMap.driveFrontRight.config_kF(0, right[3], 10);
+        RobotMap.driveFrontRight.config_kP(0 , getRight_kP(), 10);
+        RobotMap.driveFrontRight.config_kI(0, getRight_kI(), 10);
+        RobotMap.driveFrontRight.config_kD(0, getRight_kD(), 10);
+        RobotMap.driveFrontRight.config_kF(0, getRight_kF(), 10);
 
         // Set other PID values
         double[] gyro = get_gyroPIDf();
@@ -298,7 +302,7 @@ public class DriveControl extends Subsystem {
         double turn = scaleXAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_X_AXIS));
         double speed = scaleYAxis(Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_Y_AXIS));
 
-        robotDrive.arcadeDrive(scaleXAxis(turn), scaleYAxis(speed), false);
+        robotDrive.arcadeDrive(turn, speed, false);
     }
 
     /**
@@ -356,13 +360,34 @@ public class DriveControl extends Subsystem {
     }
 
     // ---- Getters ---- //
-    public double[] get_leftPIDf() {
-        return SmartDashboard.getNumberArray("Left PIDf", new double[] {0, 0, 0, 0});
+    public double getRight_kP() {
+        return SmartDashboard.getNumber("Right kP", 0);
+    }
+    public double getRight_kI() {
+        return SmartDashboard.getNumber("Right kI", 0);
+    }
+    public double getRight_kD() {
+        return SmartDashboard.getNumber("Right kD", 0);
+    }
+    public double getRight_kF() {
+        return SmartDashboard.getNumber("Right kF", 0);
     }
 
-    public double[] get_rightPIDf() {
-        return SmartDashboard.getNumberArray("Right PIDf", new double[] {0, 0, 0, 0});
+    public double getLeft_kP() {
+        return SmartDashboard.getNumber("Left kP", 0);
     }
+    public double getLeft_kI() {
+        return SmartDashboard.getNumber("Left kI", 0);
+    }
+    public double getLeft_kD() {
+        return SmartDashboard.getNumber("Left kD", 0);
+    }
+    public double getLeft_kF() {
+        return SmartDashboard.getNumber("Left kF", 0);
+    }
+
+
+
 
     // ----------------------- Speed Control ----------------------- //
     /**
@@ -377,6 +402,7 @@ public class DriveControl extends Subsystem {
         // Get elevator height %
         double pHeight = Robot.elevator.getHeight() / Elevator.maxTicks;
         // If our height is negative
+        System.out.println(pHeight);
         if (pHeight < 0) {
             // Run normal arcade drive
             arcadeJoystickInputs();
@@ -396,6 +422,7 @@ public class DriveControl extends Subsystem {
 
         // Requested change in voltage
         double difference = 12 * speed - voltage;
+
         // dV is the max change if dV < |the requested change| just set to requested voltage
         if (Math.abs(difference) < dV) {
             voltage = 12 * speed;
@@ -409,7 +436,7 @@ public class DriveControl extends Subsystem {
         }
 
         // Update voltage
-        SmartDashboard.putNumber("Last voltage", voltage);
+        SmartDashboard.putNumber("Voltage", voltage);
 
         // Drive
         rawArcadeDrive(voltage / maxVoltage, turn);

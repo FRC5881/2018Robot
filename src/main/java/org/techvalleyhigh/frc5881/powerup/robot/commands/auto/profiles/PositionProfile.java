@@ -16,8 +16,11 @@ public class PositionProfile extends Command {
     private double[] leftPoints;
     private double[] rightPoints;
     private int current;
+    private int timeOut = 0;
 
-    private static final int target = 30;
+
+    private static final int target = 100;
+
 
     public PositionProfile(Autonomous auto) {
         System.out.println("Position Profile Constructing...");
@@ -46,8 +49,8 @@ public class PositionProfile extends Command {
         Trajectory rightTrajectory = modifier.getRightTrajectory();
 
         // Load trajectories into arrays
-        leftPoints = MotionUtil.positions(leftTrajectory);
-        rightPoints = MotionUtil.positions(rightTrajectory);
+        leftPoints = MotionUtil.positions(leftTrajectory, 10);
+        rightPoints = MotionUtil.positions(rightTrajectory, 10);
 
         System.out.println("Set points found " + leftPoints.length);
     }
@@ -61,6 +64,9 @@ public class PositionProfile extends Command {
         RobotMap.driveFrontLeft.set(ControlMode.Position, 0);
         RobotMap.driveFrontRight.set(ControlMode.Position, 0);
 
+        RobotMap.driveFrontLeft.configAllowableClosedloopError(0,0, 10);
+        RobotMap.driveFrontRight.configAllowableClosedloopError(0,0, 10);
+
         Robot.driveControl.initPID();
     }
 
@@ -68,21 +74,44 @@ public class PositionProfile extends Command {
     protected void execute() {
         // If we have more points to run
         if (current < leftPoints.length) {
-            // Put targets on dashboard for debug purposes
-            SmartDashboard.putNumber("left target", leftPoints[current]);
-            SmartDashboard.putNumber("right target", rightPoints[current]);
-
             // Feet to travel = Wheel circumference * rotations
             // 1 Rotation = 1440 Ticks
-            // 1 foot = 2 * PI * Wheel radius (feet) * 1440 Ticks
-            RobotMap.driveFrontLeft.set(ControlMode.Position, leftPoints[current] * 2 * Math.PI * 0.5 * 1440);
-            RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 2 * Math.PI * 0.5 * 1440);
+            // 1 foot = 2 * PI * Wheel radius (feet) * 1440 ticks
+            // 1 foot = 2 * PI (1/4) * 1440 ticks
+            // 1 foot = PI/2 * 1440 ticks ticks
 
-            // Only continue if we're on target
-            if (RobotMap.driveFrontLeft.getClosedLoopError(0) < target && RobotMap.driveFrontRight.getClosedLoopError(0) < target) {
+            RobotMap.driveFrontLeft.set(ControlMode.Position, 0);
+
+            // TODO: uncomment
+            //RobotMap.driveFrontLeft.set(ControlMode.Position, rightPoints[current] * 1440 / (Math.PI/2));
+            RobotMap.driveFrontRight.set(ControlMode.Position, rightPoints[current] * 1440 / (Math.PI/2));
+
+            // Only continue if we're on target or we've been stationary too long
+            if (timeOut > 100 || onTarget()) {
+                clearError();
                 current++;
+
+                timeOut = 0;
+            } else {
+                timeOut++;
             }
         }
+    }
+
+    /**
+     * Sets the encoder position to the target points, effectively clearing the error
+     */
+    private void clearError() {
+        RobotMap.driveFrontRight.setSelectedSensorPosition(0, (int) rightPoints[current], 10);
+        RobotMap.driveFrontLeft.setSelectedSensorPosition(0, (int) leftPoints[current], 10);
+    }
+
+    /**
+     * Returns true if left & right error are less than the target
+     */
+    public boolean onTarget() {
+        return Math.abs(RobotMap.driveFrontLeft.getClosedLoopError(0)) < target
+                && Math.abs(RobotMap.driveFrontRight.getClosedLoopError(0)) < target;
     }
 
     @Override
