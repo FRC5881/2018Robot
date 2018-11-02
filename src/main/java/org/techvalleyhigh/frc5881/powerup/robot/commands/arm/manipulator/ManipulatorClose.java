@@ -45,7 +45,7 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void execute() {
-        if (doneWaiting()) Robot.manipulator.openGrabbers();
+        if (doneWaiting()) Robot.manipulator.closeGrabbers();
     }
 
     /**

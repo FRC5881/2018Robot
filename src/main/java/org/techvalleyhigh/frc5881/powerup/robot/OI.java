@@ -3,7 +3,9 @@ package org.techvalleyhigh.frc5881.powerup.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorFlip;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.RatchetDisable;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet.RatchetEnable;
@@ -61,7 +63,9 @@ public class OI {
         driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
         // Controls cube manipulator closing / opening
-        driveControllerButtonA.whenPressed(new ManipulatorFlip());
+        driveControllerButtonA.whenPressed(new ManipulatorOpen());
+        driveControllerButtonB.whenPressed(new ManipulatorClose());
+        driveControllerButtonY.whenPressed(new ManipulatorFlip());
 
         // Controls elevator ratchet
         driveControllerBackButton.whenPressed(new RatchetEnable());

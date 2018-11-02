@@ -35,10 +35,12 @@ public class ElevatorDrive extends Command {
     protected void initialize() {
         System.out.println("Initializing elevator command");
 
-        //Robot.elevator.setFloor();
-
         // Init lastpoint
         lastpoint = RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0);
+
+        // Tell the elevator to target it's current position (prevents jumping at the start of tele-op
+        Robot.elevator.setSetpoint(Robot.elevator.getHeight());
+
         resetTimeouts();
     }
 

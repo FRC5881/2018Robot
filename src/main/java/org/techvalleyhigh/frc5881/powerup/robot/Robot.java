@@ -1,22 +1,17 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
-import edu.wpi.cscore.VideoCamera;
-import edu.wpi.cscore.VideoSource;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
-import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
@@ -27,9 +22,6 @@ public class Robot extends TimedRobot {
     public static Elevator elevator;
     public static Ratchet ratchet;
 
-    public static final String ADDRESS = "10.58.81.11";
-    public static final int port = 8080;
-
     // Define drive commands
     public static ElevatorDrive elevatorCommand;
     public static ArmDrive armCommand;
@@ -38,7 +30,6 @@ public class Robot extends TimedRobot {
     // Choosers
     public static SendableChooser<Command> driveChooser;
     public static SendableChooser<AutonomousCommand.ProfileMode> profileChooser;
-    public static SendableChooser<AutonomousCommand.TestMode> testChooser;
 
     // Define auto code
     public static Command autonomousCommand;
@@ -81,10 +72,8 @@ public class Robot extends TimedRobot {
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
         driveChooser.addDefault("Ramped Arcade Drive", new RampedArcade());
-        driveChooser.addObject("Assisted Drive", new AssistedDrive());
         driveChooser.addObject("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
-        driveChooser.addObject("Velocity Tank", new VelocityTank());
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
 
         // Profile Control Selection
@@ -94,19 +83,7 @@ public class Robot extends TimedRobot {
         profileChooser.addObject("Position Profile", AutonomousCommand.ProfileMode.POSITION);
         SmartDashboard.putData("Auto Profile Selection", profileChooser);
 
-        testChooser = new SendableChooser<>();
-        testChooser.addDefault("NONE", AutonomousCommand.TestMode.NONE);
-        testChooser.addObject("Velocity", AutonomousCommand.TestMode.VELOCITY);
-        SmartDashboard.putData("Test Selection", testChooser);
-
-
         CameraServer.getInstance().startAutomaticCapture();
-
-        /*
-        NetworkTableInstance.getDefault()
-                .getEntry("/CameraPublisher/NVIDIACAMERA/streams")
-                .setStringArray(new String[]{"mjpeg:http://" + ADDRESS + ":" + port + "/cam.mjpg"});
-        */
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -162,8 +139,7 @@ public class Robot extends TimedRobot {
         RobotMap.driveFrontLeft.pidWrite(0);
 
         // Start Autonomous Command
-        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)
-                || testChooser.getSelected() != AutonomousCommand.TestMode.NONE) {
+        if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
             AutonomousCommand autonomousCommand =
                     new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
             autonomousCommand.start();
@@ -262,10 +238,10 @@ public class Robot extends TimedRobot {
      * Update the current sensors to the SmartDashboard used for debugging
      */
     private void updateSensors() {
-        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Left velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("Right velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
+        //SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
+        //SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+        //SmartDashboard.putNumber("Left velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
+        //SmartDashboard.putNumber("Right velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("Front left voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
         SmartDashboard.putNumber("Front right voltage", RobotMap.driveFrontRight.getMotorOutputVoltage());
 
@@ -279,6 +255,5 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Arm error", arm.getError());
         SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
-
     }
 }

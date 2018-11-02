@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
-import org.techvalleyhigh.frc5881.powerup.robot.RobotMap;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
@@ -14,7 +13,6 @@ import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.EasyAuto;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile.MotionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.PositionProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.VelocityProfile;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.tuning.VelocityTest;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
@@ -39,125 +37,119 @@ public class AutonomousCommand extends CommandGroup {
      * @param timeToWait milliseconds to wait before running the commands
      */
     public AutonomousCommand(ArrayList<Integer> chosen, long timeToWait) {
-        if (Robot.testChooser.getSelected() == TestMode.VELOCITY) {
-            addSequential(new VelocityTest(RobotMap.driveFrontLeft, 175, 2.0));
+        // Add all the autonomous paths into one big Map
+        this.autos = TrajectoryUtil.getAutos();
 
+        // Keep track if we find an auto routine so if we don't we'll default to crossing the auto line
+        boolean found = false;
+
+        // Track how long it takes to get match data
+        long start = System.currentTimeMillis();
+
+        // Wait for match data or until time passed
+        while (!hasData() && System.currentTimeMillis() - start > matchDataTime) {
+            // Do nothing we are just waiting
+        }
+
+        if (hasData()) {
+            // Tell the drive team how long it took to get match data
+            System.out.format("It took %d milliseconds to get match data\n", System.currentTimeMillis() - start);
         } else {
-            // Add all the autonomous paths into one big Map
-            this.autos = TrajectoryUtil.getAutos();
+            System.out.println("We didn't get match data in under 2 seconds!!!");
+        }
 
-            // Keep track if we find an auto routine so if we don't we'll default to crossing the auto line
-            boolean found = false;
+        // Wait for our time to wait has expired
+        while (System.currentTimeMillis() - start < timeToWait) {
+            // Do nothing we are just waiting
+        }
 
-            // Track how long it takes to get match data
-            long start = System.currentTimeMillis();
+        // Tell the drive team how long the robot waited to start (they should already have this information)
+        System.out.format("It took %d milliseconds to start autonomous\n", System.currentTimeMillis() - start);
 
-            // Wait for match data or until time passed
-            while (!hasData() && System.currentTimeMillis() - start > matchDataTime) {
-                // Do nothing we are just waiting
-            }
+        // If we have the data continue as normal
+        if (hasData()) {
+            // Let the Smart dashboard know that we got match data in time
+            SmartDashboard.putBoolean("Match Data", true);
 
-            if (hasData()) {
-                // Tell the drive team how long it took to get match data
-                System.out.format("It took %d milliseconds to get match data\n", System.currentTimeMillis() - start);
-            } else {
-                System.out.println("We didn't get match data in under 2 seconds!!!");
-            }
+            // Filter and choose auto
+            for (Integer i : chosen) {
+                // Auto code 666 skips all checks and run auto line
+                if (i == 667) {
+                    // Move the Elevator to switchTicks
+                    addSequential(new SetElevator(Elevator.switchTicks, 0));
 
-            // Wait for our time to wait has expired
-            while (System.currentTimeMillis() - start < timeToWait) {
-                // Do nothing we are just waiting
-            }
+                    autoline();
+                    if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.LEFT) {
+                        // Move the arm into scoring area
+                        addSequential(new SetArm(800, 0));
 
-            // Tell the drive team how long the robot waited to start (they should already have this information)
-            System.out.format("It took %d milliseconds to start autonomous\n", System.currentTimeMillis() - start);
-
-            // If we have the data continue as normal
-            if (hasData()) {
-                // Let the Smart dashboard know that we got match data in time
-                SmartDashboard.putBoolean("Match Data", true);
-
-                // Filter and choose auto
-                for (Integer i : chosen) {
-                    // Auto code 666 skips all checks and run auto line
-                    if (i == 667) {
-                        // Move the Elevator to switchTicks
-                        addSequential(new SetElevator(Elevator.switchTicks, 0));
-
-                        autoline();
-                        if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.LEFT) {
-                            // Move the arm into scoring area
-                            addSequential(new SetArm(800, 0));
-
-                            // Drop the cube
-                            addSequential(new ManipulatorOpen(1));
-                        }
-                        break;
-                    } else if (i == 668) {
-                        addSequential(new SetElevator(Elevator.switchTicks, 0));
-
-                        autoline();
-                        if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.RIGHT) {
-                            // Move the arm into scoring area
-                            addSequential(new SetArm(800, 0));
-
-                            // Drop the cube
-                            addSequential(new ManipulatorOpen(1));
-                        }
-                        break;
-                    } else if (i == 666) {
-                        addSequential(new SetElevator(Elevator.switchTicks, 0));
-
-                        autoline();
-                        break;
+                        // Drop the cube
+                        addSequential(new ManipulatorOpen(3));
                     }
+                    break;
+                } else if (i == 668) {
+                    addSequential(new ManipulatorClose());
+                    addSequential(new SetElevator(Elevator.switchTicks, 0));
 
-                    Autonomous auto = autos.get(i);
-                    System.out.println("Check auto: " + i);
+                    autoline();
+                    if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.RIGHT) {
+                        // Move the arm into scoring area
+                        addSequential(new SetArm(800, 0));
 
-                    // If statement checks to see it the MatchData's "owned side"
-                    // is the same as the Autonomous command's copy of "owned side"
-
-                    // Set feature to null to tell the bot to overwrite normal checks and run that specific auto
-                    // Used for routines such as crossing the auto line
-                    if (auto.getFeature() == null) {
-                        System.out.println("Overwriting auto choosing");
-                        System.out.println("Added Auto " + i);
-                        addSequential(profile(auto));
-                        found = true;
-                        break;
+                        // Drop the cube
+                        addSequential(new ManipulatorOpen(3));
                     }
+                    break;
+                } else if (i == 666) {
+                    addSequential(new SetElevator(Elevator.switchTicks, 0));
 
-                    // Check that the feature's owned side is the same as auto
-                    System.out.println("Auto feature " + MatchData.getOwnedSide(auto.getFeature()));
-                    if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
-                        System.out.println("Added Auto " + i);
-
-                        //addSequential(new MotionProfile(auto));
-
-                        // Score a cube with chosen auto
-                        score(auto);
-
-                        // Let the record know that we found an autonomous routine and don't default to the outline
-                        found = true;
-                        break;
-                    }
+                    autoline();
+                    break;
                 }
 
-                // If we don't find a routine default to crossing the auto line
-                if (!found) {
-                    // Add auto line command
-                    //autoline();
+                Autonomous auto = autos.get(i);
+                System.out.println("Check auto: " + i);
+
+                // If statement checks to see it the MatchData's "owned side"
+                // is the same as the Autonomous command's copy of "owned side"
+
+                // Set feature to null to tell the bot to overwrite normal checks and run that specific auto
+                // Used for routines such as crossing the auto line
+                if (auto.getFeature() == null) {
+                    System.out.println("Overwriting auto choosing");
+                    System.out.println("Added Auto " + i);
+                    addSequential(profile(auto));
+                    found = true;
+                    break;
                 }
 
-            // If we don't get the data in time flip out and just run the auto line
-            } else {
-                System.out.println("Defaulting to auto line");
-                SmartDashboard.putBoolean("Match Data", false);
+                // Check that the feature's owned side is the same as auto
+                System.out.println("Auto feature " + MatchData.getOwnedSide(auto.getFeature()));
+                if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
+                    System.out.println("Added Auto " + i);
 
-                // Default to auto line
+                    // Score a cube with chosen auto
+                    score(auto);
+
+                    // Let the record know that we found an autonomous routine and don't default to the outline
+                    found = true;
+                    break;
+                }
+            }
+
+            // If we don't find a usable routine default to crossing the auto line
+            if (!found) {
+                // Add auto line command
                 autoline();
             }
+
+        // If we don't get the data in time flip out and just run the auto line
+        } else {
+            System.out.println("Defaulting to auto line");
+            SmartDashboard.putBoolean("Match Data", false);
+
+            // Default to auto line
+            autoline();
         }
     }
 
@@ -193,9 +185,6 @@ public class AutonomousCommand extends CommandGroup {
      * Just cross the auto line
      */
     private void autoline() {
-        // We should also grab the cube
-        addSequential(new ManipulatorClose());
-
         addSequential(new EasyAuto(6, 3));
     }
 

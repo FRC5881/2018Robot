@@ -44,6 +44,8 @@ public class EasyAuto extends Command {
      * @return boolean false if time hasn't expired
      */
     private boolean isDone() {
+        System.out.println(System.currentTimeMillis() - startTime);
+
         return System.currentTimeMillis() - startTime > time;
     }
 
@@ -61,6 +63,7 @@ public class EasyAuto extends Command {
      */
     @Override
     protected void end() {
+        Robot.driveControl.stopDrive();
         System.out.println("Easy Auto Finished");
     }
 
