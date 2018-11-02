@@ -26,7 +26,7 @@ public class SetArm extends Command {
         requires(Robot.arm);
 
         this.setpoint = setpoint;
-        this.timeToWait = timeToWait;
+        this.timeToWait = timeToWait * 1000;
     }
 
     /**

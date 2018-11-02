@@ -86,7 +86,7 @@ public class Elevator extends Subsystem {
         SmartDashboard.putNumber("Elevator kF", 0.076);
 
         // Ticks elevator setpoint can change per 20 milliseconds
-        SmartDashboard.putNumber("Elevator Speed", 300);
+        SmartDashboard.putNumber("Elevator Speed", 150);
 
         // Allowed error for PID control
         SmartDashboard.putNumber("Elevator Allowed Error", 50);
@@ -256,7 +256,7 @@ public class Elevator extends Subsystem {
     }
 
     public double getElevatorSpeed() {
-        return SmartDashboard.getNumber("Elevator Speed", 100);
+        return SmartDashboard.getNumber("Elevator Speed", 150);
     }
 
     public int getAllowedError() {

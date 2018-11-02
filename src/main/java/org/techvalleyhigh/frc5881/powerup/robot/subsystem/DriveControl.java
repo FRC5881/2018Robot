@@ -123,11 +123,12 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber(AUTO_TURN_SPEED, 0.75);
 
         // Joystick sensitivities
-        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, -0.80);
+        SmartDashboard.putNumber(X_AXIS_SENSITIVITY, 0.80);
         SmartDashboard.putNumber(Y_AXIS_SENSITIVITY, -1.0);
 
 
         // --- Pid controls --- //
+        /*
         SmartDashboard.putNumber("Left kP", 1.6);
         SmartDashboard.putNumber("Left kI", 0.0);
         SmartDashboard.putNumber("Left kD", 0.0);
@@ -137,15 +138,14 @@ public class DriveControl extends Subsystem {
         SmartDashboard.putNumber("Right kI", 0.0);
         SmartDashboard.putNumber("Right kD", 0.0);
         SmartDashboard.putNumber("Right kF", 0.0);
+        */
 
         // Gyrp PIDf
         SmartDashboard.putNumberArray("Gyro PIDf", new double[]{0.057, 0.000000001, 0.14, 0.0});
 
         // Speed control
-        SmartDashboard.putNumber("Speed A1", 0.1);
-        SmartDashboard.putNumber("Speed A2", 0.1);
-        SmartDashboard.putNumber("Speed B1", 0.1);
-        SmartDashboard.putNumber("Speed B2", 0.1);
+        SmartDashboard.putNumber("Speed A1", 12);
+        SmartDashboard.putNumber("Speed A2", 8);
     }
 
     /**
@@ -401,8 +401,8 @@ public class DriveControl extends Subsystem {
 
         // Get elevator height %
         double pHeight = Robot.elevator.getHeight() / Elevator.maxTicks;
+
         // If our height is negative
-        System.out.println(pHeight);
         if (pHeight < 0) {
             // Run normal arcade drive
             arcadeJoystickInputs();
@@ -411,14 +411,16 @@ public class DriveControl extends Subsystem {
 
         // Initialize Maximum Change in voltage
         double dV;
-        // We have different ramps based on wanted direction
-        if (speed >= 0) {
-            // dV = a1 * (1 - (1 - a2/a1)*x^2)
-            dV = getA1() * (1 - (1 - getA2()/getA1()) * pHeight * pHeight);
-        } else {
-            // dV = b1 * (1 - (1 - b2/b1)*x^2)
-            dV = getB1() * (1 - (1 - getB2()/getB1()) * pHeight * pHeight);
-        }
+
+        // We have the same ramping no matter the direction
+        // Create frowning parabola passing through (0% Height, A1 Volts) and (100% Height, A2 Volts)
+        dV = getA1() * (1 - (1 - getA2()/getA1()) * pHeight * pHeight);
+
+        // Slow down turn rate linearly to elevator height
+        turn *= (1.4 - pHeight);
+
+        // Cap turn rate to XAxisSensitivity
+        turn = Math.min(turn, getXAxisSensitivity());
 
         // Requested change in voltage
         double difference = 12 * speed - voltage;
@@ -427,7 +429,7 @@ public class DriveControl extends Subsystem {
         if (Math.abs(difference) < dV) {
             voltage = 12 * speed;
         } else {
-            // If speed is position
+            // Add voltage to accelerate forward, decrease voltage to accelerate backwards
             if (difference >= 0) {
                 voltage += dV;
             } else {
@@ -460,22 +462,12 @@ public class DriveControl extends Subsystem {
 
     // Change in voltage per second when elevator is down going forward
     public double getA1() {
-        return SmartDashboard.getNumber("Speed A1", 0) / 50.0;
+        return SmartDashboard.getNumber("Speed A1", 12) / 50.0;
     }
 
     // Change in voltage per second when elevator is up going forward
     public double getA2() {
-        return SmartDashboard.getNumber("Speed A2", 0) / 50.0;
-    }
-
-    // Change in voltage per second when elevator is down going backwards
-    public double getB1() {
-        return SmartDashboard.getNumber("Speed B1", 0) / 50.0;
-    }
-
-    // Change in voltage per second when elevator is up going backwards
-    public double getB2() {
-        return SmartDashboard.getNumber("Speed B2", 0) / 50.0;
+        return SmartDashboard.getNumber("Speed A2", 8) / 50.0;
     }
 
     public void assistedDrive() {

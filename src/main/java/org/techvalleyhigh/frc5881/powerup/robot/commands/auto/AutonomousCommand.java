@@ -79,6 +79,39 @@ public class AutonomousCommand extends CommandGroup {
 
                 // Filter and choose auto
                 for (Integer i : chosen) {
+                    // Auto code 666 skips all checks and run auto line
+                    if (i == 667) {
+                        // Move the Elevator to switchTicks
+                        addSequential(new SetElevator(Elevator.switchTicks, 0));
+
+                        autoline();
+                        if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.LEFT) {
+                            // Move the arm into scoring area
+                            addSequential(new SetArm(800, 0));
+
+                            // Drop the cube
+                            addSequential(new ManipulatorOpen(1));
+                        }
+                        break;
+                    } else if (i == 668) {
+                        addSequential(new SetElevator(Elevator.switchTicks, 0));
+
+                        autoline();
+                        if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.RIGHT) {
+                            // Move the arm into scoring area
+                            addSequential(new SetArm(800, 0));
+
+                            // Drop the cube
+                            addSequential(new ManipulatorOpen(1));
+                        }
+                        break;
+                    } else if (i == 666) {
+                        addSequential(new SetElevator(Elevator.switchTicks, 0));
+
+                        autoline();
+                        break;
+                    }
+
                     Autonomous auto = autos.get(i);
                     System.out.println("Check auto: " + i);
 
@@ -113,8 +146,8 @@ public class AutonomousCommand extends CommandGroup {
 
                 // If we don't find a routine default to crossing the auto line
                 if (!found) {
-                    // Add auto 100 (auto line)
-                    autoline();
+                    // Add auto line command
+                    //autoline();
                 }
 
             // If we don't get the data in time flip out and just run the auto line
@@ -160,7 +193,10 @@ public class AutonomousCommand extends CommandGroup {
      * Just cross the auto line
      */
     private void autoline() {
-        addSequential(new EasyAuto(6, 5));
+        // We should also grab the cube
+        addSequential(new ManipulatorClose());
+
+        addSequential(new EasyAuto(6, 3));
     }
 
 

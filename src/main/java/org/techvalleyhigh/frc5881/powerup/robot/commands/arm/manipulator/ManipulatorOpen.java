@@ -3,8 +3,35 @@ package org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator;
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
+/**
+ * Opens the manipulator
+ */
 public class ManipulatorOpen extends Command {
+    /**
+     * Milliseconds to wait before sending the okay to move the arm
+     */
+    private long timeToWait;
+
+    /**
+     * The current time when the command was called
+     */
+    private long startTime;
+
+    /**
+     * Create command with zero timeToWait
+     */
     public ManipulatorOpen() {
+        this(0);
+    }
+
+    /**
+     * Create command with chosen timeToWait
+     * @param timeToWait seconds to wait
+     */
+    public ManipulatorOpen(long timeToWait) {
+        this.timeToWait = timeToWait * 1000;
+        this.startTime = System.currentTimeMillis();
+
         requires(Robot.manipulator);
     }
 
@@ -13,6 +40,7 @@ public class ManipulatorOpen extends Command {
      */
     @Override
     protected void initialize() {
+        System.out.println("ManipulatorOpen command initialized... Waiting " + timeToWait/1000.0 + " seconds");
     }
 
     /**
@@ -20,7 +48,14 @@ public class ManipulatorOpen extends Command {
      */
     @Override
     protected void execute() {
-        Robot.manipulator.openGrabbers();
+        if (doneWaiting()) Robot.manipulator.openGrabbers();
+    }
+
+    /**
+     *  Check if we've waited enough time before opening
+     */
+    private boolean doneWaiting() {
+        return System.currentTimeMillis() - startTime >= timeToWait;
     }
 
     /**
@@ -29,7 +64,7 @@ public class ManipulatorOpen extends Command {
      */
     @Override
     protected boolean isFinished() {
-        return true;
+        return doneWaiting();
     }
 
     /**
@@ -37,7 +72,7 @@ public class ManipulatorOpen extends Command {
      */
     @Override
     protected void end() {
-        //Robot.manipulator.stop();
+        System.out.println("Manipulator Opened");
     }
 
     /**

@@ -27,9 +27,8 @@ public class OI {
     // Joysticks
     public static final int XBOX_LEFT_Y_AXIS = 1;
     public static final int XBOX_LEFT_X_AXIS = 0;
-    // TODO: Trigger warning (check if triggers are correct)
-    public static final int XBOX_LEFT_TRIGGER = 2;
-    public static final int XBOX_RIGHT_TRIGGER = 3;
+    public static final int XBOX_LEFT_TRIGGER = 3;
+    public static final int XBOX_RIGHT_TRIGGER = 2;
     public static final int XBOX_RIGHT_Y_AXIS = 5;
     public static final int XBOX_RIGHT_X_AXIS = 4;
 

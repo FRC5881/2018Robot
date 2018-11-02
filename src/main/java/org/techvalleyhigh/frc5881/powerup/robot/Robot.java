@@ -1,5 +1,7 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
+import edu.wpi.cscore.VideoCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -97,16 +99,14 @@ public class Robot extends TimedRobot {
         testChooser.addObject("Velocity", AutonomousCommand.TestMode.VELOCITY);
         SmartDashboard.putData("Test Selection", testChooser);
 
-        /*
-        // TODO: Test camera server
-        CameraServer test = CameraServer.getInstance();
-        test.addServer("http://" + ADDRESS + ":" + port + "/cam.mjpg");
-        */
 
+        CameraServer.getInstance().startAutomaticCapture();
+
+        /*
         NetworkTableInstance.getDefault()
                 .getEntry("/CameraPublisher/NVIDIACAMERA/streams")
                 .setStringArray(new String[]{"mjpeg:http://" + ADDRESS + ":" + port + "/cam.mjpg"});
-
+        */
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -268,9 +268,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Right velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("Front left voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
         SmartDashboard.putNumber("Front right voltage", RobotMap.driveFrontRight.getMotorOutputVoltage());
-        /*
-        SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
-        SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
 
         SmartDashboard.putBoolean("Ratchet enabled", ratchet.getRatchetEnabled());
         SmartDashboard.putBoolean("Grabber enabled", manipulator.getGrabberEnabled());
@@ -282,6 +279,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Arm error", arm.getError());
         SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
-        */
+
     }
 }

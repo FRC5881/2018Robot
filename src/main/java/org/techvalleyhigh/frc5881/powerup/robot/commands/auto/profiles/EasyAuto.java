@@ -35,7 +35,7 @@ public class EasyAuto extends Command {
     @Override
     protected void execute() {
         if (!isDone()) {
-            Robot.driveControl.rawTankDrive(volts /12.0, volts /12.0);
+            Robot.driveControl.rawArcadeDrive(volts/12, 0);
         }
     }
 
@@ -62,7 +62,6 @@ public class EasyAuto extends Command {
     @Override
     protected void end() {
         System.out.println("Easy Auto Finished");
-        Robot.driveControl.stopDrive();
     }
 
     /**
