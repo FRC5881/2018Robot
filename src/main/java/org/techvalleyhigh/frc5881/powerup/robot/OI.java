@@ -63,9 +63,7 @@ public class OI {
         driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 
         // Controls cube manipulator closing / opening
-        driveControllerButtonA.whenPressed(new ManipulatorOpen());
-        driveControllerButtonB.whenPressed(new ManipulatorClose());
-        driveControllerButtonY.whenPressed(new ManipulatorFlip());
+        driveControllerButtonA.whenPressed(new ManipulatorFlip());
 
         // Controls elevator ratchet
         driveControllerBackButton.whenPressed(new RatchetEnable());

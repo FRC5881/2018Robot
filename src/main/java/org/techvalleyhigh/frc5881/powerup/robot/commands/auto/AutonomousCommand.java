@@ -86,7 +86,7 @@ public class AutonomousCommand extends CommandGroup {
                         // Drop the cube
                         addSequential(new ManipulatorOpen(3));
                     }
-                    break;
+                    return;
                 } else if (i == 668) {
                     addSequential(new ManipulatorClose());
                     addSequential(new SetElevator(Elevator.switchTicks, 0));
@@ -99,50 +99,14 @@ public class AutonomousCommand extends CommandGroup {
                         // Drop the cube
                         addSequential(new ManipulatorOpen(3));
                     }
-                    break;
+                    return;
                 } else if (i == 666) {
                     addSequential(new SetElevator(Elevator.switchTicks, 0));
 
                     autoline();
-                    break;
-                }
-
-                Autonomous auto = autos.get(i);
-                System.out.println("Check auto: " + i);
-
-                // If statement checks to see it the MatchData's "owned side"
-                // is the same as the Autonomous command's copy of "owned side"
-
-                // Set feature to null to tell the bot to overwrite normal checks and run that specific auto
-                // Used for routines such as crossing the auto line
-                if (auto.getFeature() == null) {
-                    System.out.println("Overwriting auto choosing");
-                    System.out.println("Added Auto " + i);
-                    addSequential(profile(auto));
-                    found = true;
-                    break;
-                }
-
-                // Check that the feature's owned side is the same as auto
-                System.out.println("Auto feature " + MatchData.getOwnedSide(auto.getFeature()));
-                if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
-                    System.out.println("Added Auto " + i);
-
-                    // Score a cube with chosen auto
-                    score(auto);
-
-                    // Let the record know that we found an autonomous routine and don't default to the outline
-                    found = true;
-                    break;
+                    return;
                 }
             }
-
-            // If we don't find a usable routine default to crossing the auto line
-            if (!found) {
-                // Add auto line command
-                autoline();
-            }
-
         // If we don't get the data in time flip out and just run the auto line
         } else {
             System.out.println("Defaulting to auto line");
@@ -185,7 +149,7 @@ public class AutonomousCommand extends CommandGroup {
      * Just cross the auto line
      */
     private void autoline() {
-        addSequential(new EasyAuto(6, 3));
+        addSequential(new EasyAuto(6, SmartDashboard.getNumber("Auto Time", 0)));
     }
 
 
@@ -221,13 +185,5 @@ public class AutonomousCommand extends CommandGroup {
         } else {
             return new MotionProfile(auto);
         }
-    }
-
-    /**
-     * Enum for supporting different test modes
-     */
-    public enum TestMode {
-        NONE,
-        VELOCITY
     }
 }

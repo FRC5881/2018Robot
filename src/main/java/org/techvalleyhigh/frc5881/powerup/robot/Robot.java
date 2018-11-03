@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
     // Define auto code
     public static Command autonomousCommand;
 
+
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -68,6 +69,7 @@ public class Robot extends TimedRobot {
         // Add Auto commands to the smart dashboard
         SmartDashboard.putString("Possible Paths", "None");
         SmartDashboard.putNumber("Seconds to wait", 0);
+        SmartDashboard.putNumber("Auto Time", 3);
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
