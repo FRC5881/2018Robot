@@ -1,25 +1,17 @@
 package org.techvalleyhigh.frc5881.powerup.robot;
 
-import com.ctre.phoenix.motion.MotionProfileStatus;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
-import openrio.powerup.MatchData;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.ArmDrive;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Straight;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.drive.*;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ElevatorDrive;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.*;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.AutonomousCommand;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.AutonomousDecoder;
-
-import java.util.Set;
 
 public class Robot extends TimedRobot {
     // Define OI and subsystems
@@ -30,17 +22,18 @@ public class Robot extends TimedRobot {
     public static Elevator elevator;
     public static Ratchet ratchet;
 
-    public static final String ADDRESS = "10.58.81.11";
-    public static final int port = 8080;
-
     // Define drive commands
     public static ElevatorDrive elevatorCommand;
     public static ArmDrive armCommand;
     public static Command driveCommand;
+
+    // Choosers
     public static SendableChooser<Command> driveChooser;
+    public static SendableChooser<AutonomousCommand.ProfileMode> profileChooser;
 
     // Define auto code
     public static Command autonomousCommand;
+
 
     /**
      * This function is run when the robot is first started up and should be
@@ -76,22 +69,23 @@ public class Robot extends TimedRobot {
         // Add Auto commands to the smart dashboard
         SmartDashboard.putString("Possible Paths", "None");
         SmartDashboard.putNumber("Seconds to wait", 0);
+        SmartDashboard.putNumber("Auto Time", 3);
 
         // Drive Control Selection
         driveChooser = new SendableChooser<>();
         driveChooser.addDefault("Ramped Arcade Drive", new RampedArcade());
         driveChooser.addObject("Arcade Drive", new ArcadeDrive());
         driveChooser.addObject("Tank Drive", new TankDrive());
-        driveChooser.addObject("Curvature Drive", new CurvatureDrive());
-        driveChooser.addObject("Arcaded PID drive", new ArcadedPID());
-
         SmartDashboard.putData("Drive Mode Selection", driveChooser);
-        SmartDashboard.putNumber("Turn", 0);
 
-        // Camera Server
-        NetworkTableInstance.getDefault()
-                .getEntry("/CameraPublisher/NVIDIACAMERA/streams")
-                .setStringArray(new String[]{"mjpeg:http://" + ADDRESS + ":" + port + "/cam.mjpg"});
+        // Profile Control Selection
+        profileChooser = new SendableChooser<>();
+        profileChooser.addDefault("Motion Profile", AutonomousCommand.ProfileMode.MOTION);
+        profileChooser.addObject("Velocity Profile", AutonomousCommand.ProfileMode.VELOCITY);
+        profileChooser.addObject("Position Profile", AutonomousCommand.ProfileMode.POSITION);
+        SmartDashboard.putData("Auto Profile Selection", profileChooser);
+
+        CameraServer.getInstance().startAutomaticCapture();
 
         SmartDashboard.putData(Scheduler.getInstance());
     }
@@ -110,9 +104,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledPeriodic() {
+        // Update sensors
         updateSensors();
 
-        // Provide info
+        // Provide info for autonomous
         String autoOptions = SmartDashboard.getString("Possible Paths", "None");
         Scheduler.getInstance().run();
 
@@ -127,35 +122,32 @@ public class Robot extends TimedRobot {
         // Make sure the motors are in the correct states
         RobotMap.initMotorState();
 
+        // Reset arm PID values
         arm.initPID();
 
-        //new Straight(12);
-
-        // Get autonomous selection data
+        // Get autonomous selection data from driver station
         String autoOptions = SmartDashboard.getString("Possible Paths", "None");
         double seconds = SmartDashboard.getNumber("Seconds to wait", 0);
         long timeToWait = Double.valueOf(seconds).longValue() * 1000;
 
+        // Initialize match data check
         SmartDashboard.putBoolean("Match Data", false);
 
-        // Clear trajectories and PID set point, not so much a problem for competition but necessary testing
+        // Clear trajectories and PID set point, not so much a problem for competition but very necessary testing
         RobotMap.driveFrontRight.clearMotionProfileTrajectories();
         RobotMap.driveFrontLeft.clearMotionProfileTrajectories();
 
         RobotMap.driveFrontRight.pidWrite(0);
         RobotMap.driveFrontLeft.pidWrite(0);
 
-        //autonomousCommand = new Turn(SmartDashboard.getNumber("Turn", 0));
-        //autonomousCommand.start();
-
         // Start Autonomous Command
         if (AutonomousDecoder.isValidIntRangeInput(autoOptions)) {
-            AutonomousCommand autonomousCommand = new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
+            AutonomousCommand autonomousCommand =
+                    new AutonomousCommand(AutonomousDecoder.getIntRanges(autoOptions), timeToWait);
             autonomousCommand.start();
         } else {
             System.err.println("YOU DIDN'T CHOOSE AN AUTO!!!!!");
         }
-
     }
 
     /**
@@ -164,6 +156,12 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         updateSensors();
+
+        // Put setpoints and errors on smartdashboard for testing
+        SmartDashboard.putNumber("Right setpoint", RobotMap.driveFrontRight.getClosedLoopTarget(0));
+        SmartDashboard.putNumber("Left setpoint", RobotMap.driveFrontLeft.getClosedLoopTarget(0));
+        SmartDashboard.putNumber("Right Error", RobotMap.driveFrontRight.getClosedLoopError(0));
+        SmartDashboard.putNumber("Left Error", RobotMap.driveFrontLeft.getClosedLoopError(0));
 
         Scheduler.getInstance().run();
     }
@@ -175,16 +173,12 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         RobotMap.initMotorState();
 
-        // Ends autonomous command
-
         // Starts elevator command
         if (elevatorCommand != null) {
             elevatorCommand.start();
-            // Get selected drive command and start it
         } else {
             System.err.println("teleopInit() failed to start elevator command due to null");
         }
-
 
         // Start arm command
         if (armCommand != null) {
@@ -243,69 +237,25 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * Update the current sensors to the SmartDashboard used for a lot of debugging
+     * Update the current sensors to the SmartDashboard used for debugging
      */
     private void updateSensors() {
-        // Since this method is called by the periodic we use it to make sure hte compressor stays on
-        RobotMap.compressor.setClosedLoopControl(true);
-
-        /*
-        MotionProfileStatus status = new MotionProfileStatus();
-        RobotMap.driveFrontLeft.getMotionProfileStatus(status);
-        System.out.println(status.);
-        */
-
-        SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Right Error", RobotMap.driveFrontRight.getClosedLoopError(0));
-        SmartDashboard.putNumber("Left Error", RobotMap.driveFrontLeft.getClosedLoopError(0));
-        SmartDashboard.putNumber("Left Target Velocity", RobotMap.driveFrontLeft.getActiveTrajectoryVelocity());
-        SmartDashboard.putNumber("Right Target Velocity", RobotMap.driveFrontRight.getActiveTrajectoryVelocity());
-        SmartDashboard.putNumber("Left Velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("Right Velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("Left output", RobotMap.driveFrontLeft.get());
-        SmartDashboard.putNumber("Right output", RobotMap.driveFrontRight.get());
-
-
-        SmartDashboard.putNumber("Velocity", driveControl.getVelocity());
-        SmartDashboard.putNumber("Speed output", driveControl.speedPIDOutput);
-        SmartDashboard.putNumber("Speed setpoint", driveControl.getSpeedSetpoint());
-        SmartDashboard.putNumber("Speed error", driveControl.getSpeedError());
-
-        SmartDashboard.putNumber("Gyro output", driveControl.gyroPIDOutput);
-        SmartDashboard.putNumber("Gyro setpoint", driveControl.getGyroSetpoint());
-        SmartDashboard.putNumber("Gyro error", driveControl.getGyroError());
+        //SmartDashboard.putNumber("Right encoder", RobotMap.driveFrontRight.getSelectedSensorPosition(0));
+        //SmartDashboard.putNumber("Left encoder", RobotMap.driveFrontLeft.getSelectedSensorPosition(0));
+        //SmartDashboard.putNumber("Left velocity", RobotMap.driveFrontLeft.getSelectedSensorVelocity(0));
+        //SmartDashboard.putNumber("Right velocity", RobotMap.driveFrontRight.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Front left voltage", RobotMap.driveFrontLeft.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Front right voltage", RobotMap.driveFrontRight.getMotorOutputVoltage());
 
         SmartDashboard.putBoolean("Ratchet enabled", ratchet.getRatchetEnabled());
         SmartDashboard.putBoolean("Grabber enabled", manipulator.getGrabberEnabled());
 
         SmartDashboard.putNumber("Elevator encoder", RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0));
-        //SmartDashboard.putNumber("Elevator setpoint", elevator.getSetpoint());
         SmartDashboard.putNumber("Elevator error", elevator.getError());
         SmartDashboard.putNumber("Elevator voltage", RobotMap.elevatorTalonMaster.getMotorOutputVoltage());
 
         SmartDashboard.putNumber("Arm encoder", RobotMap.armTalon.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Arm output", RobotMap.armTalon.getMotorOutputPercent());
-        //SmartDashboard.putNumber("Arm setpoint", arm.getSetpoint());
         SmartDashboard.putNumber("Arm error", arm.getError());
         SmartDashboard.putNumber("Arm voltage", RobotMap.armTalon.getMotorOutputVoltage());
-
-        MatchData();
-    }
-
-    /**
-     * Puts owned side position on the SmartDashboard
-     */
-    private void MatchData() {
-        /*
-        if (MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != MatchData.OwnedSide.UNKNOWN) {
-            SmartDashboard.putBoolean("Far Right", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_FAR) == MatchData.OwnedSide.RIGHT);
-            SmartDashboard.putBoolean("Far Left", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_FAR) == MatchData.OwnedSide.LEFT);
-            SmartDashboard.putBoolean("Scale Right", MatchData.getOwnedSide(MatchData.GameFeature.SCALE) == MatchData.OwnedSide.RIGHT);
-            SmartDashboard.putBoolean("Scale Left", MatchData.getOwnedSide(MatchData.GameFeature.SCALE) == MatchData.OwnedSide.LEFT);
-            SmartDashboard.putBoolean("Near Right", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.RIGHT);
-            SmartDashboard.putBoolean("Near Left", MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.LEFT);
-        }
-        */
     }
 }

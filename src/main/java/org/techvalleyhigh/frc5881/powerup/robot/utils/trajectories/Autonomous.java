@@ -5,7 +5,7 @@ import jaci.pathfinder.Waypoint;
 import openrio.powerup.MatchData;
 
 /**
- * Read only class stores all the useful data when it comes to storing an autonomous profile
+ * Simple class stores all the useful data when it comes to storing an autonomous profile
  */
 public class Autonomous {
     private final int autoNumber;
@@ -13,7 +13,7 @@ public class Autonomous {
     private final Trajectory.Config config;
     private final MatchData.GameFeature feature;
     private final MatchData.OwnedSide side;
-    private final long timeToWait;
+    private final long elevatorTimeToWait;
 
     /**
      * Stores a path, config and ending target to private variables
@@ -22,15 +22,15 @@ public class Autonomous {
      * @param config Trajectory.Config configs to be used while creating auto profile
      * @param feature Feature autonomous profile targets
      * @param side Side of feature we'd be scoring on
-     * @param timeToWait milliseconds to wait before sending the elevator and arm to position to score
+     * @param elevatorTimeToWait milliseconds to wait before sending the elevator and arm to position to score
      */
-    public Autonomous(int autoNumber, Waypoint[] path, Trajectory.Config config, MatchData.GameFeature feature, MatchData.OwnedSide side, long timeToWait) {
+    public Autonomous(int autoNumber, Waypoint[] path, Trajectory.Config config, MatchData.GameFeature feature, MatchData.OwnedSide side, long elevatorTimeToWait) {
         this.autoNumber = autoNumber;
         this.path = path;
         this.config = config;
         this.feature = feature;
         this.side = side;
-        this.timeToWait = timeToWait;
+        this.elevatorTimeToWait = elevatorTimeToWait;
     }
 
     /**
@@ -47,7 +47,7 @@ public class Autonomous {
         this.config = config;
         this.feature = feature;
         this.side = side;
-        this.timeToWait = 0;
+        this.elevatorTimeToWait = 0;
     }
 
     public int getAutoNumber() {
@@ -70,7 +70,7 @@ public class Autonomous {
         return side;
     }
 
-    public long getTimeToWait() {
-        return timeToWait;
+    public long getElevatorTimeToWait() {
+        return elevatorTimeToWait;
     }
 }

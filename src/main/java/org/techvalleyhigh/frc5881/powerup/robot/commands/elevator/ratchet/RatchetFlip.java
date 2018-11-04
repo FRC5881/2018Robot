@@ -1,11 +1,12 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.command.Command;
+import org.techvalleyhigh.frc5881.powerup.robot.OI;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class DisableRatchet extends Command {
-
-    public DisableRatchet(){
+public class RatchetFlip extends Command {
+    public RatchetFlip() {
         requires(Robot.ratchet);
     }
 
@@ -21,7 +22,16 @@ public class DisableRatchet extends Command {
      */
     @Override
     protected void execute() {
-        Robot.ratchet.disableRatchet();
+        if (Robot.ratchet.getRatchetEnabled()) {
+            Robot.ratchet.disableRatchet();
+            Robot.oi.driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+            Robot.oi.driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
+
+        } else {
+            Robot.ratchet.enableRatchet();
+            Robot.oi.driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+            Robot.oi.driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
+        }
     }
 
     /**
@@ -38,7 +48,6 @@ public class DisableRatchet extends Command {
      */
     @Override
     protected void end() {
-
     }
 
     /**

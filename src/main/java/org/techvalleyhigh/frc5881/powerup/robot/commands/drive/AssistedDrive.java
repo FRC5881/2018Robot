@@ -4,19 +4,18 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 /**
- * Use Speed and Gryo pids for driving the bot around, gives better control with accelerations / turning rates, etc.
+ * Uses the gyroscope to help drive straight
  */
-public class RampedArcade extends Command {
-    public RampedArcade() {
+public class AssistedDrive extends Command {
+    public AssistedDrive() {
         requires(Robot.driveControl);
     }
+
     /**
      * Called just before this Command runs the first time
      */
     @Override
     protected void initialize() {
-        // Clear the voltage on ramped drive, bad news if this is left on when we enable the robot
-        Robot.driveControl.voltage = 0;
     }
 
     /**
@@ -24,7 +23,7 @@ public class RampedArcade extends Command {
      */
     @Override
     protected void execute() {
-        Robot.driveControl.rampedArcade();
+        Robot.driveControl.assistedDrive();
     }
 
     /**

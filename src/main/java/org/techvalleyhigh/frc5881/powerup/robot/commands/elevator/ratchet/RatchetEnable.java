@@ -1,15 +1,15 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 /**
- * Implements curvatureDrive feature we're not so sure what it does
-
+ *
  */
-public class CurvatureDrive extends Command {
-    public CurvatureDrive() {
-        requires(Robot.driveControl);
+public class RatchetEnable extends Command {
+
+    public RatchetEnable() {
+        requires(Robot.ratchet);
     }
 
     /**
@@ -20,21 +20,20 @@ public class CurvatureDrive extends Command {
     }
 
     /**
-     * Called repeatedly when this Command is scheduled to run
+     * Called repeatedly when this Command is scheduled to run (just once)
      */
     @Override
     protected void execute() {
-        boolean isQuickTurn = Robot.oi.driveControllerButtonA.get();
-        Robot.driveControl.curvatureJoystickInputs(isQuickTurn);
+        Robot.ratchet.enableRatchet();
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * Since this is a drive command we never want it to end
+     * This is a pneumatic command so needs to end instantly
      */
     @Override
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     /**
@@ -42,8 +41,6 @@ public class CurvatureDrive extends Command {
      */
     @Override
     protected void end() {
-        System.out.println("Curvature Drive command ended... That shouldn't happen");
-        Robot.driveControl.stopDrive();
     }
 
     /**

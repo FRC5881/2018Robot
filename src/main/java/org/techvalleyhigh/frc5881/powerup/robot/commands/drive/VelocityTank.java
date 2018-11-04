@@ -1,12 +1,11 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-public class EnableRatchet extends Command {
-
-    public EnableRatchet() {
-        requires(Robot.ratchet);
+public class VelocityTank extends Command {
+    public VelocityTank() {
+        requires(Robot.driveControl);
     }
 
     /**
@@ -17,20 +16,20 @@ public class EnableRatchet extends Command {
     }
 
     /**
-     * Called repeatedly when this Command is scheduled to run (just once)
+     * Called repeatedly when this Command is scheduled to run
      */
     @Override
     protected void execute() {
-        Robot.ratchet.enableRatchet();
+        Robot.driveControl.velocityTankJoystickInputs();
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * This is a pneumatic command so needs to end instantly
+     * Since this is a drive command we never want it to end
      */
     @Override
     protected boolean isFinished() {
-        return true;
+        return false;
     }
 
     /**
@@ -38,6 +37,8 @@ public class EnableRatchet extends Command {
      */
     @Override
     protected void end() {
+        System.out.println("Arcade Drive command ended... That shouldn't happen");
+        Robot.driveControl.stopDrive();
     }
 
     /**

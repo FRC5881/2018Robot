@@ -1,5 +1,4 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.arm;
-// TODO: Get an arm
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
@@ -37,6 +36,9 @@ public class ArmDrive extends Command {
 
         // Init lastpoint
         lastpoint = 0;
+
+        // Prevent the arm from jumping to last enabled position
+        Robot.arm.setSetpoint(Robot.arm.getPosition());
         resetTimeouts();
     }
 

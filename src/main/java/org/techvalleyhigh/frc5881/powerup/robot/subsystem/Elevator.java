@@ -34,14 +34,18 @@ public class Elevator extends Subsystem {
     public static final int scaleTicks = 22 * 1440;
 
     /**
-     * Time (milliseconds) to reach scale from bottom position
+     * Possible states the elevator can be targetting
      */
-    public static final long scaleTime = 5000;
+    public enum states {
+        FLOOR,
+        SWITCH,
+        SCALE,
+    }
 
     /**
-     * Time (milliseconds) to reach switch from bottom position
+     * Init on the floor of course
      */
-    public static final long switchTime = 1000;
+    private states currentState = states.FLOOR;
 
     /**
      * Initialize Elevator subsystem with default name
@@ -75,15 +79,21 @@ public class Elevator extends Subsystem {
         // Set the elevator to be in Position mode
         elevatorTalonMaster.set(ControlMode.Position.value);
 
+        // Put PIDf values up
         SmartDashboard.putNumber("Elevator kP", 2.0);
         SmartDashboard.putNumber("Elevator kI", 0);
         SmartDashboard.putNumber("Elevator kD", 20);
         SmartDashboard.putNumber("Elevator kF", 0.076);
 
-        SmartDashboard.putNumber("Elevator Speed", 300);
+        // Ticks elevator setpoint can change per 20 milliseconds
+        SmartDashboard.putNumber("Elevator Speed", 150);
 
-        // CTRE soft limits, don't work well with current controls
+        // Allowed error for PID control
+        SmartDashboard.putNumber("Elevator Allowed Error", 50);
+
+        // CTRE soft limits, don't work well with current code
         setSoftLimitThresholds(minTicks, maxTicks);
+
         // Keep false
         enableSoftLimits(false);
 
@@ -100,6 +110,9 @@ public class Elevator extends Subsystem {
         elevatorTalonMaster.config_kD(0, getElevator_kD(), 10);
         elevatorTalonMaster.config_kF(0, getElevator_kF(), 10);
 
+        // Set allowed error
+        elevatorTalonMaster.configAllowableClosedloopError(0, getAllowedError(), 10);
+
         // Reset PID control
         // Set the elevator to be in position mode again to be safe
         elevatorTalonMaster.set(ControlMode.Position.value);
@@ -113,25 +126,14 @@ public class Elevator extends Subsystem {
 
     // ---- Drive --- //
     /**
-     * Drive the elevator with controller input
+     * Manually drive the elevator with controller inputs
      */
-    public void driveControllerInputs() {
-        // Get POV position from controller
-        int pov = Robot.oi.coPilotController.getPOV();
-
-        double speed = 0;
-        // Check POV is any of the up angles
-        if (pov == 315 || pov == 0 || pov == 45) {
-            speed = 1;
-        // Check if POV is any of the bottom angles
-        } else if(pov == 225 || pov == 180 || pov == 135){
-            speed = -1;
+    public void manualDrive() {
+        if (Robot.oi.driveControllerLeftBumper.get()) {
+            addPosition(-getElevatorSpeed());
+        } else if(Robot.oi.driveControllerRightBumper.get()) {
+            addPosition(getElevatorSpeed());
         }
-        // Scale the speed by co pilot slider (down 0% - up 100%)
-        speed *= (1.0 - Robot.oi.coPilotController.getRawAxis(OI.PILOT_SLIDER)) / 2.0;
-
-        // Finally add the change to the current setpoint
-        addPosition((int)(speed * getMaxSpeed()));
     }
 
     /**
@@ -144,9 +146,37 @@ public class Elevator extends Subsystem {
     // ---- Auto reach targets ---- //
 
     /**
+     * Sets elevator to target up a level
+     */
+    public void incrementState() {
+        // If it's at the floor goto the switch
+        if (currentState.equals(states.FLOOR)) {
+            setSwitch();
+        // if it's at the switch goto the scale
+        } else if (currentState.equals(states.SWITCH)) {
+            setScale();
+        }
+    }
+
+    /**
+     * Sets the elevator to target down a level
+     */
+    public void decreaseState() {
+        // if it's at the switch go down to the floor
+        if (currentState.equals(states.SWITCH)) {
+            setFloor();
+        // if it's at the scale go down to the switch
+        } else if (currentState.equals(states.SCALE)) {
+            setSwitch();
+        }
+    }
+
+    /**
      * Set elevator setpoint to scale
      */
     public void setScale() {
+        currentState = states.SCALE;
+        System.out.println("SCALE");
         setSetpoint(scaleTicks);
     }
 
@@ -154,6 +184,8 @@ public class Elevator extends Subsystem {
      * Set elevator setpoint to switch
      */
     public void setSwitch() {
+        currentState = states.SWITCH;
+        System.out.println("SWITCH");
         setSetpoint(switchTicks);
     }
 
@@ -161,6 +193,8 @@ public class Elevator extends Subsystem {
      * Set elevator setpoint to min
      */
     public void setFloor() {
+        currentState = states.FLOOR;
+        System.out.println("FLOOR");
         setSetpoint(minTicks);
     }
 
@@ -217,11 +251,15 @@ public class Elevator extends Subsystem {
         return elevatorTalonMaster.getClosedLoopError(0);
     }
 
-    public double getMaxSpeed() {
-        return SmartDashboard.getNumber("Elevator Speed", 300);
-    }
-
     public double getHeight() {
         return elevatorTalonMaster.getSelectedSensorPosition(0);
+    }
+
+    public double getElevatorSpeed() {
+        return SmartDashboard.getNumber("Elevator Speed", 150);
+    }
+
+    public int getAllowedError() {
+        return (int) SmartDashboard.getNumber("Elevator Allowed Error", 50);
     }
 }

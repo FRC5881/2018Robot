@@ -34,8 +34,6 @@ public class SetElevator extends Command {
     @Override
     protected void initialize() {
         this.startTime = System.currentTimeMillis();
-        System.out.println("start: " + startTime);
-        System.out.println("waiting: " + timeToWait);
     }
 
     /**
@@ -43,7 +41,21 @@ public class SetElevator extends Command {
      */
     @Override
     protected void execute() {
+        // Once we've waited the set time
+        if (doneWaiting()) {
+            // Tell the console
+            System.out.println("Setting Elevator to " + setpoint);
 
+            // Change the setpoint
+            Robot.elevator.setSetpoint(setpoint);
+        }
+    }
+
+    /**
+     *  Check if we've waited enough time before moving the arm
+     */
+    private boolean doneWaiting() {
+        return System.currentTimeMillis() - startTime >= timeToWait;
     }
 
     /**
@@ -52,7 +64,7 @@ public class SetElevator extends Command {
      */
     @Override
     protected boolean isFinished() {
-        return System.currentTimeMillis() - startTime >= timeToWait;
+        return Robot.elevator.getError() < Robot.elevator.getAllowedError();
     }
 
     /**
@@ -60,8 +72,7 @@ public class SetElevator extends Command {
      */
     @Override
     protected void end() {
-        System.out.println("Setting Elevator to " + setpoint);
-        Robot.elevator.setSetpoint(setpoint);
+        System.out.println("SetElevator command finished");
     }
 
     /**

@@ -1,15 +1,18 @@
 package org.techvalleyhigh.frc5881.powerup.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import openrio.powerup.MatchData;
+import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorClose;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.arm.manipulator.ManipulatorOpen;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetArm;
 import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.SetElevator;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.control.Straight;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.MotionProfile;
-import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.motion.Profile;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.EasyAuto;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.motion_profile.MotionProfile;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.PositionProfile;
+import org.techvalleyhigh.frc5881.powerup.robot.commands.auto.profiles.VelocityProfile;
 import org.techvalleyhigh.frc5881.powerup.robot.subsystem.Elevator;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.Autonomous;
 import org.techvalleyhigh.frc5881.powerup.robot.utils.trajectories.TrajectoryUtil;
@@ -18,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class AutonomousCommand extends CommandGroup {
-
     /**
      * Milliseconds to allow waiting for Match Data since it might not send instantly
      */
@@ -35,11 +37,6 @@ public class AutonomousCommand extends CommandGroup {
      * @param timeToWait milliseconds to wait before running the commands
      */
     public AutonomousCommand(ArrayList<Integer> chosen, long timeToWait) {
-        currentMode = mode.NONE;
-
-        startCommands = new ArrayList<>();
-        endCommands = new ArrayList<>();
-
         // Add all the autonomous paths into one big Map
         this.autos = TrajectoryUtil.getAutos();
 
@@ -50,7 +47,9 @@ public class AutonomousCommand extends CommandGroup {
         long start = System.currentTimeMillis();
 
         // Wait for match data or until time passed
-        while (!hasData() && System.currentTimeMillis() - start > matchDataTime) { }
+        while (!hasData() && System.currentTimeMillis() - start > matchDataTime) {
+            // Do nothing we are just waiting
+        }
 
         if (hasData()) {
             // Tell the drive team how long it took to get match data
@@ -60,7 +59,9 @@ public class AutonomousCommand extends CommandGroup {
         }
 
         // Wait for our time to wait has expired
-        while(System.currentTimeMillis() - start < timeToWait) {}
+        while (System.currentTimeMillis() - start < timeToWait) {
+            // Do nothing we are just waiting
+        }
 
         // Tell the drive team how long the robot waited to start (they should already have this information)
         System.out.format("It took %d milliseconds to start autonomous\n", System.currentTimeMillis() - start);
@@ -72,43 +73,40 @@ public class AutonomousCommand extends CommandGroup {
 
             // Filter and choose auto
             for (Integer i : chosen) {
-                Autonomous auto = autos.get(i);
-                System.out.println("Check auto: " + i);
+                // Auto code 666 skips all checks and run auto line
+                if (i == 667) {
+                    // Move the Elevator to switchTicks
+                    addSequential(new SetElevator(Elevator.switchTicks, 0));
 
-                // If statement checks to see it the MatchData's "owned side"
-                // is the same as the Autonomous command's copy of "owned side"
+                    autoline();
+                    if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.LEFT) {
+                        // Move the arm into scoring area
+                        addSequential(new SetArm(800, 0));
 
-                // Set feature to null to tell the bot to overwrite normal checks and run that specific auto
-                if (auto.getFeature() == null) {
-                    System.out.println("Overwriting auto choosing");
-                    System.out.println("Added Auto " + i);
-                    addSequential(new Profile(auto));
-                    found = true;
-                    break;
-                }
+                        // Drop the cube
+                        addSequential(new ManipulatorOpen(3));
+                    }
+                    return;
+                } else if (i == 668) {
+                    addSequential(new ManipulatorClose());
+                    addSequential(new SetElevator(Elevator.switchTicks, 0));
 
-                // Check that the feature's owned side is the same as auto
-                System.out.println("Auto feature " + MatchData.getOwnedSide(auto.getFeature()));
-                if (MatchData.getOwnedSide(auto.getFeature()) == auto.getSide()) {
-                    System.out.println("Added Auto " + i);
+                    autoline();
+                    if (MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) == MatchData.OwnedSide.RIGHT) {
+                        // Move the arm into scoring area
+                        addSequential(new SetArm(800, 0));
 
-                    //addSequential(new MotionProfile(auto));
+                        // Drop the cube
+                        addSequential(new ManipulatorOpen(3));
+                    }
+                    return;
+                } else if (i == 666) {
+                    addSequential(new SetElevator(Elevator.switchTicks, 0));
 
-                    // Score a cube with chosen auto
-                    score(auto);
-
-                    // Let the record that we found an autonomous routine and don't default to the outline
-                    found = true;
-                    break;
+                    autoline();
+                    return;
                 }
             }
-
-            // If we don't find a routine default to crossing the auto line
-            if (!found) {
-                // Add auto 100 (auto line)
-                //autoline();
-            }
-
         // If we don't get the data in time flip out and just run the auto line
         } else {
             System.out.println("Defaulting to auto line");
@@ -119,130 +117,27 @@ public class AutonomousCommand extends CommandGroup {
         }
     }
 
-    private enum commands {
-        CLOSE_GRABBER,
-        OPEN_GRABBER,
-        SWITCH,
-        SCALE,
-        MOVE_ARM
-    }
-
-    private enum mode {
-        INIT,
-        RUNNING,
-        END,
-        NONE
-    }
-
-    private mode currentMode;
-
-    private Autonomous auto;
-
     /**
-     * Logic for sending moveArm and elevator commands if we want to score a cube
+     * Logic for sending commands if we want to score a cube
      */
     private void score(Autonomous autoToRun) {
-        this.auto = autoToRun;
-        // Start with just sending the motion profile
-        profile = new Profile(autoToRun);
-        addParallel(profile);
+        // Start by grabbing the cube (the pistons should be activated anyway)
+        addSequential(new ManipulatorClose());
+        // Move the arm into a safe orientation for the elevator
+        addSequential(new SetArm(800, 0));
+        // Begin the autonomous routine
+        addSequential(profile(autoToRun));
 
-        startCommands.add(commands.CLOSE_GRABBER);
-        startCommands.add(commands.MOVE_ARM);
-
-        // Tip the moveArm forward just to be out of the elevator
-        //addParallel(new SetArm(800, 0));
-
-        // Set the moveArm to correct height to score in owned structure and tell the manipulator to score slightly after
+        // Set the elevator to correct height to score in owned structure
+        // TODO Uncomment
         if (autoToRun.getFeature() == MatchData.GameFeature.SWITCH_NEAR) {
-            startCommands.add(commands.SWITCH);
-            //addParallel(new SetElevator(Elevator.switchTicks, autoToRun.getTimeToWait()));
-
+            //addParallel(new SetElevator(Elevator.switchTicks, autoToRun.getElevatorTimeToWait()));
         } else if (autoToRun.getFeature() == MatchData.GameFeature.SCALE) {
-            startCommands.add(commands.SCALE);
-            //addParallel(new SetElevator(Elevator.scaleTicks, autoToRun.getTimeToWait()));
+            //addParallel(new SetElevator(Elevator.scaleTicks, autoToRun.getElevatorTimeToWait()));
         }
 
-        endCommands.add(commands.OPEN_GRABBER);
-        //addSequential(new ManipulatorOpen());
-
-        currentMode = mode.INIT;
-    }
-
-    private ArrayList<commands> startCommands;
-    private ArrayList<commands> endCommands;
-
-    private ManipulatorClose close;
-    private SetArm moveArm;
-    private SetElevator elevator;
-    private Profile profile;
-    private ManipulatorOpen open;
-
-    @Override
-    protected void execute() {
-        //System.out.println(currentMode);
-
-        if (currentMode == mode.NONE) {
-            //System.out.println(currentMode);
-            // Do nothing
-
-        } else if (currentMode == mode.INIT) {
-            startCommands(startCommands);
-
-            // Change mode
-            currentMode = mode.RUNNING;
-            System.out.println(currentMode);
-
-        } else if (currentMode == mode.RUNNING) {
-            if (profile.isCompleted()) {
-                currentMode = mode.END;
-                System.out.println(currentMode);
-            }
-
-        } else if (currentMode == mode.END) {
-            startCommands(endCommands);
-            currentMode = mode.NONE;
-            System.out.println(currentMode);
-        }
-    }
-
-    private void startCommands(ArrayList<commands> list) {
-        for (commands c: list) {
-                /*
-                private enum commands {
-                    CLOSE_GRABBER,
-                    OPEN_GRABBER,
-                    SWITCH,
-                    SCALE,
-                    MOVE_ARM
-                }
-                 */
-            if (c.equals(commands.CLOSE_GRABBER)) {
-                System.out.println("Close Grabber");
-                close = new ManipulatorClose();
-                close.start();
-
-            } else if (c.equals(commands.OPEN_GRABBER)) {
-                System.out.println("Open Grabber");
-                open = new ManipulatorOpen();
-                open.start();
-
-            } else if (c.equals(commands.SWITCH)) {
-                System.out.println("Switch");
-                elevator = new SetElevator(Elevator.switchTicks, auto.getTimeToWait());
-                elevator.start();
-
-            } else if (c.equals(commands.SCALE)) {
-                System.out.println("Scale");
-                elevator = new SetElevator(Elevator.scaleTicks, auto.getTimeToWait());
-                elevator.start();
-
-            } else if (c.equals(commands.MOVE_ARM)) {
-                System.out.println("Arm");
-                moveArm = new SetArm(800, 0);
-                moveArm.start();
-            }
-        }
+        // After moving the elevator and profiling score
+        addSequential(new ManipulatorOpen());
     }
 
     @Override
@@ -254,7 +149,7 @@ public class AutonomousCommand extends CommandGroup {
      * Just cross the auto line
      */
     private void autoline() {
-        addSequential(new MotionProfile(autos.get(100)));
+        addSequential(new EasyAuto(6, SmartDashboard.getNumber("Auto Time", 0)));
     }
 
 
@@ -266,4 +161,29 @@ public class AutonomousCommand extends CommandGroup {
         return MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != MatchData.OwnedSide.UNKNOWN;
     }
 
+    /**
+     * Enum for supporting different profile generation methods
+     */
+    public enum ProfileMode {
+        MOTION,
+        VELOCITY,
+        POSITION
+    }
+
+    /**
+     * Return command running a profile in chosen states
+     * @param auto Autonomous object to generate profile from
+     * @return command controlling a profile
+     */
+    private Command profile(Autonomous auto) {
+        ProfileMode mode = Robot.profileChooser.getSelected();
+
+        if (mode == ProfileMode.POSITION) {
+            return new PositionProfile(auto);
+        } else if(mode == ProfileMode.VELOCITY) {
+            return new VelocityProfile(auto);
+        } else {
+            return new MotionProfile(auto);
+        }
+    }
 }

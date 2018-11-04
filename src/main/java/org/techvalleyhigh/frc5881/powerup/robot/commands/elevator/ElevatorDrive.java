@@ -35,10 +35,12 @@ public class ElevatorDrive extends Command {
     protected void initialize() {
         System.out.println("Initializing elevator command");
 
-        //Robot.elevator.setFloor();
-
         // Init lastpoint
-        lastpoint = 0;
+        lastpoint = RobotMap.elevatorTalonMaster.getSelectedSensorPosition(0);
+
+        // Tell the elevator to target it's current position (prevents jumping at the start of tele-op
+        Robot.elevator.setSetpoint(Robot.elevator.getHeight());
+
         resetTimeouts();
     }
 
@@ -48,25 +50,21 @@ public class ElevatorDrive extends Command {
     @Override
     protected void execute() {
         // Try to drive with inputs first
-        Robot.elevator.driveControllerInputs();
+        Robot.elevator.manualDrive();
 
-        // Override if we're targeting the switch or scale or floor
-        if (Robot.oi.coPilotTopBackLeft.get()) {
-            Robot.elevator.setSwitch();
+        // TODO: Add jump to next state mechanic
 
-        } else if (Robot.oi.coPilotTopBackRight.get()) {
-            Robot.elevator.setScale();
-
-        } else if(Robot.oi.coPilotLeftTrigger.get()) {
-            Robot.elevator.setFloor();
-        }
 
         // Make sure we're moving and not burning out the motors
         double newpoint = Robot.elevator.getSetpoint();
+        // Check if our target has changed recently
         if (lastpoint != newpoint) {
+            // if so reset our timeout
             resetTimeouts();
         } else {
+            // check if we've gone by timeout to kill the bot
             long current = System.currentTimeMillis();
+            // if our error is significant disable the motors
             if (current - time > timeoutKill && Math.abs(Robot.elevator.getError()) > 1440) {
                 // Kill
                 RobotMap.elevatorTalonMaster.disable();

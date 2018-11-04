@@ -4,7 +4,31 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
 public class ManipulatorClose extends Command {
+    /**
+     * Milliseconds to wait before sending the okay to move the arm
+     */
+    private long timeToWait;
+
+    /**
+     * The current time when the command was called
+     */
+    private long startTime;
+
+    /**
+     * Create command with zero timeToWait
+     */
     public ManipulatorClose() {
+        this(0);
+    }
+
+    /**
+     * Create command with chosen timeToWait
+     * @param timeToWait seconds to wait
+     */
+    public ManipulatorClose(long timeToWait) {
+        this.timeToWait = timeToWait * 1000;
+        this.startTime = System.currentTimeMillis();
+
         requires(Robot.manipulator);
     }
 
@@ -13,14 +37,22 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void initialize() {
+        System.out.println("ManipulatorClose command initialized... Waiting " + timeToWait/1000.0 + " seconds");
     }
 
     /**
-     * Called repeatedly when this Command is scheduled to run
+     * Called repeatedly when this Command is scheduled to run (just once)
      */
     @Override
     protected void execute() {
-        Robot.manipulator.closeGrabbers();
+        if (doneWaiting()) Robot.manipulator.closeGrabbers();
+    }
+
+    /**
+     *  Check if we've waited enough time before closing
+     */
+    private boolean doneWaiting() {
+        return System.currentTimeMillis() - startTime >= timeToWait;
     }
 
     /**
@@ -29,7 +61,7 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected boolean isFinished() {
-        return true;
+        return doneWaiting();
     }
 
     /**
@@ -37,7 +69,7 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void end() {
-        //Robot.manipulator.stop();
+        System.out.println("Manipulator Closed");
     }
 
     /**
@@ -46,7 +78,7 @@ public class ManipulatorClose extends Command {
      */
     @Override
     protected void interrupted() {
-        System.out.println("Manipulator Open command was interrupted... That shouldn't happen");
+        System.out.println("Manipulator Close command was interrupted... That shouldn't happen");
         end();
     }
 }

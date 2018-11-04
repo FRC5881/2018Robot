@@ -1,14 +1,12 @@
-package org.techvalleyhigh.frc5881.powerup.robot.commands.drive;
+package org.techvalleyhigh.frc5881.powerup.robot.commands.elevator.ratchet;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.powerup.robot.Robot;
 
-/**
- * Use Speed and Gryo pids for driving the bot around, gives better control with accelerations / turning rates, etc.
- */
-public class ArcadedPID extends Command {
-    public ArcadedPID() {
-        requires(Robot.driveControl);
+public class RatchetDisable extends Command {
+
+    public RatchetDisable(){
+        requires(Robot.ratchet);
     }
 
     /**
@@ -19,20 +17,20 @@ public class ArcadedPID extends Command {
     }
 
     /**
-     * Called repeatedly when this Command is scheduled to run
+     * Called repeatedly when this Command is scheduled to run (just once)
      */
     @Override
     protected void execute() {
-        Robot.driveControl.arcadedPID();
+        Robot.ratchet.disableRatchet();
     }
 
     /**
      * Make this return true when this Command no longer needs to run execute()
-     * Since this is a drive command we never want it to end
+     * This is a pneumatic command so needs to end instantly
      */
     @Override
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     /**
@@ -40,8 +38,7 @@ public class ArcadedPID extends Command {
      */
     @Override
     protected void end() {
-        System.out.println("ArcadedPID command ended... That shouldn't happen");
-        Robot.driveControl.stopDrive();
+
     }
 
     /**

@@ -36,7 +36,7 @@ public class TrajectoryUtil {
 
     // Configs
     public static final Trajectory.Config defaultConfig = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-            Trajectory.Config.SAMPLES_HIGH, 0.05, 2.0, 1, 60);
+            Trajectory.Config.SAMPLES_HIGH, 0.02, 2.5, 1, 60);
 
     /**
      * Set of waypoints that together generate a figure eight for testing
@@ -54,7 +54,7 @@ public class TrajectoryUtil {
     };
 
     /**
-     * Reflects inputs across the line y = 13.5 and negate angles
+     * Reflects inputs across the line y = 13.5 feet and negate angles
      * Since the field is nicely symmetrical this allows us to flip auto paths from the left side to the right side
      * @param input input waypoints
      * @return Array of waypoints reflected over center line of the field (long ways)

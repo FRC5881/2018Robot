@@ -89,6 +89,7 @@ public class Arm extends Subsystem {
         armTalon.config_kF(0, getArm_kF(), 10);
 
         armTalon.configAllowableClosedloopError(0, (int)getAllowedError(),0);
+        // ---- Drive ---- //
 
         // Reset PID control
         // Set the arm to be in position mode again to be safe
@@ -101,20 +102,28 @@ public class Arm extends Subsystem {
         armTalon.pidWrite(0);
     }
 
-    // ---- Drive ---- //
 
     /**
      * Drive the arm with controller input
      */
     public void driveControllerInput() {
-        // Negate the inputs so pushing stick forward is negative
-        double speed = -Robot.oi.coPilotController.getRawAxis(OI.PILOT_X_AXIS);
+        // Left trigger points down
+        // Right trigger point up
+        double left_speed = Robot.oi.driverController.getRawAxis(OI.XBOX_LEFT_TRIGGER);
+        double right_speed = Robot.oi.driverController.getRawAxis(OI.XBOX_RIGHT_TRIGGER);
 
-        // The deadzone we apply on the controller input
+        double speed;
+        // Pick the strongest input
+        if (left_speed > right_speed) {
+            speed = -left_speed;
+        } else {
+            speed = right_speed;
+        }
+
+        // The deadzone we apply on axis inputs
         speed = OI.applyDeadzone(speed, deadzone);
 
-        // Scale by extend ticks and set setpoint
-        System.out.println(speed);
+        // Scale by max ticks and add to current set point
         addPosition(speed * getMaxSpeed());
     }
 
@@ -155,6 +164,9 @@ public class Arm extends Subsystem {
     }
 
     // ----- Getters for PID ----- //
+    public double getPosition() {
+        return armTalon.getSelectedSensorPosition(0);
+    }
 
     public double getSetpoint() {
         return armTalon.getClosedLoopTarget(0);
